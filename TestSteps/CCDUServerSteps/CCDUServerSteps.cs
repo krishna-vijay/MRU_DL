@@ -1,0 +1,627 @@
+﻿// Author: MyName
+// Copyright:   Copyright 2023 Keysight Technologies
+//              You have a royalty-free right to use, modify, reproduce and distribute
+//              the sample application files (and/or any modified version) in any way
+//              you find useful, provided that you agree that Keysight Technologies has no
+//              warranty, obligations or liability for any sample application files.
+using OpenTap;
+using RjioMRU;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
+using System.Text;
+using System.Threading;
+
+namespace RjioMRU
+{
+    [Display("CCDU Basic Verification", Group: "RjioMRU", Description: "Insert a description here")]
+    public class CCDUBasicVerification : TestStep
+    {
+
+
+
+
+
+
+
+        private string basicverificationCommand = "ip link show";
+        private string varificationInterface1 = "ens1f0";
+        private string varificationInterface2 = "ens1f1";
+        private string varificationInterface3 = "ens1f2";
+        private string varificationInterface4 = "ens1f3";
+        private CCDUServer cCDUServerobj;
+
+        #region Settings
+        [Display("CCDU Server", Order: 0, Description: "Select Server")]
+        public CCDUServer CCDUServerobj { get => cCDUServerobj; set => cCDUServerobj = value; }
+        [Display("Basic verification command", Order: 2, Description: "server command to basic verification")]
+        public string BasicverificationCommand { get => basicverificationCommand; set => basicverificationCommand = value; }
+        [Display("Interface1 name", Order: 5, Description: "Enter interface1 validation name")]
+        public string VarificationInterface1 { get => varificationInterface1; set => varificationInterface1 = value; }
+        [Display("Interface2 name", Order: 5, Description: "Enter interface2 validation name")]
+        public string VarificationInterface2 { get => varificationInterface2; set => varificationInterface2 = value; }
+        [Display("Interface3 name", Order: 5, Description: "Enter interface3 validation name")]
+        public string VarificationInterface3 { get => varificationInterface3; set => varificationInterface3 = value; }
+        [Display("Interface4 name", Order: 5, Description: "Enter interface4 validation name")]
+        public string VarificationInterface4 { get => varificationInterface4; set => varificationInterface4 = value; }
+
+
+        // ToDo: Add property here for each parameter the end user should be able to change
+        #endregion
+
+        public CCDUBasicVerification()
+        {
+            // ToDo: Set default values for properties / settings.
+        }
+
+        public override void Run()
+        {
+            var basicVarificationStatus = CCDUServerobj.BasicVerification(BasicverificationCommand, out CCDUServer.linkInteraface);
+            if (!basicVarificationStatus)
+            {
+                TapThread.Sleep(100);
+                basicVarificationStatus = CCDUServerobj.BasicVerification(BasicverificationCommand, out CCDUServer.linkInteraface);
+            }
+            // ToDo: Add test case code.
+            RunChildSteps(); //If the step supports child steps.
+
+            if (basicVarificationStatus)
+            {
+                UpgradeVerdict(Verdict.Pass);
+            }
+            else
+            {
+                UpgradeVerdict(Verdict.Fail);
+            }
+            // If no verdict is used, the verdict will default to NotSet.
+            // You can change the verdict using UpgradeVerdict() as shown below.
+            // UpgradeVerdict(Verdict.Pass);
+        }
+    }
+
+    [Display("CCDU Link Interface IP Change", Group: "RjioMRU", Description: "Insert a description here")]
+    public class CheckLinkDetection : TestStep
+    {
+        private string ipAddress = "192.168.1.1";
+        private string speedCheckString = "speed 25000Mb/s,";
+        private string linkDetecetedString = "Link detected";
+
+        private CCDUServer cCDUServerobj;
+
+        #region Settings
+        [Display("CCDU Server", Order: 0, Description: "Select Server")]
+        public CCDUServer CCDUServerobj { get => cCDUServerobj; set => cCDUServerobj = value; }
+        [Display("Link interface IP", Order: 2, Description: "server command to basic verification")]
+        public string IpAddress { get => ipAddress; set => ipAddress = value; }
+
+
+
+
+        // ToDo: Add property here for each parameter the end user should be able to change
+        #endregion
+
+        public CheckLinkDetection()
+        {
+            // ToDo: Set default values for properties / settings.
+        }
+
+        public override void Run()
+        {
+            var ipChangeStatus = CCDUServerobj.ChangeInterfceIP(CCDUServer.linkInteraface, ipAddress);
+            if (!ipChangeStatus)
+            {
+                TapThread.Sleep(100);
+                ipChangeStatus = CCDUServerobj.ChangeInterfceIP(CCDUServer.linkInteraface, ipAddress);
+            }
+            // ToDo: Add test case code.
+            RunChildSteps(); //If the step supports child steps.
+
+            if (ipChangeStatus)
+            {
+                UpgradeVerdict(Verdict.Pass);
+            }
+            else
+            {
+                UpgradeVerdict(Verdict.Fail);
+            }
+            // If no verdict is used, the verdict will default to NotSet.
+            // You can change the verdict using UpgradeVerdict() as shown below.
+            // UpgradeVerdict(Verdict.Pass);
+        }
+    }
+
+
+    [Display("CCDU Interface Test Verification", Group: "RjioMRU", Description: "Insert a description here")]
+    public class interfaecTestVerificaiton : TestStep
+    {
+        private string interfaceName = "ens1f1";
+        private string ipAddress = "192.168.1.2";
+        private string linkDetecetedString = "Link detected";
+
+        private CCDUServer cCDUServerobj;
+
+        #region Settings
+        [Display("CCDU Server", Order: 0, Description: "Select Server")]
+        public CCDUServer CCDUServerobj { get => cCDUServerobj; set => cCDUServerobj = value; }
+
+        [Display("Ip Address", Order: 5, Description: "IP address ")]
+        public string IpAddress { get => ipAddress; set => ipAddress = value; }
+
+
+        // ToDo: Add property here for each parameter the end user should be able to change
+        #endregion
+
+        public interfaecTestVerificaiton()
+        {
+            // ToDo: Set default values for properties / settings.
+        }
+
+        public override void Run()
+        {
+            var PingTestStatus = CCDUServerobj.Interface_testIPverification(CCDUServer.linkInteraface, IpAddress);
+            // ToDo: Add test case code.
+            RunChildSteps(); //If the step supports child steps.
+
+            if (PingTestStatus)
+            {
+                UpgradeVerdict(Verdict.Pass);
+            }
+            else
+            {
+                UpgradeVerdict(Verdict.Fail);
+            }
+            // If no verdict is used, the verdict will default to NotSet.
+            // You can change the verdict using UpgradeVerdict() as shown below.
+            // UpgradeVerdict(Verdict.Pass);
+        }
+    }
+
+
+    [Display("PTP Tab ptp4l Command", Group: "RjioMRU", Description: "Insert a description here")]
+    public class PTP_Tabptp4lCommand : TestStep
+    {
+        private string interfaceName = "ens7f1";
+        private string ipAddress = "192.168.1.30";
+        private string linkDetecetedString = "Link detected";
+        private bool KeepTrace = false;
+
+        private CCDUServer cCDUServerobj;
+
+        #region Settings
+        [Display("CCDU Server", Order: 0, Description: "Select Server")]
+        public CCDUServer CCDUServerobj { get => cCDUServerobj; set => cCDUServerobj = value; }
+        [Display("Enable Trace", Order: 10, Description: "Check for Trace Enable.")]
+        public bool KeepTrace1 { get => KeepTrace; set => KeepTrace = value; }
+ 
+        //[Display("Interface IP",Order:20,Description:"Enter ip of the interface ")]
+        //public string IpAddress { get => ipAddress; set => ipAddress = value; }
+
+        //[Display("Interface Name", Order: 2, Description: "Interface Name")]
+        //public string InterfaceName { get => interfaceName; set => interfaceName = value; }
+        //[Display("Ip Address", Order: 5, Description: "IP address ")]
+        //public string IpAddress { get => ipAddress; set => ipAddress = value; }
+
+
+        // ToDo: Add property here for each parameter the end user should be able to change
+        #endregion
+
+        public PTP_Tabptp4lCommand()
+        {
+            // ToDo: Set default values for properties / settings.
+        }
+
+        public override void Run()
+        {
+            Thread PTPthread = new Thread(()=>CCDUServerobj.PtpTaBCommandExecute(KeepTrace1));
+            PTPthread.IsBackground = false;
+            PTPthread.Start();
+            // var PingTestStatus = CCDUServerobj.PtpTaBCommandExecute(CCDUBasicVerification.linkInteraface);
+            // ToDo: Add test case code.
+            RunChildSteps(); //If the step supports child steps.
+
+            //if (PingTestStatus)
+            //{
+              UpgradeVerdict(Verdict.Pass);
+            //}
+            //else
+            //{
+            //    UpgradeVerdict(Verdict.Fail);
+            //}
+            // If no verdict is used, the verdict will default to NotSet.
+            // You can change the verdict using UpgradeVerdict() as shown below.
+            // UpgradeVerdict(Verdict.Pass);
+        }
+    }
+
+    [Display("PHc Tab phc2sys Command", Group: "RjioMRU", Description: "Insert a description here")]
+    public class PHC_Tabphc2sysCommand : TestStep
+    {
+        private string interfaceName = "p4p3";
+        private string ipAddress = "192.168.1.30";
+        private string linkDetecetedString = "Link detected";
+        private bool KeepTracing = false;
+        private string command1 = "cd /custom-sw/thirdparty/usr/sbin/";
+        private string command2phc = "./phc2sys -s " + CCDUServer.linkInteraface + " -O -37 -m";
+
+        private CCDUServer cCDUServerobj;
+
+        #region Settings
+        [Display("CCDU Server", Order: 0, Description: "Select Server")]
+        public CCDUServer CCDUServerobj { get => cCDUServerobj; set => cCDUServerobj = value; }
+        [Display("Enable Trace",Order:10,Description:"Check for Trace Enable.")]
+        public bool KeepTracing1 { get => KeepTracing; set => KeepTracing = value; }
+        [Display("Command1 ",Order:15,Description:"Enter the first command")]
+
+        public string Command1 { get => command1; set => command1 = value; }
+
+        [Display("Command2",Order:20,Description:"Enter second command")]
+        public string Command2phc { get => command2phc; set => command2phc = value; }
+
+
+        //[Display("Interface Name", Order: 2, Description: "Interface Name")]
+        //public string InterfaceName { get => interfaceName; set => interfaceName = value; }
+        //[Display("Ip Address", Order: 5, Description: "IP address ")]
+        //public string IpAddress { get => ipAddress; set => ipAddress = value; }
+
+
+        // ToDo: Add property here for each parameter the end user should be able to change
+        #endregion
+
+        public PHC_Tabphc2sysCommand()
+        {
+            // ToDo: Set default values for properties / settings.
+        }
+
+        public override void Run()
+        {
+            Command2phc = "./phc2sys -s " + CCDUServer.linkInteraface + " -O -37 -m";
+            Thread PHCthread = new Thread(()=>CCDUServerobj.PhCTaBCommandExecute(KeepTracing1,Command1, Command2phc));
+            PHCthread.IsBackground = true;
+            PHCthread.Start();
+            // var PingTestStatus = CCDUServerobj.PhCTaBCommandExecute(CCDUBasicVerification.linkInteraface);
+            // ToDo: Add test case code.
+            RunChildSteps(); //If the step supports child steps
+
+            //if (PingTestStatus)
+            //{
+                UpgradeVerdict(Verdict.Pass);
+            //}
+            //else
+            //{
+            //    UpgradeVerdict(Verdict.Fail);
+            //}
+            // If no verdict is used, the verdict will default to NotSet.
+            // You can change the verdict using UpgradeVerdict() as shown below.
+            // UpgradeVerdict(Verdict.Pass);
+        }
+
+    }
+    
+    
+    [Display("L1 Tab phc2sys Command", Group: "RjioMRU", Description: "Insert a description here")]
+    public class L1_Tabphc2sysCommand : TestStep
+    {
+       
+
+        private CCDUServer cCDUServerobj;
+        private bool KeepTrace = false;
+        private string command1  = "cd /home/macro-gnb/working_dir/pkg_HiPhy_22.11.00.12_Xml_v5.2.5_Os_CentOs/custom-sw/ccdu/scripts/l1/";
+
+        #region Settings
+        [Display("CCDU Server", Order: 0, Description: "Select Server")]
+        public CCDUServer CCDUServerobj { get => cCDUServerobj; set => cCDUServerobj = value; }
+        [Display("Enable Trace", Order: 10, Description: "Check for Trace Enable.")]
+        public bool KeepTrace1 { get => KeepTrace; set => KeepTrace = value; }
+
+        [Display("Command 1",Order: 15,Description:"Enter command1 script")]
+        public string Command1 { get => command1; set => command1 = value; }
+
+        //[Display("Interface Name", Order: 2, Description: "Interface Name")]
+        //public string InterfaceName { get => interfaceName; set => interfaceName = value; }
+        //[Display("Ip Address", Order: 5, Description: "IP address ")]
+        //public string IpAddress { get => ipAddress; set => ipAddress = value; }
+
+
+        // ToDo: Add property here for each parameter the end user should be able to change
+        #endregion
+
+        public L1_Tabphc2sysCommand()
+        {
+            // ToDo: Set default values for properties / settings.
+        }
+
+        public override void Run()
+        {
+            Thread L1_thread = new Thread(()=>CCDUServerobj.L1TaBCommandExecute(KeepTrace1, Command1));
+            L1_thread.IsBackground = true;
+            L1_thread.Start();
+            // var PingTestStatus = CCDUServerobj.PhCTaBCommandExecute(CCDUBasicVerification.linkInteraface);
+            // ToDo: Add test case code.
+            RunChildSteps(); //If the step supports child steps
+
+            //if (PingTestStatus)
+            //{
+               UpgradeVerdict(Verdict.Pass);
+            //}
+            //else
+            //{
+            //    UpgradeVerdict(Verdict.Fail);
+            //}
+            // If no verdict is used, the verdict will default to NotSet.
+            // You can change the verdict using UpgradeVerdict() as shown below.
+            // UpgradeVerdict(Verdict.Pass);
+        }
+
+    }
+    [Display("TestMac Tab phc2sys Command", Group: "RjioMRU", Description: "Insert a description here")]
+    public class TestMac_Tabphc2sysCommand : TestStep
+    {
+
+        private string command1 = "cd /home/macro-gnb/working_dir/testmac_pkg_22.11.00.03";
+       private string command2 = "./testmac_entry.sh";
+        private CCDUServer cCDUServerobj;
+        private bool KeepTracing = false;
+        #region Settings
+        [Display("CCDU Server", Order: 0, Description: "Select Server")]
+        public CCDUServer CCDUServerobj { get => cCDUServerobj; set => cCDUServerobj = value; }
+        [Display("Enable Trace", Order: 10, Description: "Check for Trace Enable.")]
+        public bool KeepTracing1 { get => KeepTracing; set => KeepTracing = value; }
+        [Display("Command1",Order:15,Description:"Enter the command1 script")]
+        public string Command1 { get => command1; set => command1 = value; }
+        [Display("Command2",Order:20,Description:"Enter the command2 script")]
+        public string Command2 { get => command2; set => command2 = value; }
+
+        // ToDo: Add property here for each parameter the end user should be able to change
+        #endregion
+
+        public TestMac_Tabphc2sysCommand()
+        {
+            // ToDo: Set default values for properties / settings.
+        }
+
+        public override void Run()
+        {
+            Thread TestMac_thread = new Thread(()=>CCDUServerobj.TestMacTaBCommandExecute(KeepTracing1, Command1,Command2));
+            TestMac_thread.IsBackground = true;
+            TestMac_thread.Start();
+            // var PingTestStatus = CCDUServerobj.PhCTaBCommandExecute(CCDUBasicVerification.linkInteraface);
+            // ToDo: Add test case code.
+            RunChildSteps(); //If the step supports child steps
+            UpgradeVerdict(Verdict.Pass);
+        }
+
+    }
+    
+    [Display("TestMac Start DL Testing", Group: "RjioMRU", Description: "Insert a description here")]
+    public class TestMac_TABStartDLTest: TestStep
+    {
+
+
+        private CCDUServer cCDUServerobj;
+        private string commamd = "phystart 4 0 0";
+        private string command1 = "run 1 2 1 100 1433";
+        #region Settings
+        private bool KeepTracing = false;
+        [Display("CCDU Server", Order: 0, Description: "Select Server")]
+        public CCDUServer CCDUServerobj { get => cCDUServerobj; set => cCDUServerobj = value; }
+
+        [Display("Enable Trace", Order: 10, Description: "Check for Trace Enable.")]
+        public bool KeepTracing1 { get => KeepTracing; set => KeepTracing = value; }
+        [Display("Command",Order:15,Description:"Enter the command script")]
+        public string Commamd { get => commamd; set => commamd = value; }
+
+        [Display("command1",Order:20,Description:"ENter the command1 script")]
+        public string Command1 { get => command1; set => command1 = value; }
+
+
+        // ToDo: Add property here for each parameter the end user should be able to change
+        #endregion
+
+        public TestMac_TABStartDLTest()
+        {
+            // ToDo: Set default values for properties / settings.
+        }
+
+        public override void Run()
+        {
+            Thread TestMacTest_thread = new Thread(()=>CCDUServerobj.startDLTest(KeepTracing1,Commamd,Command1));
+            TestMacTest_thread.IsBackground = true;
+            TestMacTest_thread.Start();
+            //CCDUServerobj.startDLTest();
+            // var PingTestStatus = CCDUServerobj.PhCTaBCommandExecute(CCDUBasicVerification.linkInteraface);
+            // ToDo: Add test case code.
+            RunChildSteps(); //If the step supports child steps
+            UpgradeVerdict(Verdict.Pass);
+        }
+
+    }
+
+
+    [Display("Close all Plugins", Group: "RjioMRU", Description: "Insert a description here")]
+    public class CloseAllPlugins : TestStep
+    {
+         
+
+        public CloseAllPlugins()
+        {
+            // ToDo: Set default values for properties / settings.
+        }
+
+        public override void Run()
+        {
+
+            lock (CCDUServer.ServerLockObject)
+            {
+                CCDUServer.loopBreak = true;
+            }
+            // ToDo: Add test case code.
+            RunChildSteps(); //If the step supports child steps.
+
+            UpgradeVerdict(Verdict.Pass);
+            // If no verdict is used, the verdict will default to NotSet.
+            // You can change the verdict using UpgradeVerdict() as shown below.
+            // UpgradeVerdict(Verdict.Pass);
+        }
+    }
+    
+    [Display("Loop Break False", Group: "RjioMRU", Description: "Insert a description here")]
+    public class LoopBreakFalse: TestStep
+    {
+         
+
+        public LoopBreakFalse()
+        {
+            // ToDo: Set default values for properties / settings.
+        }
+
+        public override void Run()
+        {
+
+            lock (CCDUServer.ServerLockObject)
+            {
+                CCDUServer.loopBreak = false;
+            }
+            // ToDo: Add test case code.
+            RunChildSteps(); //If the step supports child steps.
+
+
+            // If no verdict is used, the verdict will default to NotSet.
+            // You can change the verdict using UpgradeVerdict() as shown below.
+             UpgradeVerdict(Verdict.Pass);
+        }
+    }
+
+    [Display("Run Virtual Functions", Group: "RjioMRU", Description: "Insert a description here")]
+    public class RunVirtualFunctions : TestStep
+    {
+        private CCDUServer cCDUServerobj;
+        string command1 = string.Empty;
+        string command2 = string.Empty;
+        string command3 = string.Empty;
+        public CCDUServer CCDUServerobj { get => cCDUServerobj; set => cCDUServerobj = value; }
+        [Display("Virtual Function script1",Order:1,Description:"Enter virtual function script1")]
+       
+        public string Command1 { get => command1; set => command1 = value; }
+        [Display("Virtual Function script2", Order: 5, Description: "Enter virtual function script2")]
+
+        public string Command2 { get => command2; set => command2 = value; }
+        [Display("Virtual Function script3", Order: 10, Description: "Enter virtual function script3")]
+        public string Command3 { get => command3; set => command3 = value; }
+
+        public RunVirtualFunctions()
+        {
+            // ToDo: Set default values for properties / settings.
+        }
+
+        public override void Run()
+        {
+            CCDUServerobj.RunVirutalFunctions(Command1, Command2, Command3);
+
+
+            // ToDo: Add test case code.
+            RunChildSteps(); //If the step supports child steps.
+
+
+            // If no verdict is used, the verdict will default to NotSet.
+            // You can change the verdict using UpgradeVerdict() as shown below.
+            UpgradeVerdict(Verdict.Pass);
+        }
+    }
+    
+    [Display("Carrier Aggrigation Functions", Group: "RjioMRU", Description: "Insert a description here")]
+    public class RunCAFunctions : TestStep
+    {
+
+
+        /*
+         string command1 = "export LD_LIBRARY_PATH=/custom-sw/thirdparty/usr/lib64/:/custom-sw/thirdparty/usr/lib/:/usr/local/bin/:/custom-sw/thirdparty/usr/local/ssl/lib/", string command2 = "./netopeer2-cli", string command3 = "connect --host=192.168.1.2 --port=1830 --login=root", string refTag = "Type your password:", string password = "root", string command4 = "listen", string command4RefTag = "cmd_listen: Already connected to", string command5 = "edit-config --target running --config=/root/uplane_test_xml_for_release_2.9.0_ACTIVE_1.xml --defop merge"
+         */
+        private CCDUServer cCDUServerobj;
+        string command1 = "export LD_LIBRARY_PATH=/custom-sw/thirdparty/usr/lib64/:/custom-sw/thirdparty/usr/lib/:/usr/local/bin/:/custom-sw/thirdparty/usr/local/ssl/lib/";
+        string command2 = "./netopeer2-cli";
+        string command3 = "connect --host=192.168.1.2 --port=1830 --login=root";
+        string refTag = "Type your password:";
+        string password = "root";
+        string command4 = "listen";
+        string command4RefTag = "cmd_listen: Already connected to";
+        string command5 = "edit-config --target running --config=/root/uplane_test_xml_for_release_2.9.0_ACTIVE_1.xml --defop merge";
+
+        public CCDUServer CCDUServerobj { get => cCDUServerobj; set => cCDUServerobj = value; }
+        [Display("CA script1",Order:1,Description:"Enter CA function script1")]
+       
+        public string Command1 { get => command1; set => command1 = value; }
+        [Display("CA script2", Order: 5, Description: "Enter CA function script2")]
+
+        public string Command2 { get => command2; set => command2 = value; }
+        [Display("CA script3", Order: 10, Description: "Enter CA function script3")]
+        public string Command3 { get => command3; set => command3 = value; }
+
+        [Display("REF Tag", Order: 10, Description: "Enter Reg Tag script3")]
+        public string RefTag { get => refTag; set => refTag = value; }
+
+        [Display("Password", Order: 10, Description: "Enter Password")]
+        public string Password { get => password; set => password = value; }
+
+        [Display("CA script4", Order: 10, Description: "Enter CA function script4")]
+        public string Command4 { get => command4; set => command4 = value; }
+
+        [Display("Ref Tag for Command4", Order: 10, Description: " ")]
+        public string Command4RefTag { get => command4RefTag; set => command4RefTag = value; }
+
+        [Display("CA script5", Order: 10, Description: "Enter CA function script5")]
+        public string Command5 { get => command5; set => command5 = value; }
+
+        public RunCAFunctions()
+        {
+            // ToDo: Set default values for properties / settings.
+        }
+
+        public override void Run()
+        {
+            CCDUServerobj.CarrierAggrigation(Command1, Command2, Command3, RefTag,Password,Command4,Command4RefTag,Command5);
+            // ToDo: Add test case code.
+            RunChildSteps(); //If the step supports child steps.
+
+
+            // If no verdict is used, the verdict will default to NotSet.
+            // You can change the verdict using UpgradeVerdict() as shown below.
+            UpgradeVerdict(Verdict.Pass);
+        }
+    }
+    
+    
+    [Display("rm -rf /root/.ssh/known_hosts ", Group: "RjioMRU", Description: "Insert a description here")]
+    public class RunCAKnownHostCommand: TestStep
+    {
+
+
+        /*
+         string command1 = "export LD_LIBRARY_PATH=/custom-sw/thirdparty/usr/lib64/:/custom-sw/thirdparty/usr/lib/:/usr/local/bin/:/custom-sw/thirdparty/usr/local/ssl/lib/", string command2 = "./netopeer2-cli", string command3 = "connect --host=192.168.1.2 --port=1830 --login=root", string refTag = "Type your password:", string password = "root", string command4 = "listen", string command4RefTag = "cmd_listen: Already connected to", string command5 = "edit-config --target running --config=/root/uplane_test_xml_for_release_2.9.0_ACTIVE_1.xml --defop merge"
+         */
+        private CCDUServer cCDUServerobj;
+         
+
+        public CCDUServer CCDUServerobj { get => cCDUServerobj; set => cCDUServerobj = value; }
+        [Display("CA script1",Order:1,Description:"Enter CA function script1")]
+        
+
+        public RunCAKnownHostCommand()
+        {
+            // ToDo: Set default values for properties / settings.
+        }
+
+        public override void Run()
+        {
+            CCDUServerobj.CCDU_CA_known_hostsCommand();
+            // ToDo: Add test case code.
+            RunChildSteps(); //If the step supports child steps.
+
+
+            // If no verdict is used, the verdict will default to NotSet.
+            // You can change the verdict using UpgradeVerdict() as shown below.
+            UpgradeVerdict(Verdict.Pass);
+        }
+    }
+
+}

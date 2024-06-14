@@ -1,0 +1,108 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Library</OutputType>
+    <!-- We are debugging using NET Framework, but builds to Netstandard in release mode to ensure cross platform compatibility -->
+    <!-- If your plugin is Windows only and you use Windows specific API's, feel free to change "netstandard2.0" below to "net462" and everything will work as when you are debugging. In this case, remember to change "OS" in package.xml to only "windows" -->
+    <!-- If your plugin should be cross platform but does not build in release mode, please verify that all API's you used are available. You might need references or nuget packages for API's that are available in NET framework, but not in NetStandard -->
+    <TargetFramework>net472</TargetFramework>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <OpenTapPackageDefinitionPath>package.xml</OpenTapPackageDefinitionPath>
+    <BaseOutputPath>C:\Program Files\Keysight\Test Automation\Packages\RjioMRU</BaseOutputPath>
+    <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
+    <Company>Keysight Technologies</Company>
+    <Copyright>Keysight Technologies </Copyright>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)'=='Debug'">
+    <!-- We are setting TargetFramework in debug configuration, otherwise Visual Studio tries to attach a .NET Core debugger. That will not work, because the program we open is a .NET Framework executable -->
+    <TargetFramework>net48</TargetFramework>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <FileAlignment>1024</FileAlignment>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <FileAlignment>1024</FileAlignment>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="TestSteps\EXMSteps\**" />
+    <Compile Remove="TestSteps\RRHSteps\**" />
+    <Compile Remove="TestSteps\RxSteps\**" />
+    <EmbeddedResource Remove="TestSteps\EXMSteps\**" />
+    <EmbeddedResource Remove="TestSteps\RRHSteps\**" />
+    <EmbeddedResource Remove="TestSteps\RxSteps\**" />
+    <None Remove="TestSteps\EXMSteps\**" />
+    <None Remove="TestSteps\RRHSteps\**" />
+    <None Remove="TestSteps\RxSteps\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="DUT\RRH_DUT.cs" />
+    <Compile Remove="Instruments\RxSensitivityPC.cs" />
+    <Compile Remove="Reporting\ReporTExample.cs" />
+    <Compile Remove="TestSteps\CalODSC.cs" />
+    <Compile Remove="TestSteps\DummyTEsting.cs" />
+    <Compile Remove="TestSteps\SequencerStart.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Developer's System is needed to debug in 'Editor' -->
+    <AdditionalOpenTapPackage Include="Developer's System" />
+
+    <!--<AdditionalOpenTapPackage Include="Developer's System CE" />-->
+  </ItemGroup>
+
+  <ItemGroup>
+    <COMReference Include="Microsoft.Office.Interop.Excel">
+      <WrapperTool>tlbimp</WrapperTool>
+      <VersionMinor>9</VersionMinor>
+      <VersionMajor>1</VersionMajor>
+      <Guid>00020813-0000-0000-c000-000000000046</Guid>
+      <Lcid>0</Lcid>
+      <Isolated>false</Isolated>
+      <EmbedInteropTypes>true</EmbedInteropTypes>
+    </COMReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="SpreadsheetLight" Version="3.5.0" />
+    <PackageReference Include="SSH.NET" Version="2020.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Ivi.Visa">
+      <HintPath>..\..\..\..\..\..\..\..\Program Files (x86)\IVI Foundation\VISA\Microsoft.NET\Framework32\v2.0.50727\VISA.NET Shared Components 5.11.0\Ivi.Visa.dll</HintPath>
+    </Reference>
+    <Reference Include="Keysight.Visa">
+      <HintPath>..\..\..\..\..\..\..\..\Program Files\Keysight\IO Libraries Suite\Keysight.Visa.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CSharp, Version=4.0.4.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+    <Reference Include="OpenTap">
+      <HintPath>..\..\..\..\..\..\..\..\Program Files\Keysight\Test Automation\OpenTap.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Windows.Forms" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Resources\dSA_CableLossFile1.csv">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\dSA_CableLossFile2.csv">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\MRUReportTemplete.xlsx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>
