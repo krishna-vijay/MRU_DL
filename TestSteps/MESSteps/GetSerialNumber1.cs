@@ -6,6 +6,7 @@
 //              warranty, obligations or liability for any sample application files.
 using Newtonsoft.Json;
 using OpenTap;
+using RjioMRU.MES;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;

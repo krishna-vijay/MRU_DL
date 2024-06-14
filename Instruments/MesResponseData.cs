@@ -6,8 +6,8 @@
 
         public string ProductCode { get; set; }
 
-        public string RFFE { get; internal set; }
+        public string RFFE_SerialNumber { get; internal set; }
 
-        public string HSTB { get; internal set; }
+        public string HSTB_SerialNumber { get; internal set; }
     }
 }

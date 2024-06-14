@@ -32,7 +32,7 @@ namespace RjioMRU
         public override void Open()
         {
 
-            base.IoTimeout = 30000;
+            base.IoTimeout = 31000;
             base.Open();
             // TODO:  Open the connection to the instrument here
 

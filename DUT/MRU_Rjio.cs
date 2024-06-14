@@ -410,7 +410,6 @@ namespace RjioMRU
 
         public bool Dr49_CH1_DPD_Measurement(int channelNumber, out double Txvalue, out double RxValue)
         {
-
             Log.Debug("49DR CH1 Functions");
             int count = 0;
             Stopwatch sp = new Stopwatch();
@@ -2293,6 +2292,25 @@ namespace RjioMRU
                 }
 
             } while (true);
+        }
+
+        internal void Dr49_CH1_WriteDSAToEEPROM(int[] hexValues)
+        {
+            DR49Ch1ComObj.ReadExisting();
+            string command4EEPROM_DSA = "rj-rfeeprom-updater -upd_dsa_tx " + hexValues[0] + "," + hexValues[1] + "," + hexValues[2] + "," + hexValues[3] + "," + hexValues[4] + "," + hexValues[5] + "," + hexValues[6] + "," + hexValues[7] + "," + hexValues[8] + "," + hexValues[9] + "," + hexValues[10] + "," + hexValues[11] + "," + hexValues[12] + "," + hexValues[13] + "," + hexValues[14] + "," + hexValues[15] + " -upd_dsa_fb 0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f -upd_dac0 0x47E - nupd_dac1 0x64B -upd_fw_ver 1.0 -upd_hw_ver B -upd_prv_valid";
+            Log.Info(command4EEPROM_DSA);
+            DR49Ch1ComObj.WriteLine(command4EEPROM_DSA);
+
+            
+        }
+        internal void Dr49_CH2_WriteDSAToEEPROM(int[] hexValues)
+        {
+            DR49Ch1ComObj.ReadExisting();
+            string command4EEPROM_DSA = "rj-rfeeprom-updater -upd_dsa_tx " + hexValues[0] + "," + hexValues[1] + "," + hexValues[2] + "," + hexValues[3] + "," + hexValues[4] + "," + hexValues[5] + "," + hexValues[6] + "," + hexValues[7] + "," + hexValues[8] + "," + hexValues[9] + "," + hexValues[10] + "," + hexValues[11] + "," + hexValues[12] + "," + hexValues[13] + "," + hexValues[14] + "," + hexValues[15] + " -upd_dsa_fb 0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f -upd_dac0 0x47E - nupd_dac1 0x64B -upd_fw_ver 1.0 -upd_hw_ver B -upd_prv_valid";
+            Log.Info(command4EEPROM_DSA);
+            DR49Ch1ComObj.WriteLine(command4EEPROM_DSA);
+
+            
         }
         #endregion DR21Functions
 

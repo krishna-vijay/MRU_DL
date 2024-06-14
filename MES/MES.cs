@@ -18,7 +18,7 @@ using Newtonsoft.Json;
 //If you do NOT have a SCPI based instrument, you should modify this instance to extend
 //the (less powerful) Instrument base class.
 
-namespace RjioMRU
+namespace RjioMRU.MES
 {
     [Display("MES", Group: "RjioMRU", Description: "Insert a description here")]
     public class ClsMES : ScpiInstrument
@@ -52,7 +52,7 @@ namespace RjioMRU
 
         public void OpenMESConnection()
         {
-            authenticationEncoded = System.Convert.ToBase64String(Encoding.GetEncoding("ISO-8859-1").GetBytes(Username + ":" + Password));
+            authenticationEncoded = Convert.ToBase64String(Encoding.GetEncoding("ISO-8859-1").GetBytes(Username + ":" + Password));
             BaseURL = "http://42qconduituat2.42-q.com:18003";// "http://" + base.VisaAddress + ":8733";
             handler = new HttpClientHandler()
             {
@@ -64,7 +64,7 @@ namespace RjioMRU
 
         }
 
-        public async Task<MesResponseData> GetDataFrom(string serialNumber)
+        public async Task<MesResponseData> GetDataFromMac_ProductID(string serialNumber)
         {
             MesResponseData rep = new MesResponseData();
 
@@ -86,7 +86,7 @@ namespace RjioMRU
                 {
                     response.EnsureSuccessStatusCode();
                     var body = await response.Content.ReadAsStringAsync();
-                    MES.Response2.ResponseItem[] response2 = JsonConvert.DeserializeObject<MES.Response2.ResponseItem[]>(body);
+                    Response2.ResponseItem[] response2 = JsonConvert.DeserializeObject<Response2.ResponseItem[]>(body);
 
                     foreach (var resp in response2)
                     {
@@ -100,11 +100,11 @@ namespace RjioMRU
                         }
                         else if (resp.ref_designator.Equals("SACN 70341", StringComparison.InvariantCultureIgnoreCase))
                         {
-                            rep.HSTB = resp.component_id;
+                            rep.HSTB_SerialNumber = resp.component_id;
                         }
                         else if (resp.ref_designator.Equals("SCAN MRURF PCBA", StringComparison.InvariantCultureIgnoreCase))
                         {
-                            rep.RFFE = resp.component_id;
+                            rep.RFFE_SerialNumber = resp.component_id;
                         }
                     }
                 }

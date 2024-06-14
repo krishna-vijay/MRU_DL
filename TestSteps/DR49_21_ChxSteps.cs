@@ -5,6 +5,7 @@
 //              you find useful, provided that you agree that Keysight Technologies has no
 //              warranty, obligations or liability for any sample application files.
 using OpenTap;
+using RjioMRU.MES;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -333,8 +334,8 @@ namespace RjioMRU.TestSteps
             // UpgradeVerdict(Verdict.Pass);
         }
     }
-    
-    
+
+
     [Display("PTP Sync Check ", Group: "RjioMRU", Description: "Pinging testing")]
 
     public class PtpSyncCheck : TestStep
@@ -348,8 +349,8 @@ namespace RjioMRU.TestSteps
         #region Settings
 
         public MRU_Rjio MruObj { get => mruObj; set => mruObj = value; }
-        
-         
+
+
         // ToDo: Add property here for each parameter the end user should be able to change
         #endregion
 
@@ -361,7 +362,7 @@ namespace RjioMRU.TestSteps
         public override void Run()
         {
             var PingTestStatus = MruObj.Dr21PTPSyncStatusCheck();
-            
+
             // ToDo: Add test case code.
             RunChildSteps(); //If the step supports child steps.
 
@@ -421,8 +422,8 @@ namespace RjioMRU.TestSteps
             // UpgradeVerdict(Verdict.Pass);
         }
     }
-    
-    
+
+
     [Display("DR21 PTP Sync Established Check", Group: "RjioMRU", Description: "Pinging testing")]
 
     public class DR21PTYSynEstablishedCheck : TestStep
@@ -599,7 +600,7 @@ namespace RjioMRU.TestSteps
             // UpgradeVerdict(Verdict.Pass);
         }
     }
-    
+
     [Display("DR49 Ch2 DSA Disable Script", Group: "RjioMRU", Description: "Insert a description here")]
     public class DR49_Ch2DSADisableScript : TestStep
     {
@@ -690,7 +691,7 @@ namespace RjioMRU.TestSteps
             // UpgradeVerdict(Verdict.Pass);
         }
     }
-    
+
     [Display("DR49 Ch1 DSA Disable Script", Group: "RjioMRU", Description: "Insert a description here")]
     public class DR49_Ch1DSADisableScript : TestStep
     {
@@ -950,7 +951,7 @@ namespace RjioMRU.TestSteps
 
 
     [Display("49DR Ch1 DPD Reset", Group: "RjioMRU", Description: "Insert a description here")]
-    public class DR49Ch1_DPDReset: TestStep
+    public class DR49Ch1_DPDReset : TestStep
     {
         int channelNuber = 1;
 
@@ -1049,7 +1050,7 @@ namespace RjioMRU.TestSteps
         }
     }
     [Display("Check slot Version", Group: "RjioMRU", Description: "Insert a description here")]
-    public class CheckSlotNumber: TestStep
+    public class CheckSlotNumber : TestStep
     {
         int channelNuber = 1;
         #region Settings
@@ -1076,7 +1077,7 @@ namespace RjioMRU.TestSteps
             slot49DrCh2 = MruObj.Dr49_Ch2_checkSlot(command);
             Log.Info("Slot 49DR Ch2 :" + slot49DrCh2);
 
-            if (string.IsNullOrEmpty(slot21dr) || string.IsNullOrEmpty(slot49DrCh1) || string.IsNullOrEmpty(slot49DrCh2) )
+            if (string.IsNullOrEmpty(slot21dr) || string.IsNullOrEmpty(slot49DrCh1) || string.IsNullOrEmpty(slot49DrCh2))
             {
                 UpgradeVerdict(Verdict.Fail);
                 return;
@@ -1109,7 +1110,7 @@ namespace RjioMRU.TestSteps
 
 
     [Display("Dr21 Execute Extract ", Group: "RjioMRU", Description: "Insert a description here")]
-    public class ExecuteExtractScript: TestStep
+    public class ExecuteExtractScript : TestStep
     {
         string commandScripts = "cd /mnt/data\r\ncd /mnt/data/\r\ntar -xvzf fact_testing_config.tar.gz\r\ncd fact_testing_config_files/dl_testing/\r\nchmod 777 config_before_dl_testing.sh\r\n./config_before_dl_testing.sh";
         #region Settings
@@ -1123,7 +1124,7 @@ namespace RjioMRU.TestSteps
         }
         public MRU_Rjio MruObj { get => mruObj; set => mruObj = value; }
 
-        [Display("21Dr Extract scripts ",Order:10,Description:"Enter all the extract scripts ")]
+        [Display("21Dr Extract scripts ", Order: 10, Description: "Enter all the extract scripts ")]
         public string CommandScripts { get => commandScripts; set => commandScripts = value; }
 
         public override void Run()
@@ -1136,7 +1137,7 @@ namespace RjioMRU.TestSteps
             {
                 Log.Info(item);
             }
-           
+
             UpgradeVerdict(Verdict.Pass);
             // ToDo: Add test case code.
             RunChildSteps(); //If the step supports child steps.
@@ -1150,7 +1151,7 @@ namespace RjioMRU.TestSteps
     [Display("Dr21 Reboot MRU All", Group: "RjioMRU", Description: "Insert a description here")]
     public class Dr21RebbotMRUAll : TestStep
     {
-         
+
         #region Settings
         MRU_Rjio mruObj;
         // ToDo: Add property here for each parameter the end user should be able to change
@@ -1162,14 +1163,14 @@ namespace RjioMRU.TestSteps
         }
         public MRU_Rjio MruObj { get => mruObj; set => mruObj = value; }
 
-        
+
 
         public override void Run()
         {
 
 
             MruObj.Dr21RebootMRUAll();
-            
+
 
             UpgradeVerdict(Verdict.Pass);
             // ToDo: Add test case code.
@@ -1179,14 +1180,11 @@ namespace RjioMRU.TestSteps
             // UpgradeVerdict(Verdict.Pass);
         }
     }
-    
-    
-    
-    
+
     [Display("21Dr rm -rf /root/.ssh/known_hosts", Group: "RjioMRU", Description: "Insert a description here")]
     public class Dr21Known_HostsCommand : TestStep
     {
-         
+
         #region Settings
         MRU_Rjio mruObj;
         // ToDo: Add property here for each parameter the end user should be able to change
@@ -1198,14 +1196,49 @@ namespace RjioMRU.TestSteps
         }
         public MRU_Rjio MruObj { get => mruObj; set => mruObj = value; }
 
-        
+
 
         public override void Run()
         {
 
 
             MruObj.Dr21known_hostsCommand();
-            
+
+
+            UpgradeVerdict(Verdict.Pass);
+            // ToDo: Add test case code.
+            RunChildSteps(); //If the step supports child steps.
+            // If no verdict is used, the verdict will default to NotSet.
+            // You can change the verdict using UpgradeVerdict() as shown below.
+            // UpgradeVerdict(Verdict.Pass);
+        }
+    }
+
+    [Display("MAC Provisioning ", Group: "RjioMRU", Description: "Insert a description here")]
+    public class Dr21_MACProvisioning : TestStep
+    {
+
+        #region Settings
+        MRU_Rjio mruObj;
+        MES.ClsMES mesObj;
+        string serialNumber = string.Empty;
+        // ToDo: Add property here for each parameter the end user should be able to change
+        #endregion
+
+        public Dr21_MACProvisioning()
+        {
+            // ToDo: Set default values for properties / settings.
+        }
+        public MRU_Rjio MruObj { get => mruObj; set => mruObj = value; }
+        public ClsMES MesObj { get => mesObj; set => mesObj = value; }
+        [Display("Serial Number", Order: 10, Description: "Enter the serial number")]
+        public string SerialNumber { get => serialNumber; set => serialNumber = value; }
+
+        public override void Run()
+        {
+            var prod_mac = MesObj.GetDataFromMac_ProductID(SerialNumber);
+            MruObj.Dr21MAC_SLNO_PRODID_Provisioning(prod_mac.Result.MacAddress, SerialNumber, prod_mac.Result.ProductCode);
+
 
             UpgradeVerdict(Verdict.Pass);
             // ToDo: Add test case code.
