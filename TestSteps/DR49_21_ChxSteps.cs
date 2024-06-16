@@ -1237,8 +1237,15 @@ namespace RjioMRU.TestSteps
         public override void Run()
         {
             var prod_mac = MesObj.GetDataFromMac_ProductID(SerialNumber);
-            MruObj.Dr21MAC_SLNO_PRODID_Provisioning(prod_mac.Result.MacAddress, SerialNumber, prod_mac.Result.ProductCode);
-
+            if (MruObj != null)
+            {
+                MruObj.Dr21MAC_SLNO_PRODID_Provisioning(prod_mac.Result.MacAddress, SerialNumber, prod_mac.Result.ProductCode);
+            }
+            else
+            {
+                Log.Info("MRU object is null");
+            }
+             
 
             UpgradeVerdict(Verdict.Pass);
             // ToDo: Add test case code.
@@ -1248,6 +1255,8 @@ namespace RjioMRU.TestSteps
             // UpgradeVerdict(Verdict.Pass);
         }
     }
+
+
 
 
 }

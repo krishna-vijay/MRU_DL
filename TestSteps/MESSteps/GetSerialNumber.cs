@@ -19,6 +19,7 @@ namespace RjioMRU.TestSteps.MESSteps
     {
         #region Settings
         ClsMES _MESSerialNumber = null;
+        string serialnumber = string.Empty; 
         // ToDo: Add property here for each parameter the end user should be able to change
         #endregion
 
@@ -29,10 +30,13 @@ namespace RjioMRU.TestSteps.MESSteps
 
         public ClsMES MESSerialNumber { get => _MESSerialNumber; set => _MESSerialNumber = value; }
 
+        [Display("Serial Number", Order: 2)]
+        public string Serialnumber { get => serialnumber; set => serialnumber = value; }
+
         public override void Run()
         {
-           var serialnumber= MESSerialNumber.GetSerialNumber();
-            Log.Info(serialnumber.Result);
+           var serialnumberValue= MESSerialNumber.GetDataFromMac_ProductID(Serialnumber);
+           Log.Info("MAC Number -> "+serialnumberValue.Result.MacAddress + " " + serialnumberValue.Result.ProductCode);
              // ToDo: Add test case code.
             RunChildSteps(); //If the step supports child steps.
 

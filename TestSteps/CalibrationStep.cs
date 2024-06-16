@@ -376,6 +376,7 @@ namespace RjioMRU.TestSteps
             if (WriteDSAToEEPROM)
             {
                 MRU_DUT.Dr49_CH1_WriteDSAToEEPROM(HexValues);
+
             }
             // MRU_DUT.stopReceiveEvent();
             UpgradeVerdict(Verdict.Pass);
