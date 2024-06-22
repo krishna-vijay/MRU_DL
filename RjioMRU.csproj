@@ -74,6 +74,7 @@
 
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="OpenTAP" Version="9.21.0" />
     <PackageReference Include="SpreadsheetLight" Version="3.5.0" />
     <PackageReference Include="SSH.NET" Version="2020.0.2" />
   </ItemGroup>
@@ -86,9 +87,6 @@
       <HintPath>..\..\..\..\..\..\..\..\Program Files\Keysight\IO Libraries Suite\Keysight.Visa.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp, Version=4.0.4.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
-    <Reference Include="OpenTap">
-      <HintPath>..\..\..\..\..\..\..\..\Program Files\Keysight\Test Automation\OpenTap.dll</HintPath>
-    </Reference>
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Windows.Forms" />
   </ItemGroup>

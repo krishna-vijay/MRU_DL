@@ -11,6 +11,8 @@ using System.Diagnostics;
 using System.Net.Http.Headers;
 using DocumentFormat.OpenXml.InkML;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using DocumentFormat.OpenXml.Office2013.Drawing.ChartStyle;
 
 //Note this template assumes that you have a SCPI based instrument, and accordingly
 //extends the ScpiInstrument base class.
@@ -18,7 +20,7 @@ using Newtonsoft.Json;
 //If you do NOT have a SCPI based instrument, you should modify this instance to extend
 //the (less powerful) Instrument base class.
 
-namespace RjioMRU.MES
+namespace RjioMRU
 {
     [Display("MES", Group: "RjioMRU", Description: "Insert a description here")]
     public class ClsMES : ScpiInstrument
@@ -26,16 +28,28 @@ namespace RjioMRU.MES
         #region Settings
         public static bool isMESConnectionDone = false;
         HttpClientHandler handler;
-        HttpClient client;
+        HttpClient client = null;
 
-        static string BaseURL;
+        string mESInfoUrl;
         string authenticationEncoded = string.Empty;
-        string username = string.Empty;
-        string password = string.Empty;
-        [Display("User name", Description: "Enter the username", Order: 0)]
-        public string Username { get => username; set => username = value; }
-        [Display("Password", Description: "Enter the password", Order: 1)]
-        public string Password { get => password; set => password = value; }
+        string clientID = string.Empty;
+        string employee = string.Empty;
+        string station = string.Empty;
+        //string unit_id = string.Empty;
+        [Display("Client ID", Description: "Enter the Client ID", Order: 0)]
+        public string ClientID { get => clientID; set => clientID = value; }
+        [Display("Employee", Description: "Enter the employee ID", Order: 1)]
+        public string Employee { get => employee; set => employee = value; }
+        [Display("Station", Description: "Enter the Station ID", Order: 2)]
+        public string Station { get => station; set => station = value; }
+        //[Display("ExtraParameter", Description: "Enter the Station ID", Order: 2)]
+        //public string Unit_id { get => unit_id; set => unit_id = value; }
+        [Display("MES Information Server URL")]
+        public string MESInfoUrl { get => mESInfoUrl; set => mESInfoUrl = value; }
+        [Display("Result Sever URL", Description: "Enter Result server URL", Order: 3)]
+        public string ResultServerURL { get => resultServerURL; set => resultServerURL = value; }
+
+        string resultServerURL = string.Empty;
 
         // ToDo: Add property here for each parameter the end user should be able to change
         #endregion
@@ -43,8 +57,10 @@ namespace RjioMRU.MES
         #region Constructors
         public ClsMES()
         {
-
-            // ToDo: Set default values for properties / settings.
+            clientID = "p5599dc1uat";
+            employee = "62153666";
+            station = "539";
+            //unit_id = "JITSAF1FKMRU00006";
         }
         #endregion Constructors
 
@@ -52,133 +68,83 @@ namespace RjioMRU.MES
 
         public void OpenMESConnection()
         {
-           // authenticationEncoded = Convert.ToBase64String(Encoding.GetEncoding("ISO-8859-1").GetBytes(Username + ":" + Password));
-            BaseURL = "http://production.42-q.com:18003";// "http://" + base.VisaAddress + ":8733";
-            handler = new HttpClientHandler()
-            {
-                Proxy = new WebProxy(BaseURL),
-                UseProxy = true,
-            };
-            client = new HttpClient(handler);
-            isMESConnectionDone = true;
 
         }
 
-        public async Task<MesResponseData> GetDataFromMac_ProductID(string serialNumber)
-        {
-            MesResponseData rep = new MesResponseData();
+        //public async Task<MesResponseData> GetDataFromMac_ProductID(string serialNumber)
+        //{
+        //    MesResponseData rep = new MesResponseData();
 
+        //    try
+        //    {
+        //        if (!isMESConnectionDone)
+        //        {
+        //            OpenMESConnection();
+        //        }
+        //        //http://42qconduituat2.42-q.com:18003/conduit //[by Naresh eamil]
+        //        string route = $"https://production.42-q.com/mes-api/p5599dc1/units/{serialNumber}/children";
+        //        Log.Debug("Command Sent->" + route);
+        //        var client = new HttpClient();
+        //        var request = new HttpRequestMessage
+        //        {
+        //            Method = HttpMethod.Get,
+        //            RequestUri = new Uri(route),
+        //        };
+
+        //        using (var response = await client.SendAsync(request))
+        //        {
+        //            response.EnsureSuccessStatusCode();
+        //            var body = await response.Content.ReadAsStringAsync();
+        //            Response2.ResponseItem[] response2 = JsonConvert.DeserializeObject<Response2.ResponseItem[]>(body);
+        //            //write an array to deserialize json object
+
+
+        //            foreach (var resp in response2)
+        //            {
+        //                if (resp.ref_designator.Equals("MAC2", StringComparison.InvariantCultureIgnoreCase))
+        //                {
+        //                    rep.MacAddress = resp.component_id;
+        //                }
+        //                else if (resp.ref_designator.Equals("PRODUCT CODE", StringComparison.InvariantCultureIgnoreCase))
+        //                {
+        //                    rep.ProductCode = resp.component_id;
+        //                }
+        //                else if (resp.ref_designator.Equals("SACN 70341", StringComparison.InvariantCultureIgnoreCase))
+        //                {
+        //                    rep.HSTB_SerialNumber = resp.component_id;
+        //                }
+        //                else if (resp.ref_designator.Equals("SCAN MRURF PCBA", StringComparison.InvariantCultureIgnoreCase))
+        //                {
+        //                    rep.RFFE_SerialNumber = resp.component_id;
+        //                }
+        //            }
+        //        }
+        //        Log.Info("MES -> MAC :" + rep.MacAddress + " Product Code :" + rep.ProductCode);
+        //    }
+        //    catch (Exception)
+        //    {
+        //        throw;
+        //    }
+
+        //    return rep;
+        //}
+
+    
+        public async Task<ComponentData> GetMesInformationResponse(string serialNumberByUser)
+        {
+            ComponentData componentData = new ComponentData();
             try
             {
-                if (!isMESConnectionDone)
+                var clientHandler = new HttpClientHandler
                 {
-                    OpenMESConnection();
-                }
-                string route = $"https://production.42-q.com/mes-api/p5599dc1/units/{serialNumber}/children";
-                Log.Debug("Command Sent->" + route);
-                var client = new HttpClient();
+                    UseCookies = false,
+                };
+                var client = new HttpClient(clientHandler);
+                string PathWithSerialNo = MESInfoUrl + "/mes-api/p5599dc1/units/" + serialNumberByUser + "/children";
                 var request = new HttpRequestMessage
                 {
                     Method = HttpMethod.Get,
-                    RequestUri = new Uri(route),
-                };
-                using (var response = await client.SendAsync(request))
-                {
-                    response.EnsureSuccessStatusCode();
-                    var body = await response.Content.ReadAsStringAsync();
-                    Response2.ResponseItem[] response2 = JsonConvert.DeserializeObject<Response2.ResponseItem[]>(body);
-
-                    foreach (var resp in response2)
-                    {
-                        if (resp.ref_designator.Equals("MAC2", StringComparison.InvariantCultureIgnoreCase))
-                        {
-                            rep.MacAddress = resp.component_id;
-                        }
-                        else if (resp.ref_designator.Equals("PRODUCT CODE", StringComparison.InvariantCultureIgnoreCase))
-                        {
-                            rep.ProductCode = resp.component_id;
-                        }
-                        else if (resp.ref_designator.Equals("SACN 70341", StringComparison.InvariantCultureIgnoreCase))
-                        {
-                            rep.HSTB_SerialNumber = resp.component_id;
-                        }
-                        else if (resp.ref_designator.Equals("SCAN MRURF PCBA", StringComparison.InvariantCultureIgnoreCase))
-                        {
-                            rep.RFFE_SerialNumber = resp.component_id;
-                        }
-                    }
-                }
-                Log.Info("MES -> MAC :" + rep.MacAddress + " Product Code :" + rep.ProductCode);
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-
-            return rep;
-        }
-
-        public async Task<string> GetSerialNumber()
-        {
-            try
-            {
-                if (!isMESConnectionDone)
-                {
-                    OpenMESConnection();
-                }
-                string SerialNumber = string.Empty;
-                string route = "/conduit";
-                Log.Debug("Command Sent->" + route);
-                var client = new HttpClient();
-                var request = new HttpRequestMessage
-                {
-                    Method = HttpMethod.Post,
-                    RequestUri = new Uri(BaseURL + route),
-                    Headers =
-    {
-        { "User-Agent", "insomnia/9.2.0" },
-    },
-                    Content = new StringContent("{\n\"version\": \"1.0\",\n\"source\": {\n\"client_id\": \"p5599dc1uat\",\n\"employee\": \"62153666\",\n\"password\": \"\",\n\"workstation\": {\n\"type\": \"Device\",\n\"station\": \" 539 \"\n}\n},\n\"refresh_unit\": true,\n\"token\": \"\",\n\"keep_alive\": false,\n\"single_transaction\": false,\n\"options\": {\n\"skip_data\": [\n\"defects\",\n\" comments\",\n\"components\",\n\"attributes\"\n]\n},\n\"transactions\": [\n{\n\"unit\": {\n\"unit_id\": \"JITSAF1FKMRU00006\",\n\"part_number\": \"\",\n\"revision\": \"\"\n}\n}\n]\n}")
-                    {
-                        Headers =
-        {
-            ContentType = new MediaTypeHeaderValue("application/json")
-        }
-                    }
-                };
-                using (var response = await client.SendAsync(request))
-                {
-                    response.EnsureSuccessStatusCode();
-                    var body = await response.Content.ReadAsStringAsync();
-                    SerialNumber = body;
-                }
-
-                return SerialNumber;
-            }
-            catch (Exception)
-            {
-
-                throw;
-            }
-
-        }
-
-        public async Task<string> GetSerialNumber1()
-        {
-            try
-            {
-                if (!isMESConnectionDone)
-                {
-                    OpenMESConnection();
-                }
-                string SerialNumber = string.Empty;
-                string route = "/conduit";
-                Log.Debug("Command Sent->" + route);
-                var client = new HttpClient();
-                var request = new HttpRequestMessage
-                {
-                    Method = HttpMethod.Post,
-                    RequestUri = new Uri(BaseURL + route),
+                    RequestUri = new Uri(PathWithSerialNo),
                     Headers =
                     {
                         { "User-Agent", "insomnia/9.2.0" },
@@ -188,59 +154,155 @@ namespace RjioMRU.MES
                 {
                     response.EnsureSuccessStatusCode();
                     var body = await response.Content.ReadAsStringAsync();
-                    SerialNumber = body;
+                    componentData = JsonConvert.DeserializeObject<ComponentData>(body);
+                    Log.Info("Success: " + componentData.success);
+                    Log.Info("Message: " + componentData.message);
+                    Log.Info("Message body received from MES : {0}", body);
+                    foreach (var component in componentData.data)
+                    {
+                        Log.Info("Serial Key: " + component.serial_key);
+                        Log.Info("Serial Number: " + component.serial_number);
+                        Log.Info("Part Key: " + component.part_key);
+                        Log.Info("Parent Part Number: " + component.parent_part_number);
+                        Log.Info("Component ID: " + component.component_id);
+                        Log.Info("Component Part Key: " + component.component_part_key);
+                        Log.Info("Component Part Number: " + component.component_part_number);
+                        Log.Info("Ref Designator: " + component.ref_designator);
+                        Log.Info("Removed: " + component.removed);
+                        Log.Info("Level: " + component.level);
+                        Log.Info("Path: " + component.path);
+                        Log.Info("Cycle: " + component.cycle);
+                    }             
                 }
+            }
+            catch (Exception ex)
+            {
+                Log.Error("Error in getting MES data from server: " + ex.Message);
+            }
+            return componentData;
+        }
+               
+        
+        
+        public async Task<bool> SingleSerialFlowCheck(string serialNumber = "JITSAF1LIMRU00006")
+        {
+            ComponentData componentData = new ComponentData();
+            try
+            {
+                var clientHandler = new HttpClientHandler
+                {
+                    UseCookies = false,
+                };
+                var client = new HttpClient(clientHandler);
+                var request = new HttpRequestMessage
+                {
+                    Method = HttpMethod.Post,
+                    RequestUri = new Uri(ResultServerURL),
+                    Headers ={
+                        { "User-Agent", "insomnia/9.2.0" } , },
+                    Content = new StringContent("{\r\n\"version\": \"1.0\",\r\n\"source\": {\r\n\"client_id\": \"p5547dc2_uat\",\r\n\"employee\": \"24098\",\r\n\"password\": \"\",\r\n\"workstation\": {\r\n\"type\": \"Device\",\r\n\"station\": \"903\"\r\n}\r\n},\r\n\"refresh_unit\": true,\r\n\"token\": \"\",\r\n\"keep_alive\": false,\r\n\"single_transaction\": false,\r\n\"options\": {\r\n\"skip_data\": [\r\n\"defects\",\r\n\"comments\",\r\n\"components\",\r\n\"attributes\"\r\n]\r\n},\r\n\"transactions\": [\r\n{\r\n\"unit\": {\r\n\"unit_id\": \"42Q203800003\",\r\n\"part_number\": \"\",\r\n\"revision\": }\r\n}\r\n]\r\n}")
+                };
 
-                return SerialNumber;
+              ///Client ID, Employee, Station, Unit_id are the parameters to be passed in the request body
+                using (var response = await client.SendAsync(request))
+                {
+                    response.EnsureSuccessStatusCode();
+                    var body = await response.Content.ReadAsStringAsync();
+                    Log.Info(body);
+
+                    //body status ok return true else false
+                   
+                }
             }
             catch (Exception)
             {
 
                 throw;
             }
+            return true; // return true if EnsureSuccessStatusCode(); is success else return false.
+            /*
+             {
+                "success": true,
+                "message": "",
+                "data": [
+                    {
+                        "serial_key": 2095440,
+                        "serial_number": "JITSAF1LIMRU00006",
+                        "part_key": 375,
+                        "parent_part_number": "LFIRIL051-7470089-A_1.1",
+                        "component_id": "A0:73:FC:00:BF:9A",
+                        "component_part_key": 0,
+                        "ref_designator": "MAC2",
+                        "removed": 0,
+                        "level": -1,
+                        "path": "{A0:73:FC:00:BF:9A}",
+                        "cycle": false
+                    },
+                    {
+                        "serial_key": 2095440,
+                        "serial_number": "JITSAF1LIMRU00006",
+                        "part_key": 375,
+                        "parent_part_number": "LFIRIL051-7470089-A_1.1",
+                        "component_id": "JITSAF1MRU01",
+                        "component_part_key": 0,
+                        "ref_designator": "PRODUCT CODE",
+                        "removed": 0,
+                        "level": -1,
+                        "path": "{JITSAF1MRU01}",
+                        "cycle": false
+                    },
+                    {
+                        "serial_key": 2095440,
+                        "serial_number": "JITSAF1LIMRU00006",
+                        "part_key": 375,
+                        "parent_part_number": "LFIRIL051-7470089-A_1.1",
+                        "component_id": "MRRFBD22480003",
+                        "component_part_key": 371,
+                        "component_part_number": "LFIRIL002-7470340-B_1.0-SA",
+                        "ref_designator": "SCAN 70340",
+                        "removed": 0,
+                        "level": -1,
+                        "path": "{MRRFBD22480003}",
+                        "cycle": false
+                    },
+                    {
+                        "serial_key": 2095440,
+                        "serial_number": "JITSAF1LIMRU00006",
+                        "part_key": 375,
+                        "parent_part_number": "LFIRIL051-7470089-A_1.1",
+                        "component_id": "JITSAMRUIIHSB00022",
+                        "component_part_key": 355,
+                        "component_part_number": "LFIRIL002-7470341-B_1.4",
+                        "ref_designator": "SACN 70341",
+                        "removed": 0,
+                        "level": -1,
+                        "path": "{JITSAMRUIIHSB00022}",
+                        "cycle": false
+                    },
+                    {
+                        "serial_key": 2084161,
+                        "serial_number": "MRRFBD22480003",
+                        "part_key": 371,
+                        "parent_part_number": "LFIRIL002-7470340-B_1.0-SA",
+                        "component_id": "JITSAMRUHIMRB00018",
+                        "component_part_key": 337,
+                        "component_part_number": "LFIRIL002-7470340-B_1.0",
+                        "ref_designator": "SCAN MRURF PCBA",
+                        "removed": 0,
+                        "level": -2,
+                        "path": "{MRRFBD22480003,JITSAMRUHIMRB00018}",
+                        "cycle": false
+                    }
+                ]
+            }
+            */
+
+            // change the above JSON to a JSON array (e.g. [1,2,3])
+
 
         }
- 
- 
 
-         
-        /// <summary>
-        /// possible combinations of status catagories and name
-        /// Idle,idle
-        /// Error,Deactivation,
-        /// Testing  RunSequence
-        /// Processing UploadData
-        /// Suspended Suspend
-        /// Suspended WaitContinue
-        /// Processing FinishDataCollection
-        /// 
-        /// </summary>
-        /// <returns></returns>
-        public async Task<string> GetESDSTatus()
-        {
-            if (!isMESConnectionDone)
-            {
-                OpenMESConnection();
-            }
-            string route = "/Design_time_addresses/ESD2RemoteServiceActive/channel";
-            var client = new HttpClient();
-            var request = new HttpRequestMessage
-            {
-                Method = HttpMethod.Get,
-                RequestUri = new Uri(BaseURL + route),
-                Headers =
-    {
-        { "Authorization", "Basic "+ authenticationEncoded },
-    },
-            };
-            using (var response = await client.SendAsync(request))
-            {
-                response.EnsureSuccessStatusCode();
-                var body = await response.Content.ReadAsStringAsync();
-                Console.WriteLine(body);
-                return body;
-            }
-        }
+
 
         #endregion Methods
 
@@ -268,9 +330,9 @@ namespace RjioMRU.MES
         /// </summary>
         public override void Close()
         {
-            isMESConnectionDone = false;
-            client.Dispose();
-            client = null;
+            //isMESConnectionDone = false;
+            //client.Dispose();
+            //client = null;
             // TODO:  Shut down the connection to the instrument here.
             base.Close();
         }
@@ -287,4 +349,32 @@ namespace RjioMRU.MES
         }
         #endregion Structures
     }
+
+    public class ComponentData
+    {
+        public bool success { get; set; }
+        public string message { get; set; }
+        public List<Component> data { get; set; }
+    }
+
+    public class Component
+    {
+        
+        public int serial_key { get; set; }
+        public string serial_number { get; set; }
+        public int part_key { get; set; }
+        public string parent_part_number { get; set; }
+        public string component_id { get; set; }
+        public int component_part_key { get; set; }
+        public string component_part_number { get; set; }
+        public string ref_designator { get; set; }
+        public int removed { get; set; }
+        public int level { get; set; }
+        public string path { get; set; }
+        public bool cycle { get; set; }
+    }
 }
+
+
+
+

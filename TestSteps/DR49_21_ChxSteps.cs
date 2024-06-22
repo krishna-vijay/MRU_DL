@@ -1217,34 +1217,57 @@ namespace RjioMRU.TestSteps
     [Display("MAC Provisioning ", Group: "RjioMRU", Description: "Insert a description here")]
     public class Dr21_MACProvisioning : TestStep
     {
-
         #region Settings
         MRU_Rjio mruObj;
-        MES.ClsMES mesObj;
-        string serialNumber = string.Empty;
+        ClsMES mesObj;
+        //string serialNumber = string.Empty;
+        //string productID = string.Empty;
+        //string macID = string.Empty;
+        //string ihstbID = string.Empty;
+        //string rffeID = string.Empty;
         // ToDo: Add property here for each parameter the end user should be able to change
         #endregion
 
         public Dr21_MACProvisioning()
         {
-            // ToDo: Set default values for properties / settings.
+            SerialNumber = new Input<string>();
+            ProductID = new Input<string>();
+            MacID = new Input<string>();
+            IhstbID = new Input<string>();
+            RffeID = new Input<string>();
         }
         public MRU_Rjio MruObj { get => mruObj; set => mruObj = value; }
-        public ClsMES MesObj { get => mesObj; set => mesObj = value; }
-        [Display("Serial Number", Order: 10, Description: "Enter the serial number")]
-        public string SerialNumber { get => serialNumber; set => serialNumber = value; }
+       // public ClsMES MesObj { get => mesObj; set => mesObj = value; }
+
+        [Display("Serial Number", Order: 10, Description: "Read the serial number")]
+        public Input<string> SerialNumber { get; set; }
+
+        [Display("Product ID", Order: 11, Description: "Read the Product ID")]
+        public Input<string> ProductID { get; set; }
+
+        [Display("MAC ID", Order: 12, Description: "MAC ID")]
+        public Input<string> MacID { get; set; }
+
+        [Display("Ihstb ID", Order: 13, Description: "Read ihstb ID")]
+        public Input<string> IhstbID { get; set; }
+
+        [Display("Rffe ID", Order: 14, Description: "Rffe ID")]
+        public Input<string> RffeID { get; set; }
 
         public override void Run()
         {
-            var prod_mac = MesObj.GetDataFromMac_ProductID(SerialNumber);
-            if (MruObj != null)
-            {
-                MruObj.Dr21MAC_SLNO_PRODID_Provisioning(prod_mac.Result.MacAddress, SerialNumber, prod_mac.Result.ProductCode);
-            }
-            else
-            {
-                Log.Info("MRU object is null");
-            }
+           // var prod_mac = MesObj.GetDataFromMac_ProductID(SerialNumber.Value);
+            //if (MruObj != null)
+            //{
+                Log.Info("Serial number {0} , MAC ID {1} and Product id {2} from MES, Writing to EEPROM of MRU",SerialNumber.Value, MacID.Value,ProductID.Value);
+                MruObj.Dr21MAC_SLNO_PRODID_Provisioning(MacID.Value, SerialNumber.Value,ProductID.Value);
+                // If S.NO and MAC ID is already there in the MRU, NO need to overwrite
+                // Check before writing: Read Info from MRU
+            //}
+            //else
+            //{
+            //    Log.Info("MRU object is null");
+            //}
              
 
             UpgradeVerdict(Verdict.Pass);

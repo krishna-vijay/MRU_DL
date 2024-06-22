@@ -2108,7 +2108,8 @@ namespace RjioMRU
             {
                 if (item.Contains("master offset"))
                 {
-                    ptpTime = Convert.ToInt16(item.Substring(item.IndexOf("master offset") + 13, "          2".Length).Trim());
+                    //Error due to handling large value , which could not be fit in int16/ converting to int32
+                    ptpTime = Convert.ToInt32(item.Substring(item.IndexOf("master offset") + 13, "          2".Length).Trim());
                 }
                 if (Math.Abs(ptpTime) < 100)
                 {
@@ -2125,9 +2126,6 @@ namespace RjioMRU
             {
                 return false;
             }
-
-
-            return false;
         }
 
 
@@ -2181,6 +2179,7 @@ namespace RjioMRU
         public bool Dr21MAC_SLNO_PRODID_Provisioning(string macID, string serialNumber, string prodID   )
         {
             DR21ComObj.WriteLine("hstb-m-eeprom -upd_mac2 " + macID + " -upd_product_serial_no " + serialNumber + " -upd_product_id " + prodID + "");
+            Log.Info("Completed MAC write on MRU.");
             return true;
         }
         internal void PTPSyncCheck()

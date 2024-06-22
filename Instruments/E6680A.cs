@@ -438,7 +438,19 @@ namespace RjioMRU
             string ReturnValue = string.Empty;
             try
             {
-                ReturnValue = ScpiQuery("read:LSEQuencer?");
+                ScpiCommand("INIT");
+                TapThread.Sleep(1000);
+                string ReturnOpeResponse = ScpiQuery<string>("STAT:OPER:COND?");
+                if(ReturnOpeResponse == "0")
+                {
+                    TapThread.Sleep(1000);
+                    ReturnValue = ScpiQuery("read:LSEQuencer?");
+                }
+                else
+                {
+                    ScpiCommand("ABORT");
+                   ReturnValue = "-99";
+                }
             }
             catch (Exception)
             {

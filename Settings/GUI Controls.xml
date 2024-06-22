@@ -1,0 +1,141 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<GuiControlsSettings type="Keysight.OpenTap.Wpf.GuiControlsSettings">
+  <ExpandedStepCategories>
+    <String>RjioMRU.Instruments</String>
+  </ExpandedStepCategories>
+  <PropGridCategories>
+    <String>OpenTap.TypeDataCommon</String>
+    <String>OpenTap.TypeDataAdvanced</String>
+  </PropGridCategories>
+  <PropGridCategoryStates>
+    <Boolean>true</Boolean>
+    <Boolean>true</Boolean>
+  </PropGridCategoryStates>
+  <MainWindowHeight>1040</MainWindowHeight>
+  <MainWindowWidth>1920</MainWindowWidth>
+  <MainWindowTop>512</MainWindowTop>
+  <MainWindowLeft>-15</MainWindowLeft>
+  <MainWindowState>Normal</MainWindowState>
+  <RecentTestPlans>
+    <String>C:\Users\Jio\Desktop\MRU DL Testing BothChannels.TapPlan</String>
+    <String>C:\Program Files\Keysight\Test Automation\Packages\Debug\testplan\MRUKeysi.TapPlanForDebug2Channels07082023.TapPlan</String>
+    <String>C:\Program Files\Keysight\Test Automation\Packages\Debug\testplan\MRUKeysi.TapPlanForDebug2Channels19062023_21st.TapPlan</String>
+    <String>C:\Users\Jio\Documents\MRUKeysi.TapPlanForDebug2Channels07082023.TapPlan</String>
+  </RecentTestPlans>
+  <TestPlanGridColumnDetails></TestPlanGridColumnDetails>
+  <TestPlanColumnState />
+  <TestPlanColumnState2>
+    <ColumnState type="Keysight.OpenTap.Gui.ColumnState">
+      <Name>Duration</Name>
+      <IsVisible>true</IsVisible>
+      <Priority>0</Priority>
+      <OriginalPriority>0</OriginalPriority>
+      <Width />
+      <ManuallyConfigured>true</ManuallyConfigured>
+    </ColumnState>
+    <ColumnState type="Keysight.OpenTap.Gui.ColumnState">
+      <Name>Flow</Name>
+      <IsVisible>true</IsVisible>
+      <Priority>0.01</Priority>
+      <OriginalPriority>0.01</OriginalPriority>
+      <Width />
+      <ManuallyConfigured>true</ManuallyConfigured>
+    </ColumnState>
+    <ColumnState type="Keysight.OpenTap.Gui.ColumnState">
+      <Name>Verdict</Name>
+      <IsVisible>true</IsVisible>
+      <Priority>-99</Priority>
+      <OriginalPriority>-99</OriginalPriority>
+      <Width />
+      <ManuallyConfigured>true</ManuallyConfigured>
+    </ColumnState>
+    <ColumnState type="Keysight.OpenTap.Gui.ColumnState">
+      <Name></Name>
+      <IsVisible>true</IsVisible>
+      <Priority>-101</Priority>
+      <OriginalPriority>-101</OriginalPriority>
+      <Width />
+      <ManuallyConfigured>true</ManuallyConfigured>
+    </ColumnState>
+    <ColumnState type="Keysight.OpenTap.Gui.ColumnState">
+      <Name>Name</Name>
+      <IsVisible>true</IsVisible>
+      <Priority>-100</Priority>
+      <OriginalPriority>-100</OriginalPriority>
+      <Width />
+      <ManuallyConfigured>true</ManuallyConfigured>
+    </ColumnState>
+    <ColumnState type="Keysight.OpenTap.Gui.ColumnState">
+      <Name>Type</Name>
+      <IsVisible>true</IsVisible>
+      <Priority>1</Priority>
+      <OriginalPriority>1</OriginalPriority>
+      <Width />
+      <ManuallyConfigured>true</ManuallyConfigured>
+    </ColumnState>
+  </TestPlanColumnState2>
+  <ExternalParametersWindowSize />
+  <MultipleChoiceWindowSize />
+  <PluginManagerWindowSize />
+  <SweepValuesWindowSize />
+  <HubWindowSize />
+  <UserInputSize />
+  <UserInputSizes>
+    <KeyValuePairOfString>
+      <Key>Keysight.OpenTap.Wpf.QuickDialog+ShowMessageRequest</Key>
+      <Value>
+        <Width>300</Width>
+        <Height>161</Height>
+      </Value>
+    </KeyValuePairOfString>
+    <KeyValuePairOfString>
+      <Key>Keysight.OpenTap.Gui.PlanLoadedWithErrorsQuestion</Key>
+      <Value>
+        <Width>403</Width>
+        <Height>130</Height>
+      </Value>
+    </KeyValuePairOfString>
+    <KeyValuePairOfString>
+      <Key>OpenTap.Plugins.BasicSteps.DialogRequest</Key>
+      <Value>
+        <Width>387</Width>
+        <Height>155</Height>
+      </Value>
+    </KeyValuePairOfString>
+    <KeyValuePairOfString>
+      <Key>OpenTap.Package.PackageInstallAction+AskAboutInstallingAnyway</Key>
+      <Value>
+        <Width>397</Width>
+        <Height>161</Height>
+      </Value>
+    </KeyValuePairOfString>
+  </UserInputSizes>
+  <NewStepDialogWindowSize>
+    <Width>450</Width>
+    <Height>500</Height>
+  </NewStepDialogWindowSize>
+  <SettingDialogWindowSize>
+    <Width>600</Width>
+    <Height>700</Height>
+  </SettingDialogWindowSize>
+  <TestPlanGridScrollToPlaying>false</TestPlanGridScrollToPlaying>
+  <PluginManagerColumnWidth />
+  <PropertyDataGridColumnWidth />
+  <SelectedControlProvider />
+  <GridSplitterRatios />
+  <DialogSize />
+  <DisabledLogGroups />
+  <FilterConfigurationData />
+  <MainWindowRepeatStopCount>false</MainWindowRepeatStopCount>
+  <MainWindowRepeatStopPending>false</MainWindowRepeatStopPending>
+  <MainWindowRepeatStopPass>false</MainWindowRepeatStopPass>
+  <MainWindowRepeatStopFail>false</MainWindowRepeatStopFail>
+  <MainWindowRepeatStopError>true</MainWindowRepeatStopError>
+  <MainWindowRepeatStopAbort>false</MainWindowRepeatStopAbort>
+  <MainWindowRepeatMaxCount>0</MainWindowRepeatMaxCount>
+  <FilePathControlLastBrowsedPath>C:\Users\Jio\Documents\Keysight\Reports\MRU</FilePathControlLastBrowsedPath>
+  <Package.Dependencies>
+    <Package Name="WPF Controls" Version="^9.21.0+185bec68" />
+    <Package Name="OpenTAP" Version="^9.21.0+795ccc10" />
+  </Package.Dependencies>
+</GuiControlsSettings>

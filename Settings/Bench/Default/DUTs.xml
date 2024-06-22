@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<DutSettings type="OpenTap.DutSettings">
+  <MRU_Rjio type="RjioMRU.MRU_Rjio" Source="">
+    <DR21ComPort>COM17</DR21ComPort>
+    <DR49Ch1ComPort>COM14</DR49Ch1ComPort>
+    <DR49Ch2ComPort>COM12</DR49Ch2ComPort>
+    <ID Metadata="ID" />
+    <Comment Metadata="Comment" />
+    <Name>RjioMRU</Name>
+  </MRU_Rjio>
+  <Package.Dependencies>
+    <Package Name="OpenTAP" Version="^9.21.0+795ccc10" />
+  </Package.Dependencies>
+</DutSettings>

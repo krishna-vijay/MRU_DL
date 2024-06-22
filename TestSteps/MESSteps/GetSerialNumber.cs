@@ -14,35 +14,50 @@ using System.Text;
 
 namespace RjioMRU.TestSteps.MESSteps
 {
-    [Display("Serial Number from MES", Group: "RjioMRU.TestSteps.MESSteps", Description: "Insert a description here")]
-    public class GetSerialNumber : TestStep
-    {
-        #region Settings
-        ClsMES _MESSerialNumber = null;
-        string serialnumber = string.Empty; 
-        // ToDo: Add property here for each parameter the end user should be able to change
-        #endregion
+    //[Display("Serial Number from MES", Group: "RjioMRU.TestSteps.MESSteps", Description: "Insert a description here")]
+    //public class GetSerialNumber : TestStep
+    //{
+    //    #region Settings
+    //    ClsMES _MESSerialNumber = null;
+    //    string serialnumber = string.Empty; 
+    //    // ToDo: Add property here for each parameter the end user should be able to change
+    //    #endregion
 
-        public GetSerialNumber()
-        {
-            // ToDo: Set default values for properties / settings.
-        }
+    //    public GetSerialNumber()
+    //    {
+    //        // ToDo: Set default values for properties / settings.
+    //    }
 
-        public ClsMES MESSerialNumber { get => _MESSerialNumber; set => _MESSerialNumber = value; }
+    //    public ClsMES MESSerialNumber { get => _MESSerialNumber; set => _MESSerialNumber = value; }
 
-        [Display("Serial Number", Order: 2)]
-        public string Serialnumber { get => serialnumber; set => serialnumber = value; }
+    //    [Display("Serial Number", Order: 2)]
+    //    public string Serialnumber { get => serialnumber; set => serialnumber = value; }
 
-        public override void Run()
-        {
-           var serialnumberValue= MESSerialNumber.GetDataFromMac_ProductID(Serialnumber);
-           Log.Info("MAC Number -> "+serialnumberValue.Result.MacAddress + " " + serialnumberValue.Result.ProductCode);
-             // ToDo: Add test case code.
-            RunChildSteps(); //If the step supports child steps.
+    //    public override void Run()
+    //    {
+    //       var serialnumberValue= MESSerialNumber.GetDataFromMac_ProductID(Serialnumber);
+    //       Log.Info("MAC Number -> "+serialnumberValue.Result.MacAddress + " " + serialnumberValue.Result.ProductCode);
 
-            // If no verdict is used, the verdict will default to NotSet.
-            // You can change the verdict using UpgradeVerdict() as shown below.
-            // UpgradeVerdict(Verdict.Pass);
-        }
-    }
+    //        //If success : true from MES read response/ Continue the test, else Stop test Plan
+    //        if (serialnumberValue.Result.ToString().Contains("success : true"))
+    //        {
+    //            //please decode the serialnumberValue and get the serial number
+
+    //            UpgradeVerdict(Verdict.Pass);
+    //            // procee to the test plan execution
+    //        }
+    //        else
+    //        {
+    //            UpgradeVerdict(Verdict.Fail);
+    //            //abort the OPENTAP plan
+    //            this.PlanRun.MainThread.Abort();
+    //        }
+    //        // ToDo: Add test case code.
+    //        RunChildSteps(); //If the step supports child steps.
+
+    //        // If no verdict is used, the verdict will default to NotSet.
+    //        // You can change the verdict using UpgradeVerdict() as shown below.
+    //        // UpgradeVerdict(Verdict.Pass);
+    //    }
+    //}
 }

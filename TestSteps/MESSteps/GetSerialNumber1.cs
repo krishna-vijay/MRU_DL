@@ -12,59 +12,149 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
+using System.Windows.Forms;
 
-namespace RjioMRU.TestSteps.MESSteps
+namespace RjioMRU
 {
-    [Display("GetSerialNumber1", Group: "RjioMRU.TestSteps.MESSteps", Description: "Insert a description here")]
-    public class GetSerialNumber1 : TestStep
+    [Display("MES Check To Start", Group: "RjioMRU.TestSteps.MESSteps", Description: "Insert a description here")]
+    public class MesCheckToStart : TestStep
     {
         #region Settings
-        ClsMES _MESSerialNumber = null;
-        // ToDo: Add property here for each parameter the end user should be able to change
+        ClsMES mesResource = null;
+        string serialNumber = string.Empty;
+        string serialNumberByUser = string.Empty;
+        string productID = string.Empty;
+        string macID = string.Empty;
+        string ihstbID = string.Empty;
+        string rffeID = string.Empty;
         #endregion
 
-        public GetSerialNumber1()
+        public MesCheckToStart()
         {
-            // ToDo: Set default values for properties / settings.
+            SerialnumberByUser = "JITSAF1LIMRU00006";
         }
 
-        public ClsMES MESSerialNumber { get => _MESSerialNumber; set => _MESSerialNumber = value; }
+        public ClsMES MesResource { get => mesResource; set => mesResource = value; }
+
+        [Display("Enter Serial Number", Order: 1)]
+        public string SerialnumberByUser { get => serialNumberByUser; set => serialNumberByUser = value; }
+
+        [Output]
+        [Display("Serial Number", Order: 2)]
+        public string Serialnumber { get => serialNumber; set => serialNumber = value; }
+
+        [Output]
+        [Display("Product Number", Order: 3)]
+        public string ProductID { get => productID; set => productID = value; }
+
+        [Output]
+        [Display("MAC ID", Order: 4)]
+        public string MacID { get => macID; set => macID = value; }
+
+        [Output]
+        [Display("HSTB ID", Order: 5)]
+        public string IhstbID { get => ihstbID; set => ihstbID = value; }
+
+        [Output]
+        [Display("RFFE ID", Order: 6)]
+        public string RffeID { get => rffeID; set => rffeID = value; }
 
         public override void Run()
+
         {
-            var serialnumber = MESSerialNumber.GetSerialNumber1();
-            Log.Info(serialnumber.Result);
-
-            string json = serialnumber.Result;
-            Root root = JsonConvert.DeserializeObject<Root>(json);
-
-            foreach (var component in root.data)
+            try
             {
-                Console.WriteLine($"Serial Number: {component.serial_number}");
-                Console.WriteLine($"Parent Part Number: {component.parent_part_number}");
-                Console.WriteLine($"Component ID: {component.component_id}");
+                InputBox inputBox = new InputBox("Barcore Reader", "Please SCAN the QR/ Barcode");
+                if (inputBox.ShowDialog() == DialogResult.OK)
+                {
+                    string inputValue = inputBox.InputValue;
+                    SerialnumberByUser = inputValue;
+                }
+                else
+                {
+                    this.PlanRun.MainThread.Abort();
+                    Log.Info("User has cancelled the Barcode SCAN's operation");
+                }
+
+
+                var componentDataObj = MesResource.GetMesInformationResponse(SerialnumberByUser);
+                Component[] componentArray = new Component[5];
+
+                for (int i = 0; i < componentDataObj.Result.data.Count; i++)
+                {
+                    componentArray[i] = componentDataObj.Result.data[i];
+                }
+
+                Serialnumber = Serialnumber;
+                MacID = componentArray[(int)mesSelectoin.MacEnum].component_id.ToString();
+                ProductID = componentArray[(int)mesSelectoin.productIDEnum].component_id.ToString();
+                IhstbID = componentArray[(int)mesSelectoin.hstbEnum].component_id.ToString();
+                RffeID = componentArray[(int)mesSelectoin.rffeEnum].component_id.ToString();
+
+
+                if (componentDataObj.Result.success)
+                {
+                    UpgradeVerdict(Verdict.Pass);
+                }
+                else
+                {
+                    UpgradeVerdict(Verdict.Fail);
+                    this.PlanRun.MainThread.Abort();
+                }
             }
 
-            // ToDo: Add test case code.
+            catch (Exception ex)
+            {
+                MessageBox.Show($"The operator has scanned an incorrect barcode or needs to check the MES database.");
+                Log.Error("Error in MesCheckToStart, please check MES Connection: " + ex.Message);
+                UpgradeVerdict(Verdict.Error);
+            }
             RunChildSteps(); //If the step supports child steps.
+        }
+    }
+    public enum mesSelectoin
+    {
+        MacEnum =0,
+        productIDEnum=1,
+        hstbEnum=3, rffeEnum=4
+    }
+}
 
-            // If no verdict is used, the verdict will default to NotSet.
-            // You can change the verdict using UpgradeVerdict() as shown below.
-            // UpgradeVerdict(Verdict.Pass);
-        }
-        public class Component
-        {
-            public int serial_key { get; set; }
-            public string serial_number { get; set; }
-            public int part_key { get; set; }
-            public string parent_part_number { get; set; }
-            public string component_id { get; set; }
-            // ... other properties
-        }
+public class InputBox : Form
+{
+    private TextBox textBox;
+    private Button okButton;
 
-        public class Root
-        {
-            public List<Component> data { get; set; }
-        }
+    public string InputValue => textBox.Text;
+
+    public InputBox(string title, string prompt)
+    {
+        InitializeComponents(title, prompt);
+    }
+
+    private void InitializeComponents(string title, string prompt)
+    {
+        this.BringToFront();
+        this.TopMost = true;
+        this.WindowState = FormWindowState.Normal;
+        this.TopLevel = true;
+        this.Activate();
+        this.Focus();
+        //textBox.Select();
+        this.Text = title;
+        this.StartPosition = FormStartPosition.CenterParent;
+        this.FormBorderStyle = FormBorderStyle.FixedDialog;
+        this.MaximizeBox = false;
+        this.MinimizeBox = false;
+        this.Size = new System.Drawing.Size(400, 250);
+
+        Label promptLabel = new Label() { Left = 20, Top = 20, Text = prompt, AutoSize = true };
+        this.Controls.Add(promptLabel);
+        textBox = new TextBox() { Left = 20, Top = 40, Width = 240 };
+        this.Controls.Add(textBox);
+        textBox.Select();
+        okButton = new Button() { Text = "OK", Left = 190, Width = 70, Top = 70, DialogResult = DialogResult.OK };
+        this.Controls.Add(okButton);
+        this.AcceptButton = okButton;
     }
 }

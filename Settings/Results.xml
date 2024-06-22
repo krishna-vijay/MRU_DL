@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ResultSettings type="OpenTap.ResultSettings">
+  <CsvResultListener type="Keysight.OpenTap.Plugins.Csv.CsvResultListener" Source="">
+    <Separator>Comma</Separator>
+    <FilePath>Results/&lt;ResultName&gt;-&lt;Date&gt;-&lt;Verdict&gt;.csv</FilePath>
+    <IncludeByteOrderMark>false</IncludeByteOrderMark>
+    <MaximumFileSize>
+      <Value>10000</Value>
+      <IsEnabled>false</IsEnabled>
+    </MaximumFileSize>
+    <WriteResultImmediatly>false</WriteResultImmediatly>
+    <IsEnabled>true</IsEnabled>
+    <Name>CSV</Name>
+  </CsvResultListener>
+  <LogResultListener type="OpenTap.LogResultListener" Source="">
+    <FilePath>Results/&lt;Date&gt;-&lt;Verdict&gt;.txt</FilePath>
+    <FilterOptions>Verbose, Info, Warnings, Errors</FilterOptions>
+    <IsEnabled>true</IsEnabled>
+    <Name>Log</Name>
+  </LogResultListener>
+  <RjioMRUExcelReportSummary type="RjioMRU.RjioMRUExcelReportSummary" Source="">
+    <ReportName>JITSAF1LIMRU00003</ReportName>
+    <GeneratePDF>false</GeneratePDF>
+    <ReportPath>C:\Users\Jio\Documents\Keysight\Reports\MRU</ReportPath>
+    <TempletepathSUM>C:\Program Files\Keysight\Test Automation\Packages\Debug\MRUReportTemplete.xlsx</TempletepathSUM>
+    <CreateCSV>false</CreateCSV>
+    <UseGenericExcel>true</UseGenericExcel>
+    <Excel_pdf>false</Excel_pdf>
+    <IsEnabled>true</IsEnabled>
+    <Name>Rjio Report1</Name>
+  </RjioMRUExcelReportSummary>
+  <Package.Dependencies>
+    <Package Name="OpenTAP" Version="^9.21.0+795ccc10" />
+    <Package Name="CSV" Version="^9.11.0+98498e58" />
+  </Package.Dependencies>
+</ResultSettings>

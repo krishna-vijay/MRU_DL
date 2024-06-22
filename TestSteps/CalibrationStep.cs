@@ -15,6 +15,7 @@ using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading;
 using System.Windows.Forms;
 using static RjioMRU.EXM_E6680A;
 
@@ -150,6 +151,10 @@ namespace RjioMRU.TestSteps
             {
                 for (int iteration = calStartPort; iteration <= CalEndPort; iteration++)
                 {
+                    //if (iteration==1)
+                    //{
+                    //    continue;
+                    //}
 
                     DSATrailsCount = 0;
                     EVMOK = false;
@@ -160,8 +165,6 @@ namespace RjioMRU.TestSteps
                     FREQERROK = false;
                     ChannelPowerOk = false;
                     AttemptNumber = 1;
-
-                    // E6680Insturment.SetExternalPowerLoss(CableLosses[iteration]);
                     if (iteration <= 7)
                         E6680InsturmentTrx1.SetRFInputPort((iteration % 8) + 1);
                     else
@@ -171,17 +174,41 @@ namespace RjioMRU.TestSteps
                     Log.Info("Initialization Command for Ch" + iteration + " " + DSACommand);
                     MRU_DUT.DR49CH1executeCALDSAScripts(DSACommand, "rjInitialConfiguration Completed");
                     TapThread.Sleep(2000);
-                    /// MessageBox.Show("Measure the value " + DSACommand);
                     double MeasuredPowerValue = double.NaN;
+                    if(iteration == 1)
+                    {
+                        Thread.Sleep(1000);
+                    }
                     for (int l = 0; l < 2; l++)
                     {
-                        do
+                        try
                         {
-                            resultStrings = (iteration <= 7) ? E6680InsturmentTrx1.ReadSequencerPower() : E6680InsturmentTrx2.ReadSequencerPower();
-                            // var resutlStrings = E6680Insturment.measureModulationRead();
-                            MeasuredPowerValue = Convert.ToDouble(resultStrings[13]);
-                            // MeasuredPowerValue = Convert.ToDouble(resutlStrings[22]);
-                        } while (MeasuredPowerValue < -30);
+                        resultStrings = (iteration <= 7) ? E6680InsturmentTrx1.ReadSequencerPower() : E6680InsturmentTrx2.ReadSequencerPower();
+
+                        }
+                        catch (Exception ex)
+                        {
+                            Log.Error(ex);
+                            break;
+                        }
+                        // var resutlStrings = E6680Insturment.measureModulationRead();
+                        if (resultStrings.Length < 5)
+                        {
+                            continue;
+                        }
+                        MeasuredPowerValue = Convert.ToDouble(resultStrings[13]);
+
+                        // MeasuredPowerValue = Convert.ToDouble(resutlStrings[22]);
+                        // } while (MeasuredPowerValue < -30);
+                        //if (resultStrings.Length < 5)
+                        //{
+                        //    break;
+                        //}
+                    }
+                    if (resultStrings.Length < 5 || MeasuredPowerValue < 0)
+                    {
+                        StrChannelMeasurementsCh1[iteration] = iteration + "," + $" 0x{HexValues[iteration]:X}" + "," + "-999" + "," + "-999" + "," + "-999" + "," + "-999" + "," + "-999" + "," + "" + "," + "";
+                        continue;
                     }
                     ACPValues = new double[4] { Convert.ToDouble(resultStrings[67]), Convert.ToDouble(resultStrings[69]), Convert.ToDouble(resultStrings[71]), Convert.ToDouble(resultStrings[73]) };
 
@@ -223,6 +250,8 @@ namespace RjioMRU.TestSteps
                         }
                         else
                         {
+                            #region existing
+
                             string[] ACP5GValues;
                             if (iteration <= 7)
                             {
@@ -335,6 +364,8 @@ namespace RjioMRU.TestSteps
                             {
                                 continue;
                             }
+                            #endregion existing
+
                         }
 
                         ///Calibraiton logic starts........................................................................................
@@ -342,23 +373,41 @@ namespace RjioMRU.TestSteps
                         MRU_DUT.DR49CH1executeCALDSAScripts(DSACommand, "rjInitialConfiguration Completed");
                         for (int j = 0; j < 2; j++)
                         {
-                            do
+                            //do
+                            //{
+                            TapThread.Sleep(300);
+                            //  E6680Insturment.SetRFInputPort((iteration+1)%9);
+                            try
                             {
-                                TapThread.Sleep(300);
-                                //  E6680Insturment.SetRFInputPort((iteration+1)%9);
-                                resultStrings = ((iteration <= 7) ? E6680InsturmentTrx1.ReadSequencerPower() : E6680InsturmentTrx2.ReadSequencerPower());
-                                /// resultStrings = E6680Insturment.measureModulationRead();
-                                MeasuredPowerValue = Convert.ToDouble(resultStrings[13]);
-                                //  MeasuredPowerValue = Convert.ToDouble(resultStrings[22]);
 
-                            } while (MeasuredPowerValue < -5 || TapThread.Current.AbortToken.IsCancellationRequested);
+                           
+                            resultStrings = ((iteration <= 7) ? E6680InsturmentTrx1.ReadSequencerPower() : E6680InsturmentTrx2.ReadSequencerPower());
+                            }
+                            catch (Exception)
+                            {
+
+                                break;
+                            }
+                            /// resultStrings = E6680Insturment.measureModulationRead();
+                            MeasuredPowerValue = Convert.ToDouble(resultStrings[13]);
+                            //  MeasuredPowerValue = Convert.ToDouble(resultStrings[22]);
+                            if (resultStrings.Length < 5)
+                            {
+                                continue;
+                            }
+                            // } while (MeasuredPowerValue < -5 || TapThread.Current.AbortToken.IsCancellationRequested);
+                        }
+                        if (resultStrings.Length < 5 || MeasuredPowerValue < 0)
+                        {
+                            StrChannelMeasurementsCh1[iteration] = iteration + "," + $" 0x{HexValues[iteration]:X}" + "," + "-999" + "," + "-999" + "," + "-999" + "," + "-999" + "," + "-999" + "," + "" + "," + "";
+                           continue;
                         }
                         ACPValues = new double[4] { Convert.ToDouble(resultStrings[67]), Convert.ToDouble(resultStrings[69]), Convert.ToDouble(resultStrings[71]), Convert.ToDouble(resultStrings[73]) };
                         MeasuredPowerValue += (CableLosses[iteration] * -1);
                         measuredPowerValueBeforeDPD = MeasuredPowerValue;
                         Log.Info("CH1 during Chain : " + iteration + " Cal Measured power value :" + MeasuredPowerValue);
                     }
-                    
+
                     // ToDo: Add test case code.
                     RunChildSteps(); //If the step supports child steps.
 
@@ -369,13 +418,15 @@ namespace RjioMRU.TestSteps
                     Log.Info("Total Ch1 Cal Time : " + (totalCh1CalTime.TotalMilliseconds / 1000).ToString());
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 CCDUServer.loopBreak = true;
             }
             if (WriteDSAToEEPROM)
             {
                 MRU_DUT.Dr49_CH1_WriteDSAToEEPROM(HexValues);
+
+                // IF Ch1 and Ch2, all measurement done properly, then only only write to EEPROM, otherwise NO.
 
             }
             // MRU_DUT.stopReceiveEvent();

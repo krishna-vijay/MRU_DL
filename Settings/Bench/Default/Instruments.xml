@@ -1,0 +1,83 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<InstrumentSettings type="OpenTap.InstrumentSettings">
+  <CCDUServer type="RjioMRU.CCDUServer" Source="">
+    <CcduServerIp>192.168.200.4</CcduServerIp>
+    <CcduUserName>root</CcduUserName>
+    <CcduPassword>root123</CcduPassword>
+    <VisaAddress />
+    <IoTimeout>30000</IoTimeout>
+    <FinegrainedLock>false</FinegrainedLock>
+    <Lock>false</Lock>
+    <LockRetries>5</LockRetries>
+    <LockHoldoff>0.1</LockHoldoff>
+    <QueryErrorAfterCommand>false</QueryErrorAfterCommand>
+    <SendClearOnConnect>true</SendClearOnConnect>
+    <VerboseLoggingEnabled>true</VerboseLoggingEnabled>
+    <Name>AB#Server</Name>
+  </CCDUServer>
+  <EXM_E6680A type="RjioMRU.EXM_E6680A" Source="">
+    <VisaAddress>TCPIP0::192.168.0.122::inst0::INSTR</VisaAddress>
+    <IoTimeout>30000</IoTimeout>
+    <FinegrainedLock>false</FinegrainedLock>
+    <Lock>false</Lock>
+    <LockRetries>5</LockRetries>
+    <LockHoldoff>0.1</LockHoldoff>
+    <QueryErrorAfterCommand>false</QueryErrorAfterCommand>
+    <SendClearOnConnect>true</SendClearOnConnect>
+    <VerboseLoggingEnabled>true</VerboseLoggingEnabled>
+    <Name>EXMTRX1</Name>
+  </EXM_E6680A>
+  <EXM_E6680A type="RjioMRU.EXM_E6680A" Source="">
+    <VisaAddress>TCPIP0::192.168.0.122::inst1::INSTR</VisaAddress>
+    <IoTimeout>30000</IoTimeout>
+    <FinegrainedLock>false</FinegrainedLock>
+    <Lock>false</Lock>
+    <LockRetries>5</LockRetries>
+    <LockHoldoff>0.1</LockHoldoff>
+    <QueryErrorAfterCommand>false</QueryErrorAfterCommand>
+    <SendClearOnConnect>true</SendClearOnConnect>
+    <VerboseLoggingEnabled>true</VerboseLoggingEnabled>
+    <Name>EXMTRX2</Name>
+  </EXM_E6680A>
+  <EXM_E6680A type="RjioMRU.EXM_E6680A" Source="">
+    <VisaAddress>TCPIP0::192.168.0.122::inst2::INSTR</VisaAddress>
+    <IoTimeout>30000</IoTimeout>
+    <FinegrainedLock>false</FinegrainedLock>
+    <Lock>false</Lock>
+    <LockRetries>5</LockRetries>
+    <LockHoldoff>0.1</LockHoldoff>
+    <QueryErrorAfterCommand>false</QueryErrorAfterCommand>
+    <SendClearOnConnect>true</SendClearOnConnect>
+    <VerboseLoggingEnabled>true</VerboseLoggingEnabled>
+    <Name>EXMTRX3</Name>
+  </EXM_E6680A>
+  <EXM_E6680A type="RjioMRU.EXM_E6680A" Source="">
+    <VisaAddress>TCPIP0::192.168.0.122::inst3::INSTR</VisaAddress>
+    <IoTimeout>30000</IoTimeout>
+    <FinegrainedLock>false</FinegrainedLock>
+    <Lock>false</Lock>
+    <LockRetries>5</LockRetries>
+    <LockHoldoff>0.1</LockHoldoff>
+    <QueryErrorAfterCommand>false</QueryErrorAfterCommand>
+    <SendClearOnConnect>true</SendClearOnConnect>
+    <VerboseLoggingEnabled>true</VerboseLoggingEnabled>
+    <Name>EXMTRX4</Name>
+  </EXM_E6680A>
+  <ClsMES type="RjioMRU.MES.ClsMES" Source="">
+    <Username>anandababu_muthu</Username>
+    <Password>Maniyukesh12@</Password>
+    <VisaAddress>https://production.42-q.com</VisaAddress>
+    <IoTimeout>10000</IoTimeout>
+    <FinegrainedLock>false</FinegrainedLock>
+    <Lock>false</Lock>
+    <LockRetries>5</LockRetries>
+    <LockHoldoff>0.1</LockHoldoff>
+    <QueryErrorAfterCommand>false</QueryErrorAfterCommand>
+    <SendClearOnConnect>true</SendClearOnConnect>
+    <VerboseLoggingEnabled>true</VerboseLoggingEnabled>
+    <Name>MES</Name>
+  </ClsMES>
+  <Package.Dependencies>
+    <Package Name="OpenTAP" Version="^9.21.0+795ccc10" />
+  </Package.Dependencies>
+</InstrumentSettings>
