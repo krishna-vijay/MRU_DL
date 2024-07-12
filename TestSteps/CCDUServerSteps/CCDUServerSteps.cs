@@ -18,13 +18,6 @@ namespace RjioMRU
     [Display("CCDU Basic Verification", Group: "RjioMRU", Description: "Insert a description here")]
     public class CCDUBasicVerification : TestStep
     {
-
-
-
-
-
-
-
         private string basicverificationCommand = "ip link show";
         private string varificationInterface1 = "ens1f0";
         private string varificationInterface2 = "ens1f1";
@@ -546,6 +539,7 @@ namespace RjioMRU
         string command4 = "listen";
         string command4RefTag = "cmd_listen: Already connected to";
         string command5 = "edit-config --target running --config=/root/uplane_test_xml_for_release_2.9.0_ACTIVE_1.xml --defop merge";
+        string command6 = "rm -rf /root/.ssh/known_hosts"; // if failed only
 
         public CCDUServer CCDUServerobj { get => cCDUServerobj; set => cCDUServerobj = value; }
         [Display("CA script1",Order:1,Description:"Enter CA function script1")]
@@ -572,6 +566,10 @@ namespace RjioMRU
         [Display("CA script5", Order: 10, Description: "Enter CA function script5")]
         public string Command5 { get => command5; set => command5 = value; }
 
+
+        [Display("CA script6", Order: 10, Description: "Enter CA function script6")]
+        public string Command6 { get => command6; set => command6 = value; }
+
         public RunCAFunctions()
         {
             // ToDo: Set default values for properties / settings.
@@ -579,14 +577,20 @@ namespace RjioMRU
 
         public override void Run()
         {
-            CCDUServerobj.CarrierAggrigation(Command1, Command2, Command3, RefTag,Password,Command4,Command4RefTag,Command5);
-            // ToDo: Add test case code.
-            RunChildSteps(); //If the step supports child steps.
-
-
-            // If no verdict is used, the verdict will default to NotSet.
-            // You can change the verdict using UpgradeVerdict() as shown below.
-            UpgradeVerdict(Verdict.Pass);
+            try
+            {
+                CCDUServerobj.CarrierAggrigation(Command1, Command2, Command3, RefTag, Password, Command4, Command4RefTag, Command5, Command6);
+            }
+            catch(Exception ex)
+            {
+                Log.Error("Error during Carrier Aggrigation Functions: {0}", ex);
+                UpgradeVerdict(Verdict.Error);
+            }
+            finally
+            {
+                RunChildSteps(); //Turn off the power supply
+            }
+            //UpgradeVerdict(Verdict.Pass);
         }
     }
     

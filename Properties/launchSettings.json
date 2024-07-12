@@ -2,7 +2,7 @@
   "profiles": {
     "Editor": {
       "commandName": "Executable",
-      "executablePath": "C:\\Program Files\\Keysight\\Test Automation\\Editor.exe"
+      "executablePath": ".\\Editor.exe"
     }
   }
 }

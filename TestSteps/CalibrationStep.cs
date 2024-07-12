@@ -37,7 +37,7 @@ namespace RjioMRU.TestSteps
         int calStartPort = 0;
         int calEndPort = 1;
         Stopwatch stopwathCh1 = new Stopwatch();
-
+        bool stepPassFlag = true;
         int DSACalCycles = 0;
 
         MRU_Rjio mRU_DUT;
@@ -46,7 +46,8 @@ namespace RjioMRU.TestSteps
         //EXM_E6680A e6680InsturmentTrx3;
         //EXM_E6680A e6680InsturmentTrx4;
         string[] strHexValues = new string[16];
-        int[] HexValues = new int[16];
+        public int[] HexValues = new int[16];
+        public static int[] HexValues4DSAWriging = new int[16];
         double[] CableLosses = new double[16];
         private string dSA_CableLossFile = "DSA_CABLELOSS_Ch1.csv";
 
@@ -115,7 +116,6 @@ namespace RjioMRU.TestSteps
         public int DSACalCycles1 { get => DSACalCycles; set => DSACalCycles = value; }
 
         [Display("Write DSA values to EEPROM", Order: 100)]
-        public bool WriteDSAToEEPROM { get; set; }
 
         public override void Run()
         {
@@ -151,11 +151,367 @@ namespace RjioMRU.TestSteps
             {
                 for (int iteration = calStartPort; iteration <= CalEndPort; iteration++)
                 {
-                    //if (iteration==1)
-                    //{
-                    //    continue;
-                    //}
+                    DSATrailsCount = 0;
+                    EVMOK = false;
+                    ACLR_L1OK = false;
+                    ACLR_L2OK = false;
+                    ACLR_R1OK = false;
+                    ACLR_R2OK = false;
+                    FREQERROK = false;
+                    ChannelPowerOk = false;
+                    AttemptNumber = 1;
+                    if (iteration <= 7)
+                        E6680InsturmentTrx1.SetRFInputPort((iteration % 8) + 1);
+                    else
+                        E6680InsturmentTrx2.SetRFInputPort((iteration % 8) + 1);
 
+                    DSACommand = dsaConstruction.GenerateCommand(iteration, HexValues[iteration]);
+                    Log.Info("Initialization Command for Ch" + iteration + " " + DSACommand);
+                    MRU_DUT.DR49CH1executeCALDSAScripts(DSACommand, "rjInitialConfiguration Completed");
+                    TapThread.Sleep(2000);
+                    double MeasuredPowerValue = double.NaN;
+                    if (iteration == 1)
+                    {
+                        Thread.Sleep(1000);
+                    }
+                    for (int l = 0; l < 5; l++)
+                    {
+                        try
+                        {
+                            resultStrings = (iteration <= 7) ? E6680InsturmentTrx1.ReadSequencerPower() : E6680InsturmentTrx2.ReadSequencerPower();
+
+                        }
+                        catch (Exception ex)
+                        {
+                            Log.Error(ex);
+                            break;
+                        }
+                        // var resutlStrings = E6680Insturment.measureModulationRead();
+                        if (resultStrings.Length < 5)
+                        {
+                            continue;
+                        }
+                        else
+                        {
+                            MeasuredPowerValue = Convert.ToDouble(resultStrings[13]);
+                            if (l > 0)
+                            {
+                                break;
+                            }
+
+                        }
+                    }
+                    if (resultStrings.Length < 5 || MeasuredPowerValue < 0)
+                    {
+                        StrChannelMeasurementsCh1[iteration] = iteration + "," + $" 0x{HexValues[iteration]:X}" + "," + "-999" + "," + "-999" + "," + "-999" + "," + "-999" + "," + "-999" + "," + "" + "," + "";
+                        continue;
+                    }
+                    ACPValues = new double[4] { Convert.ToDouble(resultStrings[67]), Convert.ToDouble(resultStrings[69]), Convert.ToDouble(resultStrings[71]), Convert.ToDouble(resultStrings[73]) };
+
+                    MeasuredPowerValue += (CableLosses[iteration] * -1);
+                    measuredPowerValueBeforeDPD = MeasuredPowerValue;
+                    double powerDifferance = 0;
+                    Log.Info("Initial Power before cal Ch" + iteration + " Is :" + MeasuredPowerValue.ToString());
+                    while (true)
+                    {
+                        DSATrailsCount++;
+                        if (DSATrailsCount >= DSACalCycles1)
+                        {
+                            break;
+                        }
+                        powerDifferance = Math.Abs(MeasuredPowerValue - ChannelPower);
+                        if (MeasuredPowerValue <= LowerChannelLimit)
+                        {
+                            if (powerDifferance > 0.5)
+                            {
+                                int changeValue = (int)Math.Floor((powerDifferance / 0.25));
+                                HexValues[iteration] -= changeValue;
+                            }
+                            else
+                            {
+                                HexValues[iteration] -= 1;
+                            }
+                        }
+                        else if (MeasuredPowerValue >= UpperChannelLimit)
+                        {
+                            if (powerDifferance > 0.5)
+                            {
+                                int changeValue = (int)Math.Ceiling((powerDifferance / 0.25));
+                                HexValues[iteration] += changeValue;
+                            }
+                            else
+                            {
+                                HexValues[iteration] += 1;
+                            }
+                        }
+                        else
+                        {
+                            #region existing
+
+                            string[] ACP5GValues;
+                            if (iteration <= 7)
+                            {
+                                E6680InsturmentTrx1.SelectInstScreen("ACP");
+                                E6680InsturmentTrx1.SetExternalPowerLoss(CableLosses[iteration]);
+                                ACP5GValues = E6680InsturmentTrx1.measureACP();
+                            }
+                            else
+                            {
+                                E6680InsturmentTrx2.SelectInstScreen("ACP");
+                                E6680InsturmentTrx2.SetExternalPowerLoss(CableLosses[iteration]);
+                                ACP5GValues = E6680InsturmentTrx2.measureACP();
+                            }
+
+                            //E6680InsturmentTrx1.SetRFInputPort((iteration % 8) + 1);
+                            //    TapThread.Sleep(1000);
+                            //    resultStrings = ((iteration <= 7) ? E6680InsturmentTrx1.ReadSequencerPower() : E6680InsturmentTrx2.ReadSequencerPower());
+                            //    MeasuredPowerValue = Convert.ToDouble(resultStrings[13]);
+                            //    ACPValues = new double[4] { Convert.ToDouble(resultStrings[67]), Convert.ToDouble(resultStrings[69]), Convert.ToDouble(resultStrings[71]), Convert.ToDouble(resultStrings[73]) };
+                            //    MeasuredPowerValue += (CableLosses[iteration] * -1);
+                            if (Convert.ToDouble(ACP5GValues[4]) > -45)
+                            {
+                                var DpdStartTime = stopwathCh1.ElapsedMilliseconds;
+                                MRU_DUT.DR49CH1Jjio_DPD_InitRun(iteration);
+                                var DpdStopTime = stopwathCh1.ElapsedMilliseconds;
+                                Log.Info("DPD init Run TIme for Ch1 and chain {0} is {1}", iteration, (DpdStopTime - DpdStartTime) / 1000);
+                                TapThread.Sleep(PostDpdDelay);
+                            }
+                            if (iteration <= 7)
+                            {
+                                ACP5GValues = E6680InsturmentTrx1.measureACP();
+                            }
+                            else
+                            {
+                                ACP5GValues = E6680InsturmentTrx2.measureACP();
+
+
+
+                            }
+                            var dpdMEasurementStartTime = stopwathCh1.ElapsedMilliseconds;
+                            TapThread.Sleep(1000);
+                            //MRU_DUT.Dr49_CH1_DPD_Measurement(iteration, out var txvalue, out var rxvalue);
+                            var dpdMeasurementStopTime = stopwathCh1.ElapsedMilliseconds;
+                            Log.Info("DPD Measurement time for Ch1 and chain {0} is {1} ", iteration, (dpdMeasurementStopTime - dpdMEasurementStartTime) / 1000);
+                            if (iteration <= 7)
+                            {
+                                E6680InsturmentTrx1.SelectInstScreen("SEQ");
+                            }
+                            else
+                            {
+                                E6680InsturmentTrx2.SelectInstScreen("SEQ");
+                            }
+                            for (int j = 0; j < 5; j++)
+                            {
+                                resultStrings = ((iteration <= 7) ? E6680InsturmentTrx1.ReadSequencerPower() : E6680InsturmentTrx2.ReadSequencerPower());
+                                if (resultStrings.Length < 5)
+                                {
+                                    continue;
+                                }
+                                else
+                                {
+
+                                    if (j > 0)
+                                    {
+                                        break;
+                                    }
+
+                                }
+
+                            }
+                            if (resultStrings.Length < 5)
+                            {
+                                continue;
+                            }
+                            MeasuredPowerValue = Convert.ToDouble(resultStrings[13]);
+                            //ACP Values L2 L1 H1 H2
+                            ACPValues = new double[4] { Convert.ToDouble(ACP5GValues[8]), Convert.ToDouble(ACP5GValues[4]), Convert.ToDouble(ACP5GValues[6]), Convert.ToDouble(ACP5GValues[10]) };
+                            MeasuredPowerValue += (CableLosses[iteration] * -1);
+
+                            Log.Info("CH1 DSA Command Used: " + DSACommand);
+                            Log.Info("CH1 Chain NO:" + iteration + " Channel Power : " + MeasuredPowerValue + "dBm ACP1: " + ACPValues[0] + " ACP2 : " + ACPValues[1] + " ACP3 : " + ACPValues[2] + " ACP4 : " + ACPValues[3]);
+                            //Log.Info("CH1 Chain NO:" + iteration + " DPD TxValue :" + txvalue + " RxValue :" + rxvalue);
+                            //StrChannelMeasurementsCh1[iteration] = iteration + "," + $" 0x{HexValues[iteration]:X}" + "," + MeasuredPowerValue + "," + ACPValues[0] + "," + ACPValues[1] + "," + ACPValues[2] + "," + ACPValues[3] + "," + txvalue + "," + rxvalue;
+
+                            // Log.Info("CH1 Chain NO:" + iteration + " DPD TxValue :" + txvalue + " RxValue :" + rxvalue);
+                            StrChannelMeasurementsCh1[iteration] = iteration + "," + $" 0x{HexValues[iteration]:X}" + "," + MeasuredPowerValue + "," + ACPValues[0] + "," + ACPValues[1] + "," + ACPValues[2] + "," + ACPValues[3] + "," + "" + "," + "";
+                            ACLR_L1OK = ACLR_L1_Limit >= ACPValues[0];
+                            ACLR_L2OK = ACLR_L2_Limit >= ACPValues[1];
+                            ACLR_R1OK = ACLR_R1_Limit >= ACPValues[2];
+                            ACLR_R2OK = ACLR_R2_Limit >= ACPValues[3];
+                            /////////////////Modulation Measuremnts /////////////////////
+                            var varificationStartTime = stopwathCh1.ElapsedMilliseconds;
+                            if (iteration <= 7)
+                            {
+                                E6680InsturmentTrx1.SelectInstScreen("EVM");
+                                E6680InsturmentTrx1.SetExternalPowerLoss(CableLosses[iteration]);
+                                E6680InsturmentTrx1.SetRFInputPort((iteration % 8) + 1);
+
+                            }
+                            else
+                            {
+                                E6680InsturmentTrx2.SelectInstScreen("EVM");
+                                E6680InsturmentTrx2.SetExternalPowerLoss(CableLosses[iteration]);
+                                E6680InsturmentTrx2.SetRFInputPort((iteration % 8) + 1);
+                            }
+                            resultStrings = ((iteration <= 7) ? E6680InsturmentTrx1.measureModulationRead() : E6680InsturmentTrx2.measureModulationRead());
+                            var varificationStopTIme = stopwathCh1.ElapsedMilliseconds;
+                            Log.Info("Varification time for Ch1 chaing {0} is {1}", iteration, (varificationStopTIme - varificationStartTime) / 1000);
+
+                            Log.Info(" CH1 ChainNo" + iteration + " Modulation measurements  :Channel Power : " + resultStrings[22] + "dBm ,EVM : " + Convert.ToDouble(resultStrings[1]) + "% ,Frequency Error : " + Convert.ToDouble(resultStrings[3]) + "Hz;");
+                            if (resultStrings.Length < 5)
+                            {
+                                Log.Error("Skipping Chain No " + iteration + " because of result length " + resultStrings.Length.ToString());
+                                continue;
+                            }
+                            else
+                            {
+                                MeasuredPowerValue = (Math.Abs((ChannelPower - MeasuredPowerValue)) > (Math.Abs(channelPower - Convert.ToDouble(resultStrings[22])))) ? Convert.ToDouble(resultStrings[22]) : MeasuredPowerValue;
+                                StrChannelMeasurementsCh1[iteration] += "," + resultStrings[1] + "," + resultStrings[3] + "," + measuredPowerValueBeforeDPD;
+                            }
+                            if (iteration <= 7)
+                            {
+                                E6680InsturmentTrx1.SelectInstScreen("SEQ");
+                            }
+                            else
+                            {
+                                E6680InsturmentTrx2.SelectInstScreen("SEQ");
+                            }
+                            ChannelPowerOk = ChannelPowerLimit > Math.Abs((ChannelPower - MeasuredPowerValue));
+                            EVMOK = EVMLimit >= Convert.ToDouble(resultStrings[1]);
+                            FREQERROK = fREQErrorLimit >= Math.Abs(Convert.ToDouble(resultStrings[3]));
+                            AttemptNumber++;
+                            /////////////////////////////////////////////////////////////
+                            if ((ChannelPowerOk && ACLR_R1OK && ACLR_L2OK && ACLR_R1OK && ACLR_R2OK && FREQERROK && EVMOK) || AttemptNumber > 2)
+                            {
+                                break;
+                            }
+                            else
+                            {
+                                continue;
+                            }
+                            #endregion existing
+
+                        }
+
+                        ///Calibraiton logic starts........................................................................................
+                        DSACommand = dsaConstruction.GenerateCommand(iteration, HexValues[iteration]);
+                        MRU_DUT.DR49CH1executeCALDSAScripts(DSACommand, "rjInitialConfiguration Completed");
+                        TapThread.Sleep(2000);
+                        //TapThread.Sleep(10000);
+                        for (int j = 0; j < 5; j++)
+                        {
+                            //do
+                            //{
+                            TapThread.Sleep(1000);
+                            //  E6680Insturment.SetRFInputPort((iteration+1)%9);
+                            try
+                            {
+
+
+                                resultStrings = ((iteration <= 7) ? E6680InsturmentTrx1.ReadSequencerPower() : E6680InsturmentTrx2.ReadSequencerPower());
+                            }
+                            catch (Exception ex)
+                            {
+                                Log.Info("Exception/ CH-1 at CAL-DSA Script: {0}", ex);
+                                break;
+                            }
+                            /// resultStrings = E6680Insturment.measureModulationRead();
+                            MeasuredPowerValue = Convert.ToDouble(resultStrings[13]);
+                            //  MeasuredPowerValue = Convert.ToDouble(resultStrings[22]);
+                            if (resultStrings.Length < 5)
+                            {
+                                continue;
+                            }
+                            else
+                            {
+                                MeasuredPowerValue = Convert.ToDouble(resultStrings[13]);
+                                if (j > 0)
+                                {
+                                    break;
+                                }
+
+                            }
+                            // } while (MeasuredPowerValue < -5 || TapThread.Current.AbortToken.IsCancellationRequested);
+                        }
+                        if (resultStrings.Length < 5 || MeasuredPowerValue < 0)
+                        {
+                            StrChannelMeasurementsCh1[iteration] = iteration + "," + $" 0x{HexValues[iteration]:X}" + "," + "-999" + "," + "-999" + "," + "-999" + "," + "-999" + "," + "-999" + "," + "" + "," + "";
+                            continue;
+                        }
+                        else
+                        {
+                            HexValues4DSAWriging[iteration] = HexValues[iteration];
+                            ACPValues = new double[4] { Convert.ToDouble(resultStrings[67]), Convert.ToDouble(resultStrings[69]), Convert.ToDouble(resultStrings[71]), Convert.ToDouble(resultStrings[73]) };
+                            MeasuredPowerValue += (CableLosses[iteration] * -1);
+                            measuredPowerValueBeforeDPD = MeasuredPowerValue;
+                        }
+                        Log.Info("CH1 during Chain : " + iteration + " Cal Measured power value :" + MeasuredPowerValue);
+                    }
+
+                    // ToDo: Add test case code.
+                    RunChildSteps(); //If the step supports child steps.
+
+                    // If no verdict is used, the verdict will default to NotSet.
+                    // You can change the verdict using UpgradeVerdict() as shown below.
+                    // UpgradeVerdict(Verdict.Pass);
+                    var totalCh1CalTime = stopwathCh1.Elapsed;
+                    Log.Info("Total Ch1 Cal Time : " + (totalCh1CalTime.TotalMilliseconds / 1000).ToString());
+                    stepPassFlag &= ChannelPowerOk && ACLR_R1OK && ACLR_L2OK && ACLR_R2OK && ACLR_L2OK && FREQERROK && EVMOK;
+
+                }
+            }
+            catch (Exception ex)
+            {
+                CCDUServer.loopBreak = true;
+                Log.Info("Exception/ CH-1: {0}", ex);
+            }
+
+            // MRU_DUT.stopReceiveEvent();
+            if (stepPassFlag)
+            {
+                UpgradeVerdict(Verdict.Pass);
+
+            }
+            else
+            {
+                UpgradeVerdict(Verdict.Fail);
+            }
+        }
+        /*
+        public override void Run()
+        {
+            EXM_E6680A E6680InsturmentComman = new EXM_E6680A(); ;
+            int DSATrailsCount = 0;
+            stopwathCh1.Restart();
+            string DSACommand = string.Empty;
+
+            //MRU_DUT.startReceiveEvent();                                         c
+            MRU_DUT.Dr49_CH1_ControlC();
+            E6680InsturmentTrx1.SelectInstScreen("SEQ");
+            E6680InsturmentTrx2.SelectInstScreen("SEQ");
+
+            E6680InsturmentTrx1.MeasureContinues(false);
+            if (calEndPort > 7)
+            {
+                E6680InsturmentTrx2.MeasureContinues(false);
+            }
+            // E6680Insturment.SelectInstScreen("EVM");
+            UpperChannelLimit = channelPower + channelPowerLimit;
+            LowerChannelLimit = channelPower - channelPowerLimit;
+            string[] resultStrings = new string[6];
+            readDSA_CableLossFile(DSA_CableLossFile, out strHexValues, out CableLosses);
+            double[] ACPValues = new double[4];
+
+            for (int iteration = 0; iteration < 16; iteration++)
+            {
+                HexValues[iteration] = int.Parse(strHexValues[iteration], System.Globalization.NumberStyles.HexNumber);
+            }
+
+
+            try
+            {
+                for (int iteration = calStartPort; iteration <= CalEndPort; iteration++)
+                {
                     DSATrailsCount = 0;
                     EVMOK = false;
                     ACLR_L1OK = false;
@@ -197,13 +553,6 @@ namespace RjioMRU.TestSteps
                             continue;
                         }
                         MeasuredPowerValue = Convert.ToDouble(resultStrings[13]);
-
-                        // MeasuredPowerValue = Convert.ToDouble(resutlStrings[22]);
-                        // } while (MeasuredPowerValue < -30);
-                        //if (resultStrings.Length < 5)
-                        //{
-                        //    break;
-                        //}
                     }
                     if (resultStrings.Length < 5 || MeasuredPowerValue < 0)
                     {
@@ -380,12 +729,12 @@ namespace RjioMRU.TestSteps
                             try
                             {
 
-                           
+
                             resultStrings = ((iteration <= 7) ? E6680InsturmentTrx1.ReadSequencerPower() : E6680InsturmentTrx2.ReadSequencerPower());
                             }
-                            catch (Exception)
+                            catch (Exception ex)
                             {
-
+                                Log.Info("Exception/ CH-1 at CAL-DSA Script: {0}", ex);
                                 break;
                             }
                             /// resultStrings = E6680Insturment.measureModulationRead();
@@ -421,6 +770,7 @@ namespace RjioMRU.TestSteps
             catch (Exception ex)
             {
                 CCDUServer.loopBreak = true;
+                Log.Info("Exception/ CH-1: {0}", ex);
             }
             if (WriteDSAToEEPROM)
             {
@@ -432,7 +782,7 @@ namespace RjioMRU.TestSteps
             // MRU_DUT.stopReceiveEvent();
             UpgradeVerdict(Verdict.Pass);
         }
-
+        */
         //private string GenerateCommand(int portNumber, int HexNumber)
         //{
         //    if (HexNumber<0)
@@ -542,10 +892,11 @@ namespace RjioMRU.TestSteps
         //EXM_E6680A e6680InsturmentTrx3;
         //EXM_E6680A e6680InsturmentTrx4;
         string[] strHexValues = new string[16];
-        int[] HexValues = new int[16];
+        public int[] HexValues = new int[16];
+        public static int[] HexValues4DSAWriging = new int[16];
         double[] CableLosses = new double[16];
         private string dSA_CableLossFile = "DSA_CABLELOSS_Ch2.csv";
-
+        bool stepPassFlag = true;
         //private string[] hexValue =new string[16];
         //private double[] cableLoss = new double[16];
 
@@ -612,7 +963,7 @@ namespace RjioMRU.TestSteps
         public int DSACalCycles1 { get => DSACalCycles; set => DSACalCycles = value; }
 
         [Display("Write DSA values to EEPROM", Order: 100)]
-        public bool WriteDSAToEEPROM { get; set; }
+
         public override void Run()
         {
             EXM_E6680A E6680InsturmentComman = new EXM_E6680A(); ;
@@ -669,14 +1020,40 @@ namespace RjioMRU.TestSteps
                     TapThread.Sleep(2000);
 
                     double MeasuredPowerValue = double.NaN;
-                    for (int l = 0; l < 2; l++)
+                    for (int l = 0; l < 5; l++)
                     {
-                        do
+                        try
                         {
                             resultStrings = (iteration <= 7) ? E6680InsturmentTrx3.ReadSequencerPower() : E6680InsturmentTrx4.ReadSequencerPower();
+
+                        }
+                        catch (Exception ex)
+                        {
+                            Log.Error(ex);
+                            break;
+                        }
+                        // var resutlStrings = E6680Insturment.measureModulationRead();
+                        if (resultStrings.Length < 5)
+                        {
+                            continue;
+                        }
+                        else
+                        {
                             MeasuredPowerValue = Convert.ToDouble(resultStrings[13]);
-                        } while (MeasuredPowerValue < -30);
+                            if (l > 0)
+                            {
+                                break;
+                            }
+
+                        }
                     }
+
+                    if (resultStrings.Length < 5 || MeasuredPowerValue < 0)
+                    {
+                        StrChannelMeasurementsCh2[iteration] = iteration + "," + $" 0x{HexValues[iteration]:X}" + "," + "-999" + "," + "-999" + "," + "-999" + "," + "-999" + "," + "-999" + "," + "" + "," + "";
+                        continue;
+                    }
+
                     ACPValues = new double[4] { Convert.ToDouble(resultStrings[67]), Convert.ToDouble(resultStrings[69]), Convert.ToDouble(resultStrings[71]), Convert.ToDouble(resultStrings[73]) };
 
                     MeasuredPowerValue += (CableLosses[iteration] * -1);
@@ -764,11 +1141,34 @@ namespace RjioMRU.TestSteps
                             {
                                 E6680InsturmentTrx4.SelectInstScreen("SEQ");
                             }
+                            for (int j = 0; j < 5; j++)
+                            {
+                                resultStrings = ((iteration <= 7) ? E6680InsturmentTrx3.ReadSequencerPower() : E6680InsturmentTrx4.ReadSequencerPower());
+                                if (resultStrings.Length < 5)
+                                {
+                                    continue;
+                                }
+                                else
+                                {
 
-                            resultStrings = ((iteration <= 7) ? E6680InsturmentTrx3.ReadSequencerPower() : E6680InsturmentTrx4.ReadSequencerPower());
+                                    if (j > 0)
+                                    {
+                                        break;
+                                    }
+
+                                }
+
+                            }
+                            if (resultStrings.Length < 5)
+                            {
+                                continue;
+                            }
+
                             MeasuredPowerValue = Convert.ToDouble(resultStrings[13]);
                             ACPValues = new double[4] { Convert.ToDouble(ACP5GValues[8]), Convert.ToDouble(ACP5GValues[4]), Convert.ToDouble(ACP5GValues[6]), Convert.ToDouble(ACP5GValues[10]) };
                             MeasuredPowerValue += (CableLosses[iteration] * -1);
+
+
 
                             Log.Info("CH2 DSA Command Used: " + DSACommand);
                             Log.Info("CH2 Chain NO:" + iteration + " Channel Power : " + MeasuredPowerValue + "dBm ACP1: " + ACPValues[0] + " ACP2 : " + ACPValues[1] + " ACP3 : " + ACPValues[2] + " ACP4 : " + ACPValues[3]);
@@ -797,10 +1197,21 @@ namespace RjioMRU.TestSteps
                                 E6680InsturmentTrx4.SetExternalPowerLoss(CableLosses[iteration]);
                                 E6680InsturmentTrx4.SetRFInputPort((iteration % 8) + 1);
                             }
+
                             resultStrings = ((iteration <= 7) ? E6680InsturmentTrx3.measureModulationRead() : E6680InsturmentTrx4.measureModulationRead());
                             Log.Info(" CH1 ChainNo" + iteration + " Modulation measurements  :Channel Power : " + resultStrings[22] + "dBm ,EVM : " + Convert.ToDouble(resultStrings[1]) + "% ,Frequency Error : " + Convert.ToDouble(resultStrings[3]) + "Hz;");
-                            MeasuredPowerValue = (Math.Abs((ChannelPower - MeasuredPowerValue)) > (Math.Abs(channelPower - Convert.ToDouble(resultStrings[22])))) ? Convert.ToDouble(resultStrings[22]) : MeasuredPowerValue;
-                            StrChannelMeasurementsCh2[iteration] += "," + resultStrings[1] + "," + resultStrings[3] + "," + measuredPowerBeforeDPD;
+
+                            if (resultStrings.Length < 5)
+                            {
+                                Log.Error("Skipping Chain No " + iteration + " because of result length " + resultStrings.Length.ToString());
+                                continue;
+                            }
+                            else
+                            {
+
+                                MeasuredPowerValue = (Math.Abs((ChannelPower - MeasuredPowerValue)) > (Math.Abs(channelPower - Convert.ToDouble(resultStrings[22])))) ? Convert.ToDouble(resultStrings[22]) : MeasuredPowerValue;
+                                StrChannelMeasurementsCh2[iteration] += "," + resultStrings[1] + "," + resultStrings[3] + "," + measuredPowerBeforeDPD;
+                            }
                             if (iteration <= 7)
                             {
                                 E6680InsturmentTrx3.SelectInstScreen("SEQ");
@@ -809,6 +1220,7 @@ namespace RjioMRU.TestSteps
                             {
                                 E6680InsturmentTrx4.SelectInstScreen("SEQ");
                             }
+
                             ChannelPowerOk = ChannelPowerLimit > Math.Abs((ChannelPower - MeasuredPowerValue));
                             EVMOK = EVMLimit >= Convert.ToDouble(resultStrings[1]);
                             FREQERROK = fREQErrorLimit >= Math.Abs(Convert.ToDouble(resultStrings[3]));
@@ -826,23 +1238,54 @@ namespace RjioMRU.TestSteps
                         }
                         DSACommand = dsaConstruction.GenerateCommand(iteration, HexValues[iteration]);
                         MRU_DUT.DR49CH2executeCALDSAScripts(DSACommand, "rjInitialConfiguration Completed");
+                        TapThread.Sleep(2000);
                         //TapThread.Sleep(10000);
-                        for (int j = 0; j < 2; j++)
+                        for (int j = 0; j < 5; j++)
                         {
-                            do
-                            {
-                                TapThread.Sleep(300);
-                                //  E6680Insturment.SetRFInputPort((iteration+1)%9);
-                                resultStrings = ((iteration <= 7) ? E6680InsturmentTrx3.ReadSequencerPower() : E6680InsturmentTrx4.ReadSequencerPower());
-                                /// resultStrings = E6680Insturment.measureModulationRead();
-                                MeasuredPowerValue = Convert.ToDouble(resultStrings[13]);
-                                //  MeasuredPowerValue = Convert.ToDouble(resultStrings[22]);
 
-                            } while (MeasuredPowerValue < -5 || TapThread.Current.AbortToken.IsCancellationRequested);
+                            TapThread.Sleep(1000);
+                            //  E6680Insturment.SetRFInputPort((iteration+1)%9);
+                            try
+                            {
+                                resultStrings = ((iteration <= 7) ? E6680InsturmentTrx3.ReadSequencerPower() : E6680InsturmentTrx4.ReadSequencerPower());
+                            }
+                            catch (Exception ex)
+                            {
+                                Log.Info("Exception/ CH-2 at CAL-DSA Script: {0}", ex);
+                                break;
+                            }
+
+                            /// resultStrings = E6680Insturment.measureModulationRead();
+                            if (resultStrings.Length < 5)
+                            {
+                                continue;
+                            }
+                            else
+                            {
+                                MeasuredPowerValue = Convert.ToDouble(resultStrings[13]);
+                                if (j > 0)
+                                {
+                                    break;
+                                }
+
+                            }
+                            //  MeasuredPowerValue = Convert.ToDouble(resultStrings[22]);
                         }
-                        ACPValues = new double[4] { Convert.ToDouble(resultStrings[67]), Convert.ToDouble(resultStrings[69]), Convert.ToDouble(resultStrings[71]), Convert.ToDouble(resultStrings[73]) };
-                        MeasuredPowerValue += (CableLosses[iteration] * -1);
-                        measuredPowerBeforeDPD = MeasuredPowerValue;
+
+                        if (resultStrings.Length < 5 || MeasuredPowerValue < 0)
+                        {
+                            StrChannelMeasurementsCh2[iteration] = iteration + "," + $" 0x{HexValues[iteration]:X}" + "," + "-999" + "," + "-999" + "," + "-999" + "," + "-999" + "," + "-999" + "," + "" + "," + "";
+                            continue;
+                        }
+                        else
+                        {
+                            HexValues4DSAWriging[iteration] = HexValues[iteration];
+
+                            ACPValues = new double[4] { Convert.ToDouble(resultStrings[67]), Convert.ToDouble(resultStrings[69]), Convert.ToDouble(resultStrings[71]), Convert.ToDouble(resultStrings[73]) };
+                            MeasuredPowerValue += (CableLosses[iteration] * -1);
+                            measuredPowerBeforeDPD = MeasuredPowerValue;
+                        }
+
                         Log.Info("CH2 during Chain : " + iteration + " Cal Measured power value :" + MeasuredPowerValue);
                     }
                     // ToDo: Add test case code.
@@ -851,21 +1294,28 @@ namespace RjioMRU.TestSteps
                     // If no verdict is used, the verdict will default to NotSet.
                     // You can change the verdict using UpgradeVerdict() as shown below.
                     // UpgradeVerdict(Verdict.Pass);
+                    stepPassFlag &= ChannelPowerOk && ACLR_R1OK && ACLR_L2OK && ACLR_R2OK && ACLR_L2OK && FREQERROK && EVMOK;
+
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 CCDUServer.loopBreak = true;
-                throw;
+                Log.Info("Exception/ CH-2: {0}", ex);
             }
 
             Log.Info("CH2 Total Cal time : " + stopwathCh2.ElapsedMilliseconds / 1000 + " Seconds.");
-            if (WriteDSAToEEPROM)
-            {
-                MRU_DUT.Dr49_CH2_WriteDSAToEEPROM(HexValues);
-            }
+
             // MRU_DUT.stopReceiveEvent();
-            UpgradeVerdict(Verdict.Pass);
+            if (stepPassFlag)
+            {
+                UpgradeVerdict(Verdict.Pass);
+            }
+            else
+            {
+                UpgradeVerdict(Verdict.Fail);
+            }
+
         }
 
         //private string GenerateCommand(int portNumber, int HexNumber)

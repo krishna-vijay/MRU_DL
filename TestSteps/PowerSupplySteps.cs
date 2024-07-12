@@ -38,6 +38,8 @@ namespace RjioMRU.TestSteps
             Agilent_N5767A_powerSupply.OnPowerSupply(PowerOn1);
             // ToDo: Add test case code.
             RunChildSteps(); //If the step supports child steps.
+            UpgradeVerdict(Verdict.Pass);
+
 
             // If no verdict is used, the verdict will default to NotSet.
             // You can change the verdict using UpgradeVerdict() as shown below.

@@ -34,6 +34,10 @@ namespace RjioMRU
 
             base.IoTimeout = 31000;
             base.Open();
+            //:SYSTem:PRESet; :INIT:CONT OFF 
+            //ScpiCommand(":SYSTem:PRESet; :INIT:CONT OFF");
+            //ScpiCommand("*CLS");
+
             // TODO:  Open the connection to the instrument here
 
             //if (!IdnString.Contains("Instrument ID"))
@@ -56,6 +60,8 @@ namespace RjioMRU
         /// </summary>
         public override void Close()
         {
+            //ScpiCommand(":SYSTem:PRESet; :INIT:CONT OFF");
+            //ScpiCommand("*CLS");
             // TODO:  Shut down the connection to the instrument here.
             base.Close();
         }
@@ -438,12 +444,14 @@ namespace RjioMRU
             string ReturnValue = string.Empty;
             try
             {
-                ScpiCommand("INIT");
-                TapThread.Sleep(1000);
-                string ReturnOpeResponse = ScpiQuery<string>("STAT:OPER:COND?");
+               // ScpiCommand(":INIT:CONT OFF");
+                TapThread.Sleep(500);
+                //ScpiCommand("INIT");
+                //TapThread.Sleep(500);
+                string ReturnOpeResponse = ScpiQuery<string>(":STAT:OPER:COND?");
                 if(ReturnOpeResponse == "0")
                 {
-                    TapThread.Sleep(1000);
+                    TapThread.Sleep(500);
                     ReturnValue = ScpiQuery("read:LSEQuencer?");
                 }
                 else
@@ -451,6 +459,7 @@ namespace RjioMRU
                     ScpiCommand("ABORT");
                    ReturnValue = "-99";
                 }
+               // ScpiCommand(":INIT:CONT ON");
             }
             catch (Exception)
             {
