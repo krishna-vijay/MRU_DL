@@ -107,7 +107,7 @@ namespace RjioMRU.TestSteps
                     //hexValuesCh1
                 }
             }
-            MruObj.Dr49_CH1_WriteDSAToEEPROM(AutomaticDSAWriting ? hexValuesCh2 : channelValues.HexValuesCh2);
+            MruObj.Dr49_CH2_WriteDSAToEEPROM(AutomaticDSAWriting ? hexValuesCh2 : channelValues.HexValuesCh2);
 
             //MruObj.Dr49_CH2_WriteDSAToEEPROM(CalibrationStep_CH2.HexValues4DSAWriging);
             Log.Info("DSA Values has been update in EEPROM of Channel 2");
