@@ -115,19 +115,11 @@ namespace RjioMRU.TestSteps
         [Display("DSA setting number of trials ")]
         public int DSACalCycles1 { get => DSACalCycles; set => DSACalCycles = value; }
 
-        private int hexValueHigherLmit = 0x7F;
-        private int hexValueLowerLimit = 0x90;
-        [Display("Hex Value Higher Limit", Order: 26, Group: "Measurement Limits", Description: "Enter the maximum hex value limit ")]
-        public int HexValueHigherLmit { get => hexValueHigherLmit; set => hexValueHigherLmit = value; }
-        [Display("Hex Value Lower Limit", Order: 27, Group: "Measurement Limits", Description: "Enter the minimum hex value limit ")]
-        public int HexValueLowerLimit { get => hexValueLowerLimit; set => hexValueLowerLimit = value; }
-
+        [Display("Write DSA values to EEPROM", Order: 100)]
 
         public override void Run()
         {
-            int hexDecimalValueHigherLimit = Convert.ToInt32(HexValueHigherLmit);
-            int hexDecimalValueLowerLimit = Convert.ToInt32(HexValueLowerLimit);
-
+            EXM_E6680A E6680InsturmentComman = new EXM_E6680A(); ;
             int DSATrailsCount = 0;
             stopwathCh1.Restart();
             string DSACommand = string.Empty;
@@ -401,12 +393,6 @@ namespace RjioMRU.TestSteps
 
                         }
 
-
-
-                        if (hexDecimalValueHigherLimit < HexValues[iteration] || hexDecimalValueLowerLimit > HexValues[iteration])
-                        {
-                            break;
-                        }
                         ///Calibraiton logic starts........................................................................................
                         DSACommand = dsaConstruction.GenerateCommand(iteration, HexValues[iteration]);
                         MRU_DUT.DR49CH1executeCALDSAScripts(DSACommand, "rjInitialConfiguration Completed");
