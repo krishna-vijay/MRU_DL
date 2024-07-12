@@ -25,7 +25,7 @@ namespace RjioMRU
         string serialNumberByUser = string.Empty;
         string productID = string.Empty;
         string macID = string.Empty;
-        string ihstbID = string.Empty;
+        string hstbID = string.Empty;
         string rffeID = string.Empty;
         #endregion
 
@@ -53,7 +53,7 @@ namespace RjioMRU
 
         [Output]
         [Display("HSTB ID", Order: 5)]
-        public string IhstbID { get => ihstbID; set => ihstbID = value; }
+        public string HstbID { get => hstbID; set => hstbID = value; }
 
         [Output]
         [Display("RFFE ID", Order: 6)]
@@ -88,7 +88,7 @@ namespace RjioMRU
                 Serialnumber = Serialnumber;
                 MacID = componentArray[(int)mesSelectoin.MacEnum].component_id.ToString();
                 ProductID = componentArray[(int)mesSelectoin.productIDEnum].component_id.ToString();
-                IhstbID = componentArray[(int)mesSelectoin.hstbEnum].component_id.ToString();
+                HstbID = componentArray[(int)mesSelectoin.hstbEnum].component_id.ToString();
                 RffeID = componentArray[(int)mesSelectoin.rffeEnum].component_id.ToString();
 
 

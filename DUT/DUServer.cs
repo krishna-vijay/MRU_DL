@@ -32,7 +32,7 @@ namespace RjioMRU
         #region Settings
         public static object ServerLockObject { get; set; }
         public static bool loopBreak = false;
-        public static string linkInteraface = string.Empty;
+        public static string linkInteraface = "ens7f1";
         string ccduServerIp = "192.168.1.4";
         string ccduUserName = "root";
         string ccduPassword = "root123";
@@ -686,13 +686,16 @@ namespace RjioMRU
 
         }
 
-        public void CarrierAggrigation(string command1 = "export LD_LIBRARY_PATH=/custom-sw/thirdparty/usr/lib64/:/custom-sw/thirdparty/usr/lib/:/usr/local/bin/:/custom-sw/thirdparty/usr/local/ssl/lib/", string command2 = "./netopeer2-cli", string command3 = "connect --host=192.168.1.2 --port=1830 --login=root", string refTag = "Type your password:", string password = "root", string command4 = "listen", string command4RefTag = "cmd_listen: Already connected to", string command5 = "edit-config --target running --config=/root/uplane_test_xml_for_release_2.9.0_ACTIVE_1.xml --defop merge")
+        public void CarrierAggrigation(string command1 = "export LD_LIBRARY_PATH=/custom-sw/thirdparty/usr/lib64/:/custom-sw/thirdparty/usr/lib/:/usr/local/bin/:/custom-sw/thirdparty/usr/local/ssl/lib/", string command2 = "./netopeer2-cli", string command3 = "connect --host=192.168.1.2 --port=1830 --login=root", string refTag = "Type your password:", string password = "root", string command4 = "listen", string command4RefTag = "cmd_listen: Already connected to", string command5 = "edit-config --target running --config=/root/uplane_test_xml_for_release_2.9.0_ACTIVE_1.xml --defop merge", string command6 = "rm -rf /root/.ssh/known_hosts")
         {
+            bool warningMessage = false;
             Stopwatch  sw = Stopwatch.StartNew();
            // string command1 = "export LD_LIBRARY_PATH=/custom-sw/thirdparty/usr/lib64/:/custom-sw/thirdparty/usr/lib/:/usr/local/bin/:/custom-sw/thirdparty/usr/local/ssl/lib/";
             CarrierAggrigationStream.WriteLine(command1);
+            TapThread.Sleep(1000);
             Log.Info("CA Command sent : export LD_LIBRARY_PATH=/custom-sw/thirdparty/usr/lib64/:/custom-sw/thirdparty/usr/lib/:/usr/local/bin/:/custom-sw/thirdparty/usr/local/ssl/lib/");
             string readConsole = string.Empty;
+
             CarrierAggrigationStream.WriteLine(command2 + "\n");
             TapThread.Sleep(1000);
             Log.Info("Command2 Sent: ./netopeer2-cli");
@@ -713,6 +716,7 @@ namespace RjioMRU
                     throw new Exception("Timeout");
                 }
             } while (readConsole.Contains(">"));
+
            
             CarrierAggrigationStream.WriteLine(command3 + "\n");
             TapThread.Sleep(3000);
@@ -735,18 +739,52 @@ namespace RjioMRU
                 {
                     CarrierAggrigationStream.WriteLine("yes");
                 }
-                TapThread.Sleep(200);
+                else if(readConsole.Contains("WARNING:"))
+                {
+                    warningMessage = true;
+                    break;
+                }
+                //if (readConsole.Contains("login=rootnc ERROR: Remote host key changed"))
+                //{
+                //    Log.Info("Error during CA login=rootnc ERROR: Remote host key changed");
+                //    Log.Info("Command6 Sent:rm -rf /root/.ssh/known_hosts");
+                //    CarrierAggrigationStream.WriteLine(command6 + "\n");
+                //    TapThread.Sleep(3000);
+                //}
+                TapThread.Sleep(1000);
                 if (sw.ElapsedMilliseconds>20000)
                 {
-                    throw new Exception("Timeout");
+                    Log.Info("Timeout (20 seconds) occured during Carrier Aggrigation Functions");
+                    //bool SendIfCommandOnce = true;
+                    //if(SendIfCommandOnce)
+                    //{
+                    //    SendIfCommandOnce = false;
+                    //    CarrierAggrigationStream.WriteLine(command6 + "\n");
+                    //    TapThread.Sleep(3000);
+                    //    Log.Info("Command6 Sent:rm -rf /root/.ssh/known_hosts");
+                    //}
+                    break;
                 }
+
+                //if (sw.ElapsedMilliseconds > 25000)
+                //{
+                //    Log.Info("Timeout (20 seconds) occured even after issuing command6 : {0}", command6);
+                //    break;
+                //}
+                Log.Info("CA functions : " + readConsole);
             } while (!readConsole.Contains(refTag));
-            TapThread.Sleep(2000);
-            CarrierAggrigationStream.WriteLine(password);
-            TapThread.Sleep(2000);
-            CarrierAggrigationStream.WriteLine("");
-            sw.Restart();
-            TapThread.Sleep(100);
+
+            if (!warningMessage)
+            {
+
+                TapThread.Sleep(2000);
+                CarrierAggrigationStream.WriteLine(password);
+                TapThread.Sleep(2000);
+                CarrierAggrigationStream.WriteLine("");
+                sw.Restart();
+                TapThread.Sleep(100);
+              
+            }
             readConsole = string.Empty;
             do
             {
@@ -764,6 +802,7 @@ namespace RjioMRU
                 {
                     throw new Exception("Timeout");
                 }
+                Log.Info("CA Functions Waiting for > " + readConsole);
             } while (readConsole.Contains(">"));
             TapThread.Sleep(1000);
             CarrierAggrigationStream.WriteLine(command4);

@@ -1803,6 +1803,18 @@ namespace RjioMRU
         #endregion DR49Ch2Functions
 
         #region DR21Functions
+        public void Dr21_ap_calib_Rx_Tx_Functions()
+        {
+            //
+            var returnValue = DR21ComObj.ReadExisting();
+            DR21ComObj.WriteLine("ap_calib --set-rx-cal-en 0 0");
+            Log.Info    ($"ap_calib --set-rx-cal-en 0 0"); 
+            DR21ComObj.WriteLine("ap_calib --set-tx-cal-en 0 0");
+            Log.Info("ap_calib --set-tx-cal-en 0 0");
+            returnValue = DR21ComObj.ReadExisting();
+            Log.Info("Dr21_ap_calib_Rx_Tx_Functions :" + returnValue);
+            Thread.Sleep(500);
+        }
 
         public bool Dr21PingTest(int NoofPingsRequested, string ipaddress, string validateScript)
         {
@@ -1892,7 +1904,9 @@ namespace RjioMRU
                         if (count > 10)
                         {
                             DR21ComObj.WriteLine(Environment.NewLine);
-                            Log.Info($"Login 21DR  : Enter hit");
+                            Log.Info($"Login 21DR  : Enter hit via Environment.NewLine");
+                            DR21ComObj.WriteLine("\r\n");
+                            Log.Info($"Login 21DR  : Enter hit via carriage return and line feed.");
                             count = 0;
                         }
                     }
@@ -2013,7 +2027,7 @@ namespace RjioMRU
 
 
 
-        public bool dr21PTPInitEstablishedncheck(int waittimems, string validationScript)
+        public bool dr21PTPInitEstablishedncheck(int waittimems, string validationScript,string PTPRestartCommand)
         {
             Stopwatch sw = Stopwatch.StartNew();
             bool ORANInit = false;
@@ -2021,8 +2035,8 @@ namespace RjioMRU
             DR21ComObj.WriteLine(Environment.NewLine);
             do
             {
-                TapThread.Sleep(100);
-                readValue = DR21ComObj.ReadExisting();
+         
+                readValue += DR21ComObj.ReadExisting().Replace("\n","");
                 if (!string.IsNullOrEmpty( readValue.Trim()))
                 {
                     Log.Info(readValue);
@@ -2038,11 +2052,13 @@ namespace RjioMRU
                 // readValue= readValue.Replace('\r', char.MinValue);
                 if ((sw.ElapsedMilliseconds / 1000) > waittimems)
                 {
-                    Log.Error("Timeout");
+                    Log.Error("Timeout PTP restart command");
                     ORANInit = false;
-                    break;
+                    DR21ComObj.WriteLine(PTPRestartCommand);
+                    sw.Restart();
+                    continue;
                 }
-
+                TapThread.Sleep(100);
 
             } while (!readValue.Contains(validationScript) || TapThread.Current.AbortToken.IsCancellationRequested);
             DR21ComObj.WriteLine(Environment.NewLine);
@@ -2286,30 +2302,28 @@ namespace RjioMRU
                 }
                 if ((stopwatch.ElapsedMilliseconds/1000)>50)
                 {
-                    throw new Exception("Timeout");
-                    
+                    throw new Exception("Timeout");                    
                 }
-
             } while (true);
         }
 
-        internal void Dr49_CH1_WriteDSAToEEPROM(int[] hexValues)
+        internal void Dr49_CH1_WriteDSAToEEPROM(string[] hexValues)
         {
             DR49Ch1ComObj.ReadExisting();
-            string command4EEPROM_DSA = "rj-rfeeprom-updater -upd_dsa_tx " + hexValues[0] + "," + hexValues[1] + "," + hexValues[2] + "," + hexValues[3] + "," + hexValues[4] + "," + hexValues[5] + "," + hexValues[6] + "," + hexValues[7] + "," + hexValues[8] + "," + hexValues[9] + "," + hexValues[10] + "," + hexValues[11] + "," + hexValues[12] + "," + hexValues[13] + "," + hexValues[14] + "," + hexValues[15] + " -upd_dsa_fb 0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f -upd_dac0 0x47E - nupd_dac1 0x64B -upd_fw_ver 1.0 -upd_hw_ver B -upd_prv_valid";
+            string command4EEPROM_DSA = "rj-rfeeprom-updater -upd_dsa_tx " + hexValues[0] + "," + hexValues[1] + "," + hexValues[2] + "," + hexValues[3] + "," + hexValues[4] + "," + hexValues[5] + "," + hexValues[6] + "," + hexValues[7] + "," + hexValues[8] + "," + hexValues[9] + "," + hexValues[10] + "," + hexValues[11] + "," + hexValues[12] + "," + hexValues[13] + "," + hexValues[14] + "," + hexValues[15] + " -upd_dsa_fb 0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f -upd_dac0 0x47E -upd_dac1 0x64B -upd_fw_ver 1.0 -upd_hw_ver B -upd_prv_valid";
             Log.Info(command4EEPROM_DSA);
             DR49Ch1ComObj.WriteLine(command4EEPROM_DSA);
 
-            
+
         }
-        internal void Dr49_CH2_WriteDSAToEEPROM(int[] hexValues)
+        internal void Dr49_CH2_WriteDSAToEEPROM(string[] hexValues)
         {
             DR49Ch1ComObj.ReadExisting();
-            string command4EEPROM_DSA = "rj-rfeeprom-updater -upd_dsa_tx " + hexValues[0] + "," + hexValues[1] + "," + hexValues[2] + "," + hexValues[3] + "," + hexValues[4] + "," + hexValues[5] + "," + hexValues[6] + "," + hexValues[7] + "," + hexValues[8] + "," + hexValues[9] + "," + hexValues[10] + "," + hexValues[11] + "," + hexValues[12] + "," + hexValues[13] + "," + hexValues[14] + "," + hexValues[15] + " -upd_dsa_fb 0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f -upd_dac0 0x47E - nupd_dac1 0x64B -upd_fw_ver 1.0 -upd_hw_ver B -upd_prv_valid";
+            string command4EEPROM_DSA = "rj-rfeeprom-updater -upd_dsa_tx " + hexValues[0] + "," + hexValues[1] + "," + hexValues[2] + "," + hexValues[3] + "," + hexValues[4] + "," + hexValues[5] + "," + hexValues[6] + "," + hexValues[7] + "," + hexValues[8] + "," + hexValues[9] + "," + hexValues[10] + "," + hexValues[11] + "," + hexValues[12] + "," + hexValues[13] + "," + hexValues[14] + "," + hexValues[15] + " -upd_dsa_fb 0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f -upd_dac0 0x47E -upd_dac1 0x64B -upd_fw_ver 1.0 -upd_hw_ver B -upd_prv_valid";
             Log.Info(command4EEPROM_DSA);
             DR49Ch1ComObj.WriteLine(command4EEPROM_DSA);
 
-            
+
         }
         #endregion DR21Functions
 

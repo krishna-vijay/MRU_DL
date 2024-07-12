@@ -75,7 +75,7 @@ namespace RjioMRU
             E6680Ainstrumet.renameScreen("EVM");
             E6680Ainstrumet.SelectMeasurements(EXM_E6680A.LTEAFDD_MEASUREMENT_Type.EVM);
             E6680Ainstrumet.MeasureContinues(false);
-          
+
 
             E6680Ainstrumet.RecallSCPFile(ScpFilePath);
             E6680Ainstrumet.TrackEVM();

@@ -15,6 +15,115 @@ using System.Text;
 //rj-dsa-init 16 0x7F 0x7F 0x7F 0x7F 0x7F 0x7F 0x7F 0x7F 0x7F 0x7F 0x7F 0x7F 0x7F 0x7F 0x7F 0x7F 16 0x0f 0x0f 0x0f 0x0f 0x0f 0x0f 0x0f 0x0f 0x0f 0x0f 0x0f 0x0f 0x0f 0x0f 0x0f 0x0f 2 1200 1611
 namespace RjioMRU.TestSteps
 {
+
+    /* if (WriteDSAToEEPROM)
+            {
+                MRU_DUT.Dr49_CH1_WriteDSAToEEPROM(HexValues);
+
+                // IF Ch1 and Ch2, all measurement done properly, then only only write to EEPROM, otherwise NO.
+
+            }*/
+
+
+
+
+    [Display("DR49 Ch1 Write DSA", Group: "RjioMRU", Description: "Insert a description here")]
+    public class DR49_Ch1_DSA_Write : TestStep
+    {
+        #region Settings
+        MRU_Rjio mruObj;
+        private string[] hexValuesCh1 = new string[16] { "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F" };
+        bool automaticDSAWriting = false;
+        // ToDo: Add property here for each parameter the end user should be able to change
+        #endregion
+
+        public DR49_Ch1_DSA_Write()
+        {
+            // ToDo: Set default values for properties / settings.
+        }
+
+        public MRU_Rjio MruObj { get => mruObj; set => mruObj = value; }
+        [Display("Select Automatic and Manual ", Order: 0, Description: "Enter Hex Values for DSA")]
+        public bool AutomaticDSAWriting { get => automaticDSAWriting; set => automaticDSAWriting = value; }
+
+        public override void Run()
+        {
+            DSACHexValues channelValues = new DSACHexValues();
+
+
+            if (AutomaticDSAWriting)
+            {
+                for (int iteration = 0; iteration < CalibrationStep_CH1.HexValues4DSAWriging.Length; iteration++)
+                {
+                    hexValuesCh1[iteration] = $"0x{CalibrationStep_CH1.HexValues4DSAWriging[iteration]:X}";
+                    //hexValuesCh1
+                }
+            }
+
+            MruObj.Dr49_CH1_WriteDSAToEEPROM(AutomaticDSAWriting ? hexValuesCh1 : channelValues.HexValuesCh1);
+            Log.Info("DSA Values has been update in EEPROM of Channel 1");
+            // ToDo: Add test case code.
+            RunChildSteps(); //If the step supports child steps.
+
+            // If no verdict is used, the verdict will default to NotSet.
+            // You can change the verdict using UpgradeVerdict() as shown below.
+            // UpgradeVerdict(Verdict.Pass);
+        }
+    }
+
+
+    [Display("DR49 Ch2 Write DSA", Group: "RjioMRU", Description: "Insert a description here")]
+    public class DR49_Ch2_DSA_Write : TestStep
+    {
+        #region Settings
+        MRU_Rjio mruObj;
+        private string[] hexValuesCh2 = new string[16] { "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F" };
+        bool automaticDSAWriting = false;
+        [Display("Select Automatic and Manual ", Order: 0, Description: "Enter Hex Values for DSA")]
+        public bool AutomaticDSAWriting { get => automaticDSAWriting; set => automaticDSAWriting = value; }
+
+        // ToDo: Add property here for each parameter the end user should be able to change
+
+
+        #endregion
+
+        public DR49_Ch2_DSA_Write()
+        {
+
+            // ToDo: Set default values for properties / settings.
+        }
+
+        public MRU_Rjio MruObj { get => mruObj; set => mruObj = value; }
+
+        public override void Run()
+        {
+            DSACHexValues channelValues = new DSACHexValues();
+
+            if (AutomaticDSAWriting)
+            {
+                for (int iteration = 0; iteration < CalibrationStep_CH2.HexValues4DSAWriging.Length; iteration++)
+                {
+                    hexValuesCh2[iteration] = $"0x{CalibrationStep_CH2.HexValues4DSAWriging[iteration]:X}";
+                    //hexValuesCh1
+                }
+            }
+            MruObj.Dr49_CH2_WriteDSAToEEPROM(AutomaticDSAWriting ? hexValuesCh2 : channelValues.HexValuesCh2);
+
+            //MruObj.Dr49_CH2_WriteDSAToEEPROM(CalibrationStep_CH2.HexValues4DSAWriging);
+            Log.Info("DSA Values has been update in EEPROM of Channel 2");
+
+            // ToDo: Add test case code.
+            RunChildSteps(); //If the step supports child steps.
+
+            // If no verdict is used, the verdict will default to NotSet.
+            // You can change the verdict using UpgradeVerdict() as shown below.
+            // UpgradeVerdict(Verdict.Pass);
+        }
+    }
+
+
+
+
     [Display("DR49 Ch1 DPD Pypass", Group: "RjioMRU", Description: "Insert a description here")]
     public class DR49_Ch1Bypass : TestStep
     {
@@ -245,6 +354,23 @@ namespace RjioMRU.TestSteps
 
         }
     }
+
+    [Display("DR21 ap calib fundtion", Group: "RjioMRU", Description: "ap_calib --set-rx and tx -cal-en 0 0")]
+    public class DR21_AP_CALIB_Functions : TestStep
+    {
+        MRU_Rjio mruObj;
+        public MRU_Rjio MruObj { get => mruObj; set => mruObj = value; }
+        public DR21_AP_CALIB_Functions()
+        {
+
+        }
+
+        public override void Run()
+        {
+            MruObj.Dr21_ap_calib_Rx_Tx_Functions();
+
+        }
+    }
     [Display("DR21 MRU Ipchange", Group: "RjioMRU", Description: "Insert a description here")]
     public class DR21MRUIpChange : TestStep
     {
@@ -429,7 +555,7 @@ namespace RjioMRU.TestSteps
     public class DR21PTYSynEstablishedCheck : TestStep
     {
 
-
+        string pTPRestart_Command = "ptp_init_21dr.sh --restart";
         MRU_Rjio mruObj;
         int waittime = 50;
         #region Settings
@@ -438,7 +564,8 @@ namespace RjioMRU.TestSteps
 
         [Display("Wait time")]
         public int Waittime { get => waittime; set => waittime = value; }
-
+        [Display("PTP Restart command", Description: "This command will execute after waittime delay")]
+        public string PTPRestart_Command { get => pTPRestart_Command; set => pTPRestart_Command = value; }
 
 
 
@@ -452,7 +579,7 @@ namespace RjioMRU.TestSteps
 
         public override void Run()
         {
-            var PingTestStatus = MruObj.dr21PTPInitEstablishedncheck(Waittime, "PTP synchronization detected established!");
+            var PingTestStatus = MruObj.dr21PTPInitEstablishedncheck(Waittime, "PTP synchronization detected established!", PTPRestart_Command);
             // ToDo: Add test case code.
             RunChildSteps(); //If the step supports child steps.
 
@@ -1237,7 +1364,7 @@ namespace RjioMRU.TestSteps
             RffeID = new Input<string>();
         }
         public MRU_Rjio MruObj { get => mruObj; set => mruObj = value; }
-       // public ClsMES MesObj { get => mesObj; set => mesObj = value; }
+        // public ClsMES MesObj { get => mesObj; set => mesObj = value; }
 
         [Display("Serial Number", Order: 10, Description: "Read the serial number")]
         public Input<string> SerialNumber { get; set; }
@@ -1256,19 +1383,19 @@ namespace RjioMRU.TestSteps
 
         public override void Run()
         {
-           // var prod_mac = MesObj.GetDataFromMac_ProductID(SerialNumber.Value);
+            // var prod_mac = MesObj.GetDataFromMac_ProductID(SerialNumber.Value);
             //if (MruObj != null)
             //{
-                Log.Info("Serial number {0} , MAC ID {1} and Product id {2} from MES, Writing to EEPROM of MRU",SerialNumber.Value, MacID.Value,ProductID.Value);
-                MruObj.Dr21MAC_SLNO_PRODID_Provisioning(MacID.Value, SerialNumber.Value,ProductID.Value);
-                // If S.NO and MAC ID is already there in the MRU, NO need to overwrite
-                // Check before writing: Read Info from MRU
+            Log.Info("Serial number {0} , MAC ID {1} and Product id {2} from MES, Writing to EEPROM of MRU", SerialNumber.Value, MacID.Value, ProductID.Value);
+            MruObj.Dr21MAC_SLNO_PRODID_Provisioning(MacID.Value, SerialNumber.Value, ProductID.Value);
+            // If S.NO and MAC ID is already there in the MRU, NO need to overwrite
+            // Check before writing: Read Info from MRU
             //}
             //else
             //{
             //    Log.Info("MRU object is null");
             //}
-             
+
 
             UpgradeVerdict(Verdict.Pass);
             // ToDo: Add test case code.

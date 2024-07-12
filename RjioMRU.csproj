@@ -9,7 +9,7 @@
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <OpenTapPackageDefinitionPath>package.xml</OpenTapPackageDefinitionPath>
-    <BaseOutputPath>C:\Program Files\Keysight\Test Automation\Packages\RjioMRU</BaseOutputPath>
+    <BaseOutputPath>C:\Program Files\Keysight\Test Automation\Packages</BaseOutputPath>
     <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
     <Company>Keysight Technologies</Company>
     <Copyright>Keysight Technologies </Copyright>
@@ -73,6 +73,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.Office.Interop.Excel" Version="15.0.4795.1001" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="OpenTAP" Version="9.21.0" />
     <PackageReference Include="SpreadsheetLight" Version="3.5.0" />
