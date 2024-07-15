@@ -115,7 +115,12 @@ namespace RjioMRU.TestSteps
         [Display("DSA setting number of trials ")]
         public int DSACalCycles1 { get => DSACalCycles; set => DSACalCycles = value; }
 
-        [Display("Write DSA values to EEPROM", Order: 100)]
+        double dSAHigherLimit = 0X05;
+        [Display("DSA Higher Limit", Order: 100, Description: "Higher DSA measns less value of attenuation to generate more power")]
+        public double DSAHigherLimit { get => dSAHigherLimit; set => dSAHigherLimit = value; }
+        double dSALowerLimit = 0X3F;
+        [Display("DSA Lower Limit", Order: 100, Description: "Lower DSA measns higher value of attenuation to generate less power")]
+        public double DSAlowerLimit { get => dSALowerLimit; set => dSAHigherLimit = value; }
 
         public override void Run()
         {
@@ -231,6 +236,7 @@ namespace RjioMRU.TestSteps
                             {
                                 HexValues[iteration] -= 1;
                             }
+
                         }
                         else if (MeasuredPowerValue >= UpperChannelLimit)
                         {
@@ -392,7 +398,13 @@ namespace RjioMRU.TestSteps
                             #endregion existing
 
                         }
+                        if (HexValues[iteration] > DSAHigherLimit || HexValues[iteration] < DSAlowerLimit)
+                        {
+                            Log.Error("DSA Value exceeds limits DSA Value :" + HexValues[iteration] + " DSA Higher Limits :" + DSAHigherLimit + " DSA Lower Limit :" + DSAlowerLimit +" Chanin Number : "+iteration);
+                            MessageBox.Show("DSA Limit exceeds, Breaking loop");
+                            break;
 
+                        }
                         ///Calibraiton logic starts........................................................................................
                         DSACommand = dsaConstruction.GenerateCommand(iteration, HexValues[iteration]);
                         MRU_DUT.DR49CH1executeCALDSAScripts(DSACommand, "rjInitialConfiguration Completed");
@@ -436,6 +448,7 @@ namespace RjioMRU.TestSteps
                         if (resultStrings.Length < 5 || MeasuredPowerValue < 0)
                         {
                             StrChannelMeasurementsCh1[iteration] = iteration + "," + $" 0x{HexValues[iteration]:X}" + "," + "-999" + "," + "-999" + "," + "-999" + "," + "-999" + "," + "-999" + "," + "" + "," + "";
+                            stepPassFlag = false;
                             continue;
                         }
                         else
@@ -962,7 +975,15 @@ namespace RjioMRU.TestSteps
         [Display("DSA setting number of trials ")]
         public int DSACalCycles1 { get => DSACalCycles; set => DSACalCycles = value; }
 
-        [Display("Write DSA values to EEPROM", Order: 100)]
+
+        double dSAHigherLimit = 0X05;
+        [Display("DSA Higher Limit", Order: 100, Description: "Higher DSA measns less value of attenuation to generate more power")]
+        public double DSAHigherLimit { get => dSAHigherLimit; set => dSAHigherLimit = value; }
+        double dSALowerLimit = 0X3F;
+        [Display("DSA Lower Limit", Order: 100, Description: "Lower DSA measns higher value of attenuation to generate less power")]
+        public double DSAlowerLimit { get => dSALowerLimit; set => dSAHigherLimit = value; }
+
+
 
         public override void Run()
         {
@@ -1051,6 +1072,7 @@ namespace RjioMRU.TestSteps
                     if (resultStrings.Length < 5 || MeasuredPowerValue < 0)
                     {
                         StrChannelMeasurementsCh2[iteration] = iteration + "," + $" 0x{HexValues[iteration]:X}" + "," + "-999" + "," + "-999" + "," + "-999" + "," + "-999" + "," + "-999" + "," + "" + "," + "";
+                        stepPassFlag = false;
                         continue;
                     }
 
@@ -1235,6 +1257,14 @@ namespace RjioMRU.TestSteps
                             {
                                 continue;
                             }
+                        }
+
+                        if (HexValues[iteration] > DSAHigherLimit || HexValues[iteration] < DSAlowerLimit)
+                        {
+                            Log.Error("DSA Value exceeds limits DSA Value :" + HexValues[iteration] + " DSA Higher Limits :" + DSAHigherLimit + " DSA Lower Limit :" + DSAlowerLimit + " Chanin Number : " + iteration);
+                            MessageBox.Show("DSA Limit exceeds, Breaking loop");
+                            break;
+
                         }
                         DSACommand = dsaConstruction.GenerateCommand(iteration, HexValues[iteration]);
                         MRU_DUT.DR49CH2executeCALDSAScripts(DSACommand, "rjInitialConfiguration Completed");
