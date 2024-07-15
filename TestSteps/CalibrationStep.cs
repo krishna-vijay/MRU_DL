@@ -166,7 +166,9 @@ namespace RjioMRU.TestSteps
                     ChannelPowerOk = false;
                     AttemptNumber = 1;
                     if (iteration <= 7)
+                    {
                         E6680InsturmentTrx1.SetRFInputPort((iteration % 8) + 1);
+                    }
                     else
                         E6680InsturmentTrx2.SetRFInputPort((iteration % 8) + 1);
 
@@ -397,7 +399,7 @@ namespace RjioMRU.TestSteps
                             #endregion existing
 
                         }
-                        if (HexValues[iteration] < DSAHigherLimit || HexValues[iteration] > DSAlowerLimit)
+                        if (HexValues[iteration] > DSAHigherLimit || HexValues[iteration] < DSAlowerLimit)
                         {
                             Log.Error("DSA Value exceeds limits DSA Value :" + HexValues[iteration] + " DSA Higher Limits :" + DSAHigherLimit + " DSA Lower Limit :" + DSAlowerLimit + " Chanin Number : " + iteration);
                             MessageBox.Show("DSA Limit exceeds, Breaking loop");
