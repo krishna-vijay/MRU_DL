@@ -120,7 +120,7 @@ namespace RjioMRU.TestSteps
         public double DSAHigherLimit { get => dSAHigherLimit; set => dSAHigherLimit = value; }
         double dSALowerLimit = 0X3F;
         [Display("DSA Lower Limit", Order: 100, Description: "Lower DSA measns higher value of attenuation to generate less power")]
-        public double DSAlowerLimit { get => dSALowerLimit; set => dSAHigherLimit = value; }
+        public double DSAlowerLimit { get => dSALowerLimit; set => dSALowerLimit = value; }
 
         public override void Run()
         {
@@ -397,7 +397,13 @@ namespace RjioMRU.TestSteps
                             #endregion existing
 
                         }
+                        if (HexValues[iteration] < DSAHigherLimit || HexValues[iteration] > DSAlowerLimit)
+                        {
+                            Log.Error("DSA Value exceeds limits DSA Value :" + HexValues[iteration] + " DSA Higher Limits :" + DSAHigherLimit + " DSA Lower Limit :" + DSAlowerLimit + " Chanin Number : " + iteration);
+                            MessageBox.Show("DSA Limit exceeds, Breaking loop");
+                            break;
 
+                        }
                         ///Calibraiton logic starts........................................................................................
                         DSACommand = dsaConstruction.GenerateCommand(iteration, HexValues[iteration]);
                         MRU_DUT.DR49CH1executeCALDSAScripts(DSACommand, "rjInitialConfiguration Completed");
@@ -973,7 +979,7 @@ namespace RjioMRU.TestSteps
         public double DSAHigherLimit { get => dSAHigherLimit; set => dSAHigherLimit = value; }
         double dSALowerLimit = 0X3F;
         [Display("DSA Lower Limit", Order: 100, Description: "Lower DSA measns higher value of attenuation to generate less power")]
-        public double DSAlowerLimit { get => dSALowerLimit; set => dSAHigherLimit = value; }
+        public double DSAlowerLimit { get => dSALowerLimit; set => dSALowerLimit = value; }
 
 
 
@@ -1251,7 +1257,7 @@ namespace RjioMRU.TestSteps
                             }
                         }
 
-                        if (HexValues[iteration] > DSAHigherLimit || HexValues[iteration] < DSAlowerLimit)
+                        if (HexValues[iteration] < DSAHigherLimit || HexValues[iteration] > DSAlowerLimit)
                         {
                             Log.Error("DSA Value exceeds limits DSA Value :" + HexValues[iteration] + " DSA Higher Limits :" + DSAHigherLimit + " DSA Lower Limit :" + DSAlowerLimit + " Chanin Number : " + iteration);
                             MessageBox.Show("DSA Limit exceeds, Breaking loop");
