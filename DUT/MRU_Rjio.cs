@@ -2305,7 +2305,6 @@ namespace RjioMRU
                     throw new Exception("Timeout");
 
                 }
-
             } while (true);
         }
 

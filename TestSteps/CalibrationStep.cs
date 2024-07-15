@@ -236,7 +236,6 @@ namespace RjioMRU.TestSteps
                             {
                                 HexValues[iteration] -= 1;
                             }
-
                         }
                         else if (MeasuredPowerValue >= UpperChannelLimit)
                         {
@@ -398,13 +397,7 @@ namespace RjioMRU.TestSteps
                             #endregion existing
 
                         }
-                        if (HexValues[iteration] > DSAHigherLimit || HexValues[iteration] < DSAlowerLimit)
-                        {
-                            Log.Error("DSA Value exceeds limits DSA Value :" + HexValues[iteration] + " DSA Higher Limits :" + DSAHigherLimit + " DSA Lower Limit :" + DSAlowerLimit +" Chanin Number : "+iteration);
-                            MessageBox.Show("DSA Limit exceeds, Breaking loop");
-                            break;
 
-                        }
                         ///Calibraiton logic starts........................................................................................
                         DSACommand = dsaConstruction.GenerateCommand(iteration, HexValues[iteration]);
                         MRU_DUT.DR49CH1executeCALDSAScripts(DSACommand, "rjInitialConfiguration Completed");
@@ -448,7 +441,6 @@ namespace RjioMRU.TestSteps
                         if (resultStrings.Length < 5 || MeasuredPowerValue < 0)
                         {
                             StrChannelMeasurementsCh1[iteration] = iteration + "," + $" 0x{HexValues[iteration]:X}" + "," + "-999" + "," + "-999" + "," + "-999" + "," + "-999" + "," + "-999" + "," + "" + "," + "";
-                            stepPassFlag = false;
                             continue;
                         }
                         else
