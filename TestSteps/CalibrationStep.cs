@@ -977,10 +977,10 @@ namespace RjioMRU.TestSteps
 
 
         double dSAHigherLimit = 0X05;
-        [Display("DSA Higher Limit", Order: 100, Description: "Higher DSA measns less value of attenuation to generate more power")]
+        [Display("Digital Step Attenuator Max Value", Order: 100, Description: "Higher DSA measns less value of attenuation to generate more power")]
         public double DSAHigherLimit { get => dSAHigherLimit; set => dSAHigherLimit = value; }
         double dSALowerLimit = 0X3F;
-        [Display("DSA Lower Limit", Order: 100, Description: "Lower DSA measns higher value of attenuation to generate less power")]
+        [Display("Digital Step Atenuator Min Value", Order: 100, Description: "Lower DSA measns higher value of attenuation to generate less power")]
         public double DSAlowerLimit { get => dSALowerLimit; set => dSALowerLimit = value; }
 
 
