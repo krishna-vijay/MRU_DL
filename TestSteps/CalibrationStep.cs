@@ -47,7 +47,7 @@ namespace RjioMRU.TestSteps
         //EXM_E6680A e6680InsturmentTrx4;
         string[] strHexValues = new string[16];
         public int[] HexValues = new int[16];
-        public static int[] HexValues4DSAWriging = new int[16];
+        public static int[] HexValues4DSAWriging = new int[16]  { 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F };
         double[] CableLosses = new double[16];
         private string dSA_CableLossFile = "DSA_CABLELOSS_Ch1.csv";
 
@@ -65,6 +65,7 @@ namespace RjioMRU.TestSteps
 
         public CalibrationStep_CH1()
         {
+
             RjioReportCls.reportGenerated = false;
 
             // ToDo: Set default values for properties / settings.
@@ -115,19 +116,16 @@ namespace RjioMRU.TestSteps
         [Display("DSA setting number of trials ")]
         public int DSACalCycles1 { get => DSACalCycles; set => DSACalCycles = value; }
 
-        private int hexValueHigherLmit = 0x7F;
-        private int hexValueLowerLimit = 0x90;
-        [Display("Hex Value Higher Limit", Order: 26, Group: "Measurement Limits", Description: "Enter the maximum hex value limit ")]
-        public int HexValueHigherLmit { get => hexValueHigherLmit; set => hexValueHigherLmit = value; }
-        [Display("Hex Value Lower Limit", Order: 27, Group: "Measurement Limits", Description: "Enter the minimum hex value limit ")]
-        public int HexValueLowerLimit { get => hexValueLowerLimit; set => hexValueLowerLimit = value; }
-
+        double dSAHigherLimit = 0X05;
+        [Display("Digital Step Attenuator Max Value", Order: 100, Description: "Higher DSA measns less value of attenuation to generate more power")]
+        public double DSAHigherLimit { get => dSAHigherLimit; set => dSAHigherLimit = value; }
+        double dSALowerLimit = 0X3F;
+        [Display("Digital Step Atenuator Min Value", Order: 100, Description: "Lower DSA measns higher value of attenuation to generate less power")]
+        public double DSAlowerLimit { get => dSALowerLimit; set => dSALowerLimit = value; }
 
         public override void Run()
         {
-            int hexDecimalValueHigherLimit = Convert.ToInt32(HexValueHigherLmit);
-            int hexDecimalValueLowerLimit = Convert.ToInt32(HexValueLowerLimit);
-
+            EXM_E6680A E6680InsturmentComman = new EXM_E6680A(); ;
             int DSATrailsCount = 0;
             stopwathCh1.Restart();
             string DSACommand = string.Empty;
@@ -169,7 +167,9 @@ namespace RjioMRU.TestSteps
                     ChannelPowerOk = false;
                     AttemptNumber = 1;
                     if (iteration <= 7)
+                    {
                         E6680InsturmentTrx1.SetRFInputPort((iteration % 8) + 1);
+                    }
                     else
                         E6680InsturmentTrx2.SetRFInputPort((iteration % 8) + 1);
 
@@ -270,12 +270,7 @@ namespace RjioMRU.TestSteps
                                 ACP5GValues = E6680InsturmentTrx2.measureACP();
                             }
 
-                            //E6680InsturmentTrx1.SetRFInputPort((iteration % 8) + 1);
-                            //    TapThread.Sleep(1000);
-                            //    resultStrings = ((iteration <= 7) ? E6680InsturmentTrx1.ReadSequencerPower() : E6680InsturmentTrx2.ReadSequencerPower());
-                            //    MeasuredPowerValue = Convert.ToDouble(resultStrings[13]);
-                            //    ACPValues = new double[4] { Convert.ToDouble(resultStrings[67]), Convert.ToDouble(resultStrings[69]), Convert.ToDouble(resultStrings[71]), Convert.ToDouble(resultStrings[73]) };
-                            //    MeasuredPowerValue += (CableLosses[iteration] * -1);
+
                             if (Convert.ToDouble(ACP5GValues[4]) > -45)
                             {
                                 var DpdStartTime = stopwathCh1.ElapsedMilliseconds;
@@ -391,6 +386,8 @@ namespace RjioMRU.TestSteps
                             /////////////////////////////////////////////////////////////
                             if ((ChannelPowerOk && ACLR_R1OK && ACLR_L2OK && ACLR_R1OK && ACLR_R2OK && FREQERROK && EVMOK) || AttemptNumber > 2)
                             {
+                                HexValues4DSAWriging[iteration] = HexValues[iteration];
+
                                 break;
                             }
                             else
@@ -400,12 +397,13 @@ namespace RjioMRU.TestSteps
                             #endregion existing
 
                         }
-
-
-
-                        if (hexDecimalValueHigherLimit < HexValues[iteration] || hexDecimalValueLowerLimit > HexValues[iteration])
+                        if (HexValues[iteration] < DSAlowerLimit || HexValues[iteration] > DSAHigherLimit)
                         {
+                            Log.Error("DSA Value exceeds limits DSA Value :" + HexValues[iteration] + " DSA Higher Limits :" + DSAHigherLimit + " DSA Lower Limit :" + DSAlowerLimit + " Chanin Number : " + iteration);
+                            MessageBox.Show("DSA Limit exceeds, Breaking loop");
+                            stepPassFlag = false;   
                             break;
+
                         }
                         ///Calibraiton logic starts........................................................................................
                         DSACommand = dsaConstruction.GenerateCommand(iteration, HexValues[iteration]);
@@ -450,6 +448,7 @@ namespace RjioMRU.TestSteps
                         if (resultStrings.Length < 5 || MeasuredPowerValue < 0)
                         {
                             StrChannelMeasurementsCh1[iteration] = iteration + "," + $" 0x{HexValues[iteration]:X}" + "," + "-999" + "," + "-999" + "," + "-999" + "," + "-999" + "," + "-999" + "," + "" + "," + "";
+                            stepPassFlag = false;
                             continue;
                         }
                         else
@@ -976,7 +975,15 @@ namespace RjioMRU.TestSteps
         [Display("DSA setting number of trials ")]
         public int DSACalCycles1 { get => DSACalCycles; set => DSACalCycles = value; }
 
-        [Display("Write DSA values to EEPROM", Order: 100)]
+
+        double dSAHigherLimit = 0X05;
+        [Display("Digital Step Attenuator Max Value", Order: 100, Description: "Higher DSA measns less value of attenuation to generate more power")]
+        public double DSAHigherLimit { get => dSAHigherLimit; set => dSAHigherLimit = value; }
+        double dSALowerLimit = 0X3F;
+        [Display("Digital Step Atenuator Min Value", Order: 100, Description: "Lower DSA measns higher value of attenuation to generate less power")]
+        public double DSAlowerLimit { get => dSALowerLimit; set => dSALowerLimit = value; }
+
+
 
         public override void Run()
         {
@@ -1065,6 +1072,7 @@ namespace RjioMRU.TestSteps
                     if (resultStrings.Length < 5 || MeasuredPowerValue < 0)
                     {
                         StrChannelMeasurementsCh2[iteration] = iteration + "," + $" 0x{HexValues[iteration]:X}" + "," + "-999" + "," + "-999" + "," + "-999" + "," + "-999" + "," + "-999" + "," + "" + "," + "";
+                        stepPassFlag = false;
                         continue;
                     }
 
@@ -1243,12 +1251,22 @@ namespace RjioMRU.TestSteps
                             // MRURjioReportCls.Measurements += StrChannelMeasurements[iteration] + "," + resultStrings[1] + "," + resultStrings[3] + ";";
                             if ((ChannelPowerOk && ACLR_R1OK && ACLR_L2OK && ACLR_R1OK && ACLR_R2OK && FREQERROK && EVMOK) || AttemptNumber > 2)
                             {
+                                HexValues4DSAWriging[iteration] = HexValues[iteration];
                                 break;
                             }
                             else
                             {
                                 continue;
                             }
+                        }
+
+                        if (HexValues[iteration] < DSAlowerLimit || HexValues[iteration] > DSAHigherLimit)
+                        {
+                            Log.Error("DSA Value exceeds limits DSA Value :" + HexValues[iteration] + " DSA Higher Limits :" + DSAHigherLimit + " DSA Lower Limit :" + DSAlowerLimit + " Chanin Number : " + iteration);
+                            MessageBox.Show("DSA Limit exceeds, Breaking loop");
+                            stepPassFlag = false;   
+                            break;
+
                         }
                         DSACommand = dsaConstruction.GenerateCommand(iteration, HexValues[iteration]);
                         MRU_DUT.DR49CH2executeCALDSAScripts(DSACommand, "rjInitialConfiguration Completed");
@@ -1289,6 +1307,7 @@ namespace RjioMRU.TestSteps
                         if (resultStrings.Length < 5 || MeasuredPowerValue < 0)
                         {
                             StrChannelMeasurementsCh2[iteration] = iteration + "," + $" 0x{HexValues[iteration]:X}" + "," + "-999" + "," + "-999" + "," + "-999" + "," + "-999" + "," + "-999" + "," + "" + "," + "";
+                            stepPassFlag = false;
                             continue;
                         }
                         else

@@ -35,3 +35,4 @@ namespace RjioMRU
         public string HexValues { get => hexValues; set => hexValues = value; }
     }
 }
+

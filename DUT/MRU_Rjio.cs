@@ -2305,7 +2305,6 @@ namespace RjioMRU
                     throw new Exception("Timeout");
 
                 }
-
             } while (true);
         }
 
@@ -2323,7 +2322,7 @@ namespace RjioMRU
             DR49Ch1ComObj.ReadExisting();
             string command4EEPROM_DSA = "rj-rfeeprom-updater -upd_dsa_tx " + hexValues[0] + "," + hexValues[1] + "," + hexValues[2] + "," + hexValues[3] + "," + hexValues[4] + "," + hexValues[5] + "," + hexValues[6] + "," + hexValues[7] + "," + hexValues[8] + "," + hexValues[9] + "," + hexValues[10] + "," + hexValues[11] + "," + hexValues[12] + "," + hexValues[13] + "," + hexValues[14] + "," + hexValues[15] + " -upd_dsa_fb 0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f -upd_dac0 0x47E -upd_dac1 0x64B -upd_fw_ver 1.0 -upd_hw_ver B -upd_prv_valid";
             Log.Info(command4EEPROM_DSA);
-            DR49Ch1ComObj.WriteLine(command4EEPROM_DSA);
+            DR49Ch2ComObj.WriteLine(command4EEPROM_DSA);
 
 
         }

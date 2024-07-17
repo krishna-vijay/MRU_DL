@@ -12,6 +12,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Windows.Forms;
 //rj-dsa-init 16 0x7F 0x7F 0x7F 0x7F 0x7F 0x7F 0x7F 0x7F 0x7F 0x7F 0x7F 0x7F 0x7F 0x7F 0x7F 0x7F 16 0x0f 0x0f 0x0f 0x0f 0x0f 0x0f 0x0f 0x0f 0x0f 0x0f 0x0f 0x0f 0x0f 0x0f 0x0f 0x0f 2 1200 1611
 namespace RjioMRU.TestSteps
 {
@@ -31,6 +32,9 @@ namespace RjioMRU.TestSteps
     public class DR49_Ch1_DSA_Write : TestStep
     {
         #region Settings
+        Input<int> dsaHigherLimit ;
+        Input<int> dsaLowerLimit ;
+
         MRU_Rjio mruObj;
         private string[] hexValuesCh1 = new string[16] { "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F" };
         bool automaticDSAWriting = false;
@@ -39,22 +43,40 @@ namespace RjioMRU.TestSteps
 
         public DR49_Ch1_DSA_Write()
         {
+            DsaHigherLimit = new Input<int>();
+            DsaLowerLimit = new Input<int>();
             // ToDo: Set default values for properties / settings.
         }
 
         public MRU_Rjio MruObj { get => mruObj; set => mruObj = value; }
         [Display("Select Automatic and Manual ", Order: 0, Description: "Enter Hex Values for DSA")]
         public bool AutomaticDSAWriting { get => automaticDSAWriting; set => automaticDSAWriting = value; }
+        [Display("DSA Lower Limit", Order: 0, Description: "Enter DSA Lower Limit")]
+        public Input<int> DsaLowerLimit { get => dsaLowerLimit; set => dsaLowerLimit = value; }
+        [Display("DSA Higher Limit", Order: 0, Description: "Enter DSA Higher Limit")]
+        public Input<int> DsaHigherLimit { get => dsaHigherLimit; set => dsaHigherLimit = value; }
 
         public override void Run()
         {
             DSACHexValues channelValues = new DSACHexValues();
+            foreach (var item in CalibrationStep_CH1.HexValues4DSAWriging)
+            {
+                if (item>DsaHigherLimit.Value||item<DsaLowerLimit.Value)
+                {
+                   var messageDecision = MessageBox.Show("DSA Value is out of range :Lower Limit ="+DsaLowerLimit.Value +" DSA Higher Limit :" + DsaHigherLimit.Value +" Measured DSA :"+item +", Do you want to exit?","DSA Out of Range",MessageBoxButtons.YesNo);
+                    if (messageDecision == DialogResult.Yes)
+                    {
+                        return;
+                    }
+                }
+            }
 
 
             if (AutomaticDSAWriting)
             {
                 for (int iteration = 0; iteration < CalibrationStep_CH1.HexValues4DSAWriging.Length; iteration++)
                 {
+
                     hexValuesCh1[iteration] = $"0x{CalibrationStep_CH1.HexValues4DSAWriging[iteration]:X}";
                     //hexValuesCh1
                 }
@@ -76,11 +98,17 @@ namespace RjioMRU.TestSteps
     public class DR49_Ch2_DSA_Write : TestStep
     {
         #region Settings
+        Input<int> dsaHigherLimit;
+        Input<int> dsaLowerLimit;
         MRU_Rjio mruObj;
         private string[] hexValuesCh2 = new string[16] { "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F" };
         bool automaticDSAWriting = false;
         [Display("Select Automatic and Manual ", Order: 0, Description: "Enter Hex Values for DSA")]
         public bool AutomaticDSAWriting { get => automaticDSAWriting; set => automaticDSAWriting = value; }
+        [Display("DSA Lower Limit", Order: 0, Description: "Enter DSA Lower Limit")]
+        public Input<int> DsaLowerLimit { get => dsaLowerLimit; set => dsaLowerLimit = value; }
+        [Display("DSA Higher Limit", Order: 0, Description: "Enter DSA Higher Limit")]
+        public Input<int> DsaHigherLimit { get => dsaHigherLimit; set => dsaHigherLimit = value; }
 
         // ToDo: Add property here for each parameter the end user should be able to change
 
@@ -89,6 +117,8 @@ namespace RjioMRU.TestSteps
 
         public DR49_Ch2_DSA_Write()
         {
+            DsaHigherLimit = new Input<int>();
+            DsaLowerLimit = new Input<int>();
 
             // ToDo: Set default values for properties / settings.
         }
@@ -98,7 +128,17 @@ namespace RjioMRU.TestSteps
         public override void Run()
         {
             DSACHexValues channelValues = new DSACHexValues();
-
+            foreach (var item in CalibrationStep_CH2.HexValues4DSAWriging)
+            {
+                if (item > DsaHigherLimit.Value || item < DsaLowerLimit.Value)
+                {
+                    var messageDecision = MessageBox.Show("DSA Value is out of range :Lower Limit =" + DsaLowerLimit.Value + " DSA Higher Limit :" + DsaHigherLimit.Value + " Measured DSA :" + item + ", Do you want to exit?", "DSA Out of Range", MessageBoxButtons.YesNo);
+                    if (messageDecision == DialogResult.Yes)
+                    {
+                        return;
+                    }
+                }
+            }
             if (AutomaticDSAWriting)
             {
                 for (int iteration = 0; iteration < CalibrationStep_CH2.HexValues4DSAWriging.Length; iteration++)
@@ -107,7 +147,7 @@ namespace RjioMRU.TestSteps
                     //hexValuesCh1
                 }
             }
-            MruObj.Dr49_CH1_WriteDSAToEEPROM(AutomaticDSAWriting ? hexValuesCh2 : channelValues.HexValuesCh2);
+            MruObj.Dr49_CH2_WriteDSAToEEPROM(AutomaticDSAWriting ? hexValuesCh2 : channelValues.HexValuesCh2);
 
             //MruObj.Dr49_CH2_WriteDSAToEEPROM(CalibrationStep_CH2.HexValues4DSAWriging);
             Log.Info("DSA Values has been update in EEPROM of Channel 2");
