@@ -26,7 +26,7 @@ namespace RjioMRU
 
         public static string MES_CSV_FilePath { get; set; }
 
-        public static void UpdateMESCSVList(string GroupName, string Test_Step_Name, string Test_Step_Status, string Low_Limit, String Measured_Value, string High_Limit, string Limit_Type, string Expected_Value, string Unit_Of_Measure)
+        public static void UpdateMESCSV_Parametric_List(string GroupName, string Test_Step_Name, string Test_Step_Status, string Low_Limit, String Measured_Value, string High_Limit, string Limit_Type, string Expected_Value, string Unit_Of_Measure)
         {
             string str = GroupName + "," +
                 Test_Step_Name + "," +

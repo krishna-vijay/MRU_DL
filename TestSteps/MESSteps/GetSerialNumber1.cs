@@ -109,6 +109,9 @@ namespace RjioMRU
                 Log.Error("Error in MesCheckToStart, please check MES Connection: " + ex.Message);
                 UpgradeVerdict(Verdict.Error);
             }
+
+
+            MES_CSV.UpdateMESCSV_Parametric_List(MES_CSV.GroupName, this.StepRun.TestStepName  , Verdict.ToString(),"NA", SerialnumberByUser, "NA", "NA", "NA", "NA");
             RunChildSteps(); //If the step supports child steps.
         }
     }

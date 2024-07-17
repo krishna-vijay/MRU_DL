@@ -88,12 +88,7 @@ namespace RjioMRU
         [Display("Overall Defect Code", Description: "Enter the Overall Defect Code", Group: "CSV Informations", Order: 11)]
         public string OverallDefectCode { get => overallDefectCode; set => overallDefectCode = value; }
 
-
-
-
-
-
-        #endregion MES_CVS Group
+                #endregion MES_CVS Group
         // ToDo: Add property here for each parameter the end user should be able to change
         #endregion
 
