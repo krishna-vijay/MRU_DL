@@ -48,19 +48,75 @@ namespace RjioMRU
         public string MESInfoUrl { get => mESInfoUrl; set => mESInfoUrl = value; }
         [Display("Result Sever URL", Description: "Enter Result server URL", Order: 3)]
         public string ResultServerURL { get => resultServerURL; set => resultServerURL = value; }
+       
 
         string resultServerURL = string.Empty;
 
+
+        #region MES_CVS Group
+        string equipmentNumber = string.Empty;
+        [Display("Equipment Number", Description: "Enter the Equipment Number",Group:"CSV Informations", Order: 4)]
+        public string EquipmentNumber { get => equipmentNumber; set => equipmentNumber = value; }
+        string csvStorageFolder = string.Empty;
+        
+        [Display("CSV Storage Folder", Description: "Enter the CSV Storage Folder", Group: "CSV Informations", Order: 5)]
+        [DirectoryPath()]
+        public string CsvStorageFolder { get => csvStorageFolder; set => csvStorageFolder = value; }
+
+        string groupName = string.Empty;
+        [Display("Group Name", Description: "Enter the Group Name", Group: "CSV Informations", Order: 6)]
+        public string GroupName { get => groupName; set => groupName = value; }
+
+
+        string slot = string.Empty;
+        [Display("Slot", Description: "Enter the Slot", Group: "CSV Informations", Order: 7)]
+        public string Slot { get => slot; set => slot = value; }
+
+        string credentials = string.Empty;
+        [Display("Credentials", Description: "Enter the Credentials", Group: "CSV Informations", Order: 8)]
+        public string Credentials { get => credentials; set => credentials = value; }
+
+        string operationMode = string.Empty;
+        [Display("Operation Mode", Description: "Enter the Operation Mode", Group: "CSV Informations", Order: 9)]
+        public string OperationMode { get => operationMode; set => operationMode = value; }
+
+        string sequenceID = string.Empty;
+        [Display("Sequence ID", Description: "Enter the Sequence ID", Group: "CSV Informations", Order: 10)]
+        public string SequenceID { get => sequenceID; set => sequenceID = value; }
+
+        string overallDefectCode = string.Empty;
+        [Display("Overall Defect Code", Description: "Enter the Overall Defect Code", Group: "CSV Informations", Order: 11)]
+        public string OverallDefectCode { get => overallDefectCode; set => overallDefectCode = value; }
+
+
+
+
+
+
+        #endregion MES_CVS Group
         // ToDo: Add property here for each parameter the end user should be able to change
         #endregion
 
         #region Constructors
         public ClsMES()
         {
-            clientID = "p5599dc1uat";
-            employee = "62153666";
-            station = "539";
+            ClientID = "p5599dc1uat";
+            Employee = "62153666";
+            Station = "539";
             //unit_id = "JITSAF1FKMRU00006";
+
+            MES_CSV.GroupName = GroupName;
+            MES_CSV.Equipment_ID = EquipmentNumber;
+            MES_CSV.Slot = Slot;
+            MES_CSV.Credentials = Credentials;
+            MES_CSV.Operation_Mode = OperationMode;
+            MES_CSV.SequenceID = SequenceID;
+            MES_CSV.Overall_Defect_Code = OverallDefectCode;
+
+            MES_CSV.MES_CSV_FilePath = CsvStorageFolder;
+
+
+
         }
         #endregion Constructors
 
