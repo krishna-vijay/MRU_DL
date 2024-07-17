@@ -67,6 +67,7 @@ namespace RjioMRU
             {
                 UpgradeVerdict(Verdict.Fail);
             }
+            MES_CSV.UpdateMESCSV_Parametric_List(MES_CSV.GroupName,this.StepRun.TestStepName, this.Verdict.ToString(), "NA", "25000Mb/s", "NA", "NA", "NA", "NA");
             // If no verdict is used, the verdict will default to NotSet.
             // You can change the verdict using UpgradeVerdict() as shown below.
             // UpgradeVerdict(Verdict.Pass);
@@ -118,6 +119,7 @@ namespace RjioMRU
             {
                 UpgradeVerdict(Verdict.Fail);
             }
+            MES_CSV.UpdateMESCSV_Parametric_List(MES_CSV.GroupName, this.StepRun.TestStepName, this.Verdict.ToString(), "NA", ipChangeStatus.ToString(), "TRUE", "EQ", "TRUE", "NA");
             // If no verdict is used, the verdict will default to NotSet.
             // You can change the verdict using UpgradeVerdict() as shown below.
             // UpgradeVerdict(Verdict.Pass);
@@ -209,21 +211,11 @@ namespace RjioMRU
             Thread PTPthread = new Thread(()=>CCDUServerobj.PtpTaBCommandExecute(KeepTrace1));
             PTPthread.IsBackground = false;
             PTPthread.Start();
-            // var PingTestStatus = CCDUServerobj.PtpTaBCommandExecute(CCDUBasicVerification.linkInteraface);
             // ToDo: Add test case code.
             RunChildSteps(); //If the step supports child steps.
 
-            //if (PingTestStatus)
-            //{
               UpgradeVerdict(Verdict.Pass);
-            //}
-            //else
-            //{
-            //    UpgradeVerdict(Verdict.Fail);
-            //}
-            // If no verdict is used, the verdict will default to NotSet.
-            // You can change the verdict using UpgradeVerdict() as shown below.
-            // UpgradeVerdict(Verdict.Pass);
+            MES_CSV.UpdateMESCSV_Parametric_List(MES_CSV.GroupName, this.StepRun.TestStepName, this.Verdict.ToString(), "NA", "NA", "NA", "NA", "NA", "NA"       );
         }
     }
 
@@ -425,7 +417,9 @@ namespace RjioMRU
             // var PingTestStatus = CCDUServerobj.PhCTaBCommandExecute(CCDUBasicVerification.linkInteraface);
             // ToDo: Add test case code.
             RunChildSteps(); //If the step supports child steps
+
             UpgradeVerdict(Verdict.Pass);
+            MES_CSV.UpdateMESCSV_Parametric_List(MES_CSV.GroupName, this.StepRun.TestStepName, this.Verdict.ToString(), "NA", "NA", "NA", "NA", "NA", "NA");
         }
 
     }
@@ -509,7 +503,16 @@ namespace RjioMRU
 
         public override void Run()
         {
-            CCDUServerobj.RunVirutalFunctions(Command1, Command2, Command3);
+            try
+            {
+                CCDUServerobj.RunVirutalFunctions(Command1, Command2, Command3);
+
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
 
 
             // ToDo: Add test case code.
@@ -519,6 +522,7 @@ namespace RjioMRU
             // If no verdict is used, the verdict will default to NotSet.
             // You can change the verdict using UpgradeVerdict() as shown below.
             UpgradeVerdict(Verdict.Pass);
+            MES_CSV.UpdateMESCSV_Parametric_List(MES_CSV.GroupName,this.StepRun.TestStepName, this.Verdict.ToString(), "NA", "NA", "NA", "NA", "NA", "NA");
         }
     }
     
@@ -577,9 +581,10 @@ namespace RjioMRU
 
         public override void Run()
         {
+            bool CAResult = false;
             try
             {
-                CCDUServerobj.CarrierAggrigation(Command1, Command2, Command3, RefTag, Password, Command4, Command4RefTag, Command5, Command6);
+               CAResult = CCDUServerobj.CarrierAggrigation(Command1, Command2, Command3, RefTag, Password, Command4, Command4RefTag, Command5, Command6);
             }
             catch(Exception ex)
             {
@@ -590,6 +595,16 @@ namespace RjioMRU
             {
                 RunChildSteps(); //Turn off the power supply
             }
+            if (CAResult)
+            {
+                UpgradeVerdict(Verdict.Pass);
+            }
+            else
+            {
+                UpgradeVerdict(Verdict.Fail);
+            }
+            MES_CSV.UpdateMESCSV_Parametric_List(MES_CSV.GroupName,this.StepRun.TestStepName, this.Verdict.ToString(), CAResult.ToString(), "NA", "TRUE", "EQ", "TRUE", "NA"   );
+
             //UpgradeVerdict(Verdict.Pass);
         }
     }

@@ -276,6 +276,7 @@ namespace RjioMRU.TestSteps
             {
                 UpgradeVerdict(Verdict.Fail);
             }
+            MES_CSV.UpdateMESCSV_Parametric_List(MES_CSV.GroupName, this.StepRun.TestStepName, Verdict.ToString(),"NA", Verdict.ToString(), "TRUE", "EQ", "TRUE", "NA");
             // ToDo: Add test case code.
             RunChildSteps(); //If the step supports child steps.
 
@@ -313,6 +314,8 @@ namespace RjioMRU.TestSteps
             {
                 UpgradeVerdict(Verdict.Fail);
             }
+            MES_CSV.UpdateMESCSV_Parametric_List(MES_CSV.GroupName, this.StepRun.TestStepName, Verdict.ToString(), "NA", Verdict.ToString(), "TRUE", "EQ", "TRUE", "NA");
+
             // ToDo: Add test case code.
             RunChildSteps(); //If the step supports child steps.
 
@@ -358,6 +361,7 @@ namespace RjioMRU.TestSteps
             {
                 UpgradeVerdict(Verdict.Fail);
             }
+            MES_CSV.UpdateMESCSV_Parametric_List(MES_CSV.GroupName, this.StepRun.TestStepName, Verdict.ToString(), "NA", Verdict.ToString(), "TRUE", "EQ", "TRUE", "NA");
 
             // ToDo: Add test case code.
             RunChildSteps(); //If the step supports child steps.

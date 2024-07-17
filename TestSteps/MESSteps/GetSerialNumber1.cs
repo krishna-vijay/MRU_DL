@@ -85,7 +85,8 @@ namespace RjioMRU
                     componentArray[i] = componentDataObj.Result.data[i];
                 }
 
-                Serialnumber = Serialnumber;
+                Serialnumber = serialNumberByUser;
+
                 MacID = componentArray[(int)mesSelectoin.MacEnum].component_id.ToString();
                 ProductID = componentArray[(int)mesSelectoin.productIDEnum].component_id.ToString();
                 HstbID = componentArray[(int)mesSelectoin.hstbEnum].component_id.ToString();
@@ -109,7 +110,7 @@ namespace RjioMRU
                 Log.Error("Error in MesCheckToStart, please check MES Connection: " + ex.Message);
                 UpgradeVerdict(Verdict.Error);
             }
-
+            MES_CSV.MRU_Serial_number = serialNumberByUser;
 
             MES_CSV.UpdateMESCSV_Parametric_List(MES_CSV.GroupName, this.StepRun.TestStepName  , Verdict.ToString(),"NA", SerialnumberByUser, "NA", "NA", "NA", "NA");
             RunChildSteps(); //If the step supports child steps.

@@ -1978,7 +1978,16 @@ namespace RjioMRU
 
         public bool Dr21MRUIpChange(string ethInterface, string IPAddress)
         {
-            DR21ComObj.WriteLine("ifconfig " + ethInterface + " " + IPAddress + " up");
+            try
+            {
+                DR21ComObj.WriteLine("ifconfig " + ethInterface + " " + IPAddress + " up");
+
+            }
+            catch (Exception)
+            {
+
+                return false;
+            }
             return true;
         }
 

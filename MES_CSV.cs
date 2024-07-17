@@ -15,6 +15,10 @@ namespace RjioMRU
     public static class MES_CSV
     {
         public static List<string> MRU_MES_List = new List<string>();
+        
+        public static string MRU_Serial_number { get; set; }
+
+
         public static string GroupName { get; set; }
         public static string Equipment_ID { get; set; }
 

@@ -865,7 +865,7 @@ namespace RjioMRU.TestSteps
                 MRURjioReportCls.MACID3 = DR21_ReadInfo.MAC3;
                 MRURjioReportCls.MACID4 = DR21_ReadInfo.MAC4;
                 MRURjioReportCls.PcbSerialNumber = DR21_ReadInfo.PCBserialNumber;
-                MRURjioReportCls.ProductSerialNumber = DR21_ReadInfo.ProductSerialNumber;
+                MRURjioReportCls.ProductSerialNumber = MES_CSV.MRU_Serial_number;
                 foreach (var item in RjioMRU.TestSteps.CalibrationStep_CH1.StrChannelMeasurementsCh1)
                 {
                     MRURjioReportCls.Measurements += item + ";";
@@ -877,6 +877,7 @@ namespace RjioMRU.TestSteps
                 }
                 Results.Publish<RjioReportCls>("Report", MRURjioReportCls);
                 Log.Info("Measurements : " + MRURjioReportCls.Measurements);
+               // MES_CSV.UpdateHeader(MES_CSV.MRU_Serial_number,MES_CSV.pa)
             }
         }
     }
