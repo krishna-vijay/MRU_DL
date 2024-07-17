@@ -64,8 +64,6 @@ namespace RjioMRU
         public string EquipmentNumber { get => equipmentNumber; set => equipmentNumber = value; }
         string csvStorageFolder = string.Empty;
         
-      
-
         string groupName = string.Empty;
         [Display("Group Name", Description: "Enter the Group Name", Group: "CSV Informations", Order: 6)]
         public string GroupName { get => groupName; set => groupName = value; }
