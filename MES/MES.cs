@@ -103,15 +103,6 @@ namespace RjioMRU
             Station = "539";
             //unit_id = "JITSAF1FKMRU00006";
 
-            MES_CSV.GroupName = GroupName;
-            MES_CSV.Equipment_ID = EquipmentNumber;
-            MES_CSV.Slot = Slot;
-            MES_CSV.Credentials = Credentials;
-            MES_CSV.Operation_Mode = OperationMode;
-            MES_CSV.SequenceID = SequenceID;
-            MES_CSV.Overall_Defect_Code = OverallDefectCode;
-
-            MES_CSV.MES_CSV_FilePath = CsvStorageFolder;
 
 
 
@@ -366,6 +357,16 @@ namespace RjioMRU
         /// </summary>
         public override void Open()
         {
+
+            MES_CSV.GroupName = GroupName;
+            MES_CSV.Equipment_ID = EquipmentNumber;
+            MES_CSV.Slot = Slot;
+            MES_CSV.Credentials = Credentials;
+            MES_CSV.Operation_Mode = OperationMode;
+            MES_CSV.SequenceID = SequenceID;
+            MES_CSV.Overall_Defect_Code = OverallDefectCode;
+
+            MES_CSV.MES_CSV_FilePath = CsvStorageFolder;
 
             //authenticationEncoded = System.Convert.ToBase64String(Encoding.GetEncoding("ISO-8859-1").GetBytes(Username + ":" + Password));
             //BaseURL = "http://" + base.VisaAddress + ":8733";
