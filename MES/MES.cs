@@ -54,14 +54,17 @@ namespace RjioMRU
 
 
         #region MES_CVS Group
+
+        [Display("CSV Storage Folder", Description: "Enter the CSV Storage Folder", Group: "CSV Informations", Order: 4)]
+        [DirectoryPath()]
+        public string CsvStorageFolder { get => csvStorageFolder; set => csvStorageFolder = value; }
+
         string equipmentNumber = string.Empty;
-        [Display("Equipment Number", Description: "Enter the Equipment Number",Group:"CSV Informations", Order: 4)]
+        [Display("Equipment Number", Description: "Enter the Equipment Number",Group:"CSV Informations", Order: 5)]
         public string EquipmentNumber { get => equipmentNumber; set => equipmentNumber = value; }
         string csvStorageFolder = string.Empty;
         
-        [Display("CSV Storage Folder", Description: "Enter the CSV Storage Folder", Group: "CSV Informations", Order: 5)]
-        [DirectoryPath()]
-        public string CsvStorageFolder { get => csvStorageFolder; set => csvStorageFolder = value; }
+      
 
         string groupName = string.Empty;
         [Display("Group Name", Description: "Enter the Group Name", Group: "CSV Informations", Order: 6)]

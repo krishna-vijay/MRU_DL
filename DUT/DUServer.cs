@@ -686,7 +686,7 @@ namespace RjioMRU
 
         }
 
-        public void CarrierAggrigation(string command1 = "export LD_LIBRARY_PATH=/custom-sw/thirdparty/usr/lib64/:/custom-sw/thirdparty/usr/lib/:/usr/local/bin/:/custom-sw/thirdparty/usr/local/ssl/lib/", string command2 = "./netopeer2-cli", string command3 = "connect --host=192.168.1.2 --port=1830 --login=root", string refTag = "Type your password:", string password = "root", string command4 = "listen", string command4RefTag = "cmd_listen: Already connected to", string command5 = "edit-config --target running --config=/root/uplane_test_xml_for_release_2.9.0_ACTIVE_1.xml --defop merge", string command6 = "rm -rf /root/.ssh/known_hosts")
+        public bool CarrierAggrigation(string command1 = "export LD_LIBRARY_PATH=/custom-sw/thirdparty/usr/lib64/:/custom-sw/thirdparty/usr/lib/:/usr/local/bin/:/custom-sw/thirdparty/usr/local/ssl/lib/", string command2 = "./netopeer2-cli", string command3 = "connect --host=192.168.1.2 --port=1830 --login=root", string refTag = "Type your password:", string password = "root", string command4 = "listen", string command4RefTag = "cmd_listen: Already connected to", string command5 = "edit-config --target running --config=/root/uplane_test_xml_for_release_2.9.0_ACTIVE_1.xml --defop merge", string command6 = "rm -rf /root/.ssh/known_hosts")
         {
             bool warningMessage = false;
             Stopwatch  sw = Stopwatch.StartNew();
@@ -842,6 +842,15 @@ namespace RjioMRU
                 }
             } while (readConsole.Contains("OK"));
             TapThread.Sleep(100);
+            if (readConsole.Contains("OK"))
+
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
         
         
