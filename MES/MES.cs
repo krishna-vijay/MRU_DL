@@ -88,8 +88,18 @@ namespace RjioMRU
         string overallDefectCode = string.Empty;
         [Display("Overall Defect Code", Description: "Enter the Overall Defect Code", Group: "CSV Informations", Order: 11)]
         public string OverallDefectCode { get => overallDefectCode; set => overallDefectCode = value; }
+        
 
-                #endregion MES_CVS Group
+        string partNumber = string.Empty;
+        [Display("Part Number",Description:"Enter the Part Number",Group: "CSV Informations",Order:12)]
+        public string PartNumber { get => partNumber; set => partNumber = value; }
+
+        string equipment_ID = string.Empty;
+        [Display("Equipment ID",Description:"Enter equipment ID",Group: "CSV Informations", Order: 13)]
+        public string Equipment_ID { get => equipment_ID; set => equipment_ID = value; }
+
+
+        #endregion MES_CVS Group
         // ToDo: Add property here for each parameter the end user should be able to change
         #endregion
 
@@ -357,7 +367,7 @@ namespace RjioMRU
         {
 
             MES_CSV.GroupName = GroupName;
-            MES_CSV.Equipment_ID = EquipmentNumber;
+            MES_CSV.Equipment_Number = EquipmentNumber;
             MES_CSV.Slot = Slot;
             MES_CSV.Credentials = Credentials;
             MES_CSV.Operation_Mode = OperationMode;
@@ -365,7 +375,8 @@ namespace RjioMRU
             MES_CSV.Overall_Defect_Code = OverallDefectCode;
 
             MES_CSV.MES_CSV_FilePath = CsvStorageFolder;
-
+            MES_CSV.PART_Number = PartNumber;
+            MES_CSV.Equipment_ID = Equipment_ID;
             //authenticationEncoded = System.Convert.ToBase64String(Encoding.GetEncoding("ISO-8859-1").GetBytes(Username + ":" + Password));
             //BaseURL = "http://" + base.VisaAddress + ":8733";
             //handler = new HttpClientHandler()

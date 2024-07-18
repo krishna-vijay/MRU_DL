@@ -20,8 +20,8 @@ namespace RjioMRU
 
 
         public static string GroupName { get; set; }
-        public static string Equipment_ID { get; set; }
-
+        public static string Equipment_Number { get; set; }
+        public static string Equipment_ID {  get; set; }
         public static string Slot { get; set; }
         public static string Credentials { get; set; }
         public static string Operation_Mode  { get; set; }
@@ -29,6 +29,7 @@ namespace RjioMRU
         public static string Overall_Defect_Code { get; set; }
 
         public static string MES_CSV_FilePath { get; set; }
+        public static string PART_Number { get; internal set; }
 
         public static void UpdateMESCSV_Parametric_List(string GroupName, string Test_Step_Name, string Test_Step_Status, string Low_Limit, String Measured_Value, string High_Limit, string Limit_Type, string Expected_Value, string Unit_Of_Measure)
         {
@@ -62,13 +63,21 @@ namespace RjioMRU
                 Test_Sequence_ID + "," +
                 Overall_Defect_Code;
 
-            MRU_MES_List.Insert(0, str.ToString());
+            if (MRU_MES_List.Count > 0)
+            {
+
+                MRU_MES_List.Insert(0, str.ToString());
+            }
+            else
+            {
+                MRU_MES_List.Add(str);
+            }
         }
 
         public static void WrteMESCSVFile()
         {
             string csv = string.Join(Environment.NewLine, MRU_MES_List);
-            File.WriteAllText(MES_CSV_FilePath, csv);
+            File.WriteAllText(System.IO.Path.Combine( MES_CSV_FilePath,MES_CSV.MRU_Serial_number+"_"+MES_CSV.Equipment_Number+"_"+DateTime.Now.ToString("yyyyMMddHHmmss"))+".CSV", csv);
         }
     }
 }

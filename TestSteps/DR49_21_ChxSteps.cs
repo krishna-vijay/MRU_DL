@@ -415,6 +415,9 @@ namespace RjioMRU.TestSteps
         public override void Run()
         {
             MruObj.Dr21_ap_calib_Rx_Tx_Functions();
+            MES_CSV.UpdateMESCSV_Parametric_List(MES_CSV.GroupName, this.StepRun.TestStepName, Verdict.ToString(), "NA", Verdict.ToString(), "TRUE", "EQ", "TRUE", "NA");
+
+
 
         }
     }
@@ -444,9 +447,19 @@ namespace RjioMRU.TestSteps
 
         public override void Run()
         {
-            MruObj.Dr21MRUIpChange(InterfaceName, IpAddress);
+          bool ipChangeResult =  MruObj.Dr21MRUIpChange(InterfaceName, IpAddress);
             // ToDo: Add test case code.
             RunChildSteps(); //If the step supports child steps.
+
+            if (ipChangeResult)
+            {
+                UpgradeVerdict(Verdict.Pass);
+            }
+            else
+            {
+                UpgradeVerdict(Verdict.Fail);
+            }
+            MES_CSV.UpdateMESCSV_Parametric_List(MES_CSV.GroupName, this.StepRun.TestStepName, Verdict.ToString(), "NA", Verdict.ToString(), "TRUE", "EQ", "TRUE", "NA");
 
             // If no verdict is used, the verdict will default to NotSet.
             // You can change the verdict using UpgradeVerdict() as shown below.
@@ -502,6 +515,8 @@ namespace RjioMRU.TestSteps
             {
                 UpgradeVerdict(Verdict.Fail);
             }
+            MES_CSV.UpdateMESCSV_Parametric_List(MES_CSV.GroupName, this.StepRun.TestStepName, Verdict.ToString(), PingTestStatus? "0% packet loss":"", Verdict.ToString(), "PingTestStatus", "EQ", "TRUE", "NA");
+
             // If no verdict is used, the verdict will default to NotSet.
             // You can change the verdict using UpgradeVerdict() as shown below.
             // UpgradeVerdict(Verdict.Pass);
@@ -547,6 +562,8 @@ namespace RjioMRU.TestSteps
             {
                 UpgradeVerdict(Verdict.Fail);
             }
+            MES_CSV.UpdateMESCSV_Parametric_List(MES_CSV.GroupName, this.StepRun.TestStepName, Verdict.ToString(), PingTestStatus ? "TRUE" : "", Verdict.ToString(),PingTestStatus.ToString(), "EQ", "TRUE", "NA");
+
             // If no verdict is used, the verdict will default to NotSet.
             // You can change the verdict using UpgradeVerdict() as shown below.
             // UpgradeVerdict(Verdict.Pass);
@@ -590,6 +607,8 @@ namespace RjioMRU.TestSteps
             {
                 UpgradeVerdict(Verdict.Fail);
             }
+            MES_CSV.UpdateMESCSV_Parametric_List(MES_CSV.GroupName, this.StepRun.TestStepName, Verdict.ToString(), "NA", "Modem started", "Modem started", "EQ", "Modem started", "NA");
+
             // If no verdict is used, the verdict will default to NotSet.
             // You can change the verdict using UpgradeVerdict() as shown below.
             // UpgradeVerdict(Verdict.Pass);
@@ -638,6 +657,8 @@ namespace RjioMRU.TestSteps
             {
                 UpgradeVerdict(Verdict.Fail);
             }
+            MES_CSV.UpdateMESCSV_Parametric_List(MES_CSV.GroupName, this.StepRun.TestStepName, Verdict.ToString(), "NA", PingTestStatus? "PTP synchronization detected established!" :"", "TRUE", "EQ", "TRUE", "NA");
+
             // If no verdict is used, the verdict will default to NotSet.
             // You can change the verdict using UpgradeVerdict() as shown below.
             // UpgradeVerdict(Verdict.Pass);
@@ -681,6 +702,8 @@ namespace RjioMRU.TestSteps
             {
                 UpgradeVerdict(Verdict.Fail);
             }
+            MES_CSV.UpdateMESCSV_Parametric_List(MES_CSV.GroupName, this.StepRun.TestStepName, Verdict.ToString(), "NA", PingTestStatus? "Modem initialization is in process" : "", "TRUE", "EQ", "TRUE", "NA");
+
             // If no verdict is used, the verdict will default to NotSet.
             // You can change the verdict using UpgradeVerdict() as shown below.
             // UpgradeVerdict(Verdict.Pass);
@@ -722,6 +745,8 @@ namespace RjioMRU.TestSteps
             {
                 UpgradeVerdict(Verdict.Fail);
             }
+            MES_CSV.UpdateMESCSV_Parametric_List(MES_CSV.GroupName, this.StepRun.TestStepName, Verdict.ToString(), "NA", PingTestStatus.ToString(), "TRUE", "EQ", "TRUE", "NA");
+
             // If no verdict is used, the verdict will default to NotSet.
             // You can change the verdict using UpgradeVerdict() as shown below.
             // UpgradeVerdict(Verdict.Pass);
@@ -766,6 +791,8 @@ namespace RjioMRU.TestSteps
             {
                 UpgradeVerdict(Verdict.Fail);
             }
+            MES_CSV.UpdateMESCSV_Parametric_List(MES_CSV.GroupName, this.StepRun.TestStepName, Verdict.ToString(), "NA", Verdict.ToString(), "TRUE", "EQ", "TRUE", "NA");
+
             // ToDo: Add test case code.
             RunChildSteps(); //If the step supports child steps.
 
@@ -857,6 +884,8 @@ namespace RjioMRU.TestSteps
             {
                 UpgradeVerdict(Verdict.Fail);
             }
+            MES_CSV.UpdateMESCSV_Parametric_List(MES_CSV.GroupName, this.StepRun.TestStepName, Verdict.ToString(), "NA", Verdict.ToString(), "TRUE", "EQ", "TRUE", "NA");
+
             // ToDo: Add test case code.
             RunChildSteps(); //If the step supports child steps.
 
@@ -903,6 +932,8 @@ namespace RjioMRU.TestSteps
             {
                 UpgradeVerdict(Verdict.Fail);
             }
+            MES_CSV.UpdateMESCSV_Parametric_List(MES_CSV.GroupName, this.StepRun.TestStepName, Verdict.ToString(), "NA", Verdict.ToString(), "TRUE", "EQ", "TRUE", "NA");
+
             // ToDo: Add test case code.
             RunChildSteps(); //If the step supports child steps.
 
@@ -940,6 +971,7 @@ namespace RjioMRU.TestSteps
                 UpgradeVerdict(Verdict.Fail);
             }
 
+            MES_CSV.UpdateMESCSV_Parametric_List(MES_CSV.GroupName, this.StepRun.TestStepName, Verdict.ToString(), "NA", Verdict.ToString(), "TRUE", "EQ", "TRUE", "NA");
 
             // ToDo: Add test case code.
             RunChildSteps(); //If the step supports child steps.
@@ -1260,6 +1292,8 @@ namespace RjioMRU.TestSteps
 
             int StringOk = string.Compare(slot21dr, slot49DrCh1);
             int string2OK = string.Compare(slot21dr, slot49DrCh2);
+            MES_CSV.UpdateMESCSV_Parametric_List(MES_CSV.GroupName, this.StepRun.TestStepName, Verdict.ToString(),"NA", slot21dr.ToString() +":"+ slot49DrCh1.ToString(), Verdict.ToString(),"EQ", slot21dr.ToString()+"="+ slot49DrCh1.ToString(), "NA");
+
             if (StringOk != 0)
             {
                 UpgradeVerdict(Verdict.Fail);
@@ -1274,6 +1308,7 @@ namespace RjioMRU.TestSteps
                 }
             }
             UpgradeVerdict(Verdict.Pass);
+
             // ToDo: Add test case code.
             RunChildSteps(); //If the step supports child steps.
             // If no verdict is used, the verdict will default to NotSet.
@@ -1313,6 +1348,8 @@ namespace RjioMRU.TestSteps
             }
 
             UpgradeVerdict(Verdict.Pass);
+            MES_CSV.UpdateMESCSV_Parametric_List(MES_CSV.GroupName, this.StepRun.TestStepName, Verdict.ToString(), "NA", Verdict.ToString() , "TRUE", "EQ", "TRUE", "NA");
+
             // ToDo: Add test case code.
             RunChildSteps(); //If the step supports child steps.
             // If no verdict is used, the verdict will default to NotSet.
