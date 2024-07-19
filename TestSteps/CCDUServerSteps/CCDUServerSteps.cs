@@ -527,9 +527,10 @@ namespace RjioMRU
 
         public override void Run()
         {
+            bool returnValue=false;
             try
             {
-                CCDUServerobj.RunVirutalFunctions(Command1, Command2, Command3);
+              returnValue=  CCDUServerobj.RunVirutalFunctions(Command1, Command2, Command3);
 
             }
             catch (Exception)
@@ -546,7 +547,7 @@ namespace RjioMRU
             // If no verdict is used, the verdict will default to NotSet.
             // You can change the verdict using UpgradeVerdict() as shown below.
             UpgradeVerdict(Verdict.Pass);
-            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, this.Verdict.ToString(), "NA", "NA", "NA", "NA", "NA", "NA");
+            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, this.Verdict.ToString(), "NA", returnValue.ToString(), "EQ", "TRUE", "NA", "NA");
         }
     }
 

@@ -964,14 +964,25 @@ namespace RjioMRU
             return data = MruCCDUServerDataStream.Read();
         }
 
-        public void RunVirutalFunctions(String VirtualFunctionCommand, string VirtualFunctionCommand2, string VirtualFunctionCommand3)
+        public bool RunVirutalFunctions(String VirtualFunctionCommand, string VirtualFunctionCommand2, string VirtualFunctionCommand3)
         {
-            WritetoSSH(VirtualFunctionCommand);
-            Log.Info("Virtual Functions command sent " + VirtualFunctionCommand);
-            WritetoSSH(VirtualFunctionCommand2);
-            Log.Info("Virtual Functions command sent " + VirtualFunctionCommand3);
-            WritetoSSH(VirtualFunctionCommand3);
-            Log.Info("Virtual Functions command sent " + VirtualFunctionCommand3);
+            try
+            {
+                WritetoSSH(VirtualFunctionCommand);
+                Log.Info("Virtual Functions command sent " + VirtualFunctionCommand);
+                WritetoSSH(VirtualFunctionCommand2);
+                Log.Info("Virtual Functions command sent " + VirtualFunctionCommand3);
+                WritetoSSH(VirtualFunctionCommand3);
+                Log.Info("Virtual Functions command sent " + VirtualFunctionCommand3);
+
+            }
+            catch (Exception)
+            {
+
+                return false;
+            }
+
+            return true;
         }
 
         public void CCDU_CA_known_hostsCommand()

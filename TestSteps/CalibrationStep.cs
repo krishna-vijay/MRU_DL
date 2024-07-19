@@ -292,7 +292,7 @@ namespace RjioMRU.TestSteps
                             }
                             var dpdMEasurementStartTime = stopwathCh1.ElapsedMilliseconds;
                             TapThread.Sleep(1000);
-                            //MRU_DUT.Dr49_DPD_Measurement(iteration, out var txvalue, out var rxvalue, MRU_DUT.GetDR49Ch1ComObj());
+                            MRU_DUT.Dr49_DPD_Measurement(iteration, out var txvalue, out var rxvalue, MRU_DUT.GetDR49Ch1ComObj());
                             var dpdMeasurementStopTime = stopwathCh1.ElapsedMilliseconds;
                             Log.Info("DPD Measurement time for Ch1 and chain {0} is {1} ", iteration, (dpdMeasurementStopTime - dpdMEasurementStartTime) / 1000);
                             if (iteration <= 7)
