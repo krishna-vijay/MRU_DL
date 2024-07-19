@@ -408,7 +408,12 @@ namespace RjioMRU
             return ORANInit;
         }
 
-        public bool Dr49_CH1_DPD_Measurement(int channelNumber, out double Txvalue, out double RxValue)
+        public SerialPort GetDR49Ch1ComObj()
+        {
+            return DR49Ch1ComObj;
+        }
+
+        public bool Dr49_DPD_Measurement(int channelNumber, out double Txvalue, out double RxValue, SerialPort dR49ChComObj)
         {
             Log.Debug("49DR CH1 Functions");
             int count = 0;
@@ -424,12 +429,12 @@ namespace RjioMRU
             //string command = (channelNumber <= 7 ? "dpd1-debug" : "dpd2-debug");
             string command = (channelNumber <= 7 ? "dpd_dbg_host_app 0xa0060000" : "dpd_dbg_host_app 0xa00e0000");
             channelNumber = channelNumber % 8;
-            DR49Ch1ComObj.WriteLine(command);
+            dR49ChComObj.WriteLine(command);
             string readValue = string.Empty;
             do
             {
                 TapThread.Sleep(200);
-                readValue = DR49Ch1ComObj.ReadExisting();
+                readValue = dR49ChComObj.ReadExisting();
                 if (!string.IsNullOrEmpty(readValue.Trim()))
                 {
                     foreach (var line in readValue.Split('\n'))
@@ -443,13 +448,13 @@ namespace RjioMRU
                     if (sp.ElapsedMilliseconds > 10000)
                     {
                         sp.Restart();
-                        DR49Ch1ComObj.WriteLine("\x03");
+                        dR49ChComObj.WriteLine("\x03");
                         TapThread.Sleep(200);
-                        DR49Ch1ComObj.WriteLine("\x03");
+                        dR49ChComObj.WriteLine("\x03");
                         TapThread.Sleep(1000);
-                        DR49Ch1ComObj.ReadExisting();
+                        dR49ChComObj.ReadExisting();
                         readValue = string.Empty;
-                        DR49Ch1ComObj.WriteLine(command);
+                        dR49ChComObj.WriteLine(command);
                     }
                 }
 
@@ -461,11 +466,11 @@ namespace RjioMRU
                 {
                     if (!Read_Capture_Power_Meter)
                     {
-                        DR49Ch1ComObj.WriteLine("1");
+                        dR49ChComObj.WriteLine("1");
                     }
                     else
                     {
-                        DR49Ch1ComObj.WriteLine("2");
+                        dR49ChComObj.WriteLine("2");
                     }
                 }
 
@@ -474,7 +479,7 @@ namespace RjioMRU
 
                 if (readValue.Replace("\n", string.Empty).Contains("DPD User Interface Base Address: [0xa0060000]") || readValue.Replace("\n", string.Empty).Contains("DPD User Interface Base Address: [0xa4060000]"))
                 {
-                    DR49Ch1ComObj.WriteLine(Environment.NewLine);
+                    dR49ChComObj.WriteLine(Environment.NewLine);
                 }
 
                 if ((readValue.Replace("\n", string.Empty).Contains("Application SUB MENU") ||
@@ -504,11 +509,11 @@ namespace RjioMRU
                         string txStr = string.Empty;
                         string rxStr = string.Empty;
                         TapThread.Sleep(200);
-                        DR49Ch1ComObj.ReadExisting();
-                        DR49Ch1ComObj.WriteLine("6");
+                        dR49ChComObj.ReadExisting();
+                        dR49ChComObj.WriteLine("6");
                         do
                         {
-                            TxRxValues += DR49Ch1ComObj.ReadExisting().Replace("\n", string.Empty);
+                            TxRxValues += dR49ChComObj.ReadExisting().Replace("\n", string.Empty);
                             //TapThread.Sleep(200);
                         } while (!TxRxValues.Replace("\n", string.Empty).Contains("Sub Menu Selection:"));
                         ///////////////////////////////////////////////
@@ -544,35 +549,35 @@ namespace RjioMRU
                         ///////////////////////////////////////////////
                         //  extractTxRx(channelNumber, out txvalue, out RxValue, TxRxValues);
                         Read_Capture_Power_Meter = true;
-                        DR49Ch1ComObj.WriteLine("99");
+                        dR49ChComObj.WriteLine("99");
                     }
                 }
 
                 if (readValue.Contains("Exiting program"))
                 {
-                    DR49Ch1ComObj.WriteLine(Environment.NewLine);
+                    dR49ChComObj.WriteLine(Environment.NewLine);
                     break;
                 }
 
                 if (readValue.Replace("\n", string.Empty).Contains("Failed to open DPD Host Interface"))
                 {
-                    DR49Ch1ComObj.WriteLine("\x03");
+                    dR49ChComObj.WriteLine("\x03");
                     TapThread.Sleep(500);
-                    DR49Ch1ComObj.WriteLine("\x03");
+                    dR49ChComObj.WriteLine("\x03");
                     TapThread.Sleep(1000);
-                    DR49Ch1ComObj.WriteLine(command);
+                    dR49ChComObj.WriteLine(command);
                     Read_Capture_Power_Meter = false;
                     Log.Info("DPD Meas Repeting for Failed to open DPD Host Interface");
                     //throw new Exception("DPD Host interface open failed");
                 }
                 if (readValue.Replace("\n", string.Empty).Contains("Error! Wrong selection"))
                 {
-                    DR49Ch1ComObj.WriteLine("\x03");
+                    dR49ChComObj.WriteLine("\x03");
                     TapThread.Sleep(500);
-                    DR49Ch1ComObj.ReadExisting();
+                    dR49ChComObj.ReadExisting();
                     readValue = string.Empty;
                     Log.Info("DPD Meas Repeting for Error! Wrong selection");
-                    DR49Ch1ComObj.WriteLine(command);
+                    dR49ChComObj.WriteLine(command);
 
                 }
 
@@ -584,19 +589,19 @@ namespace RjioMRU
             //int count = 0;
             //txvalue = 0;
             //RxValue = 0;
-            //DR49Ch1ComObj.WriteLine("\x03");
+            //dR49ChComObj.WriteLine("\x03");
             //Stopwatch sw = Stopwatch.StartNew();
-            //// DR49Ch1ComObj.WriteLine(Environment.NewLine);
+            //// dR49ChComObj.WriteLine(Environment.NewLine);
 
             //bool Read_Capture_Power_Meter = false;
             //string command = (channelNumber <= 7 ? "dpd1-debug" : "dpd2-debug");
             //channelNumber = channelNumber % 8;
-            //DR49Ch1ComObj.WriteLine(command);
+            //dR49ChComObj.WriteLine(command);
             //string readValue = string.Empty;
             //do
             //{
             //    TapThread.Sleep(200);
-            //    readValue = DR49Ch1ComObj.ReadExisting();
+            //    readValue = dR49ChComObj.ReadExisting();
             //    if (!string.IsNullOrEmpty(readValue.Trim()))
             //    {
             //        foreach (var line in readValue.Split('\n'))
@@ -609,11 +614,11 @@ namespace RjioMRU
             //    {
             //        if (sw.ElapsedMilliseconds > 10000)
             //        {
-            //            DR49Ch1ComObj.WriteLine("\x03");
+            //            dR49ChComObj.WriteLine("\x03");
             //            TapThread.Sleep(100);
-            //            DR49Ch1ComObj.ReadExisting();
+            //            dR49ChComObj.ReadExisting();
             //            readValue = string.Empty;
-            //            DR49Ch1ComObj.WriteLine(command);
+            //            dR49ChComObj.WriteLine(command);
             //            sw.Restart();
             //        }
 
@@ -624,37 +629,37 @@ namespace RjioMRU
             //    {
             //        if (!Read_Capture_Power_Meter)
             //        {
-            //            DR49Ch1ComObj.WriteLine("1");
+            //            dR49ChComObj.WriteLine("1");
 
             //        }
             //        else
             //        {
-            //            DR49Ch1ComObj.WriteLine("2");
+            //            dR49ChComObj.WriteLine("2");
             //        }
             //    }
 
 
             //    if (readValue.Replace("\n", string.Empty).Contains("Failed to open DPD Host Interface"))
             //    {
-            //        DR49Ch1ComObj.WriteLine("\x03");
+            //        dR49ChComObj.WriteLine("\x03");
             //        TapThread.Sleep(100);
-            //        DR49Ch1ComObj.WriteLine(command);
+            //        dR49ChComObj.WriteLine(command);
             //        Read_Capture_Power_Meter = false;
             //        Log.Info("DPD Meas Repeating for Failed to open DPD Host Interface");
             //        //throw new Exception("DPD Host interface open failed");
             //    }
             //    if (readValue.Replace("\n", string.Empty).Contains("Error! Wrong selection"))
-            //        DR49Ch1ComObj.WriteLine("\x03");
+            //        dR49ChComObj.WriteLine("\x03");
             //        TapThread.Sleep(100);
-            //        DR49Ch1ComObj.ReadExisting();
+            //        dR49ChComObj.ReadExisting();
             //        readValue = string.Empty;
-            //        DR49Ch1ComObj.WriteLine(command);
+            //        dR49ChComObj.WriteLine(command);
             //        Log.Info("DPD Meas Repeating for Error! Wrong selection");
             //    }
 
             //    if (readValue.Replace("\n", string.Empty).Contains("DPD User Interface Base Address: [0xa4000000]:") || readValue.Replace("\n", string.Empty).Contains("DPD User Interface Base Address: [0xa4060000]"))
             //    {
-            //        DR49Ch1ComObj.WriteLine(Environment.NewLine);
+            //        dR49ChComObj.WriteLine(Environment.NewLine);
 
             //    }
 
@@ -667,13 +672,13 @@ namespace RjioMRU
             //            string txStr = string.Empty;
             //            string rxStr = string.Empty;
             //            TapThread.Sleep(100);
-            //            DR49Ch1ComObj.WriteLine("6");
+            //            dR49ChComObj.WriteLine("6");
 
             //            do
             //            {
 
 
-            //                TxRxValues += DR49Ch1ComObj.ReadExisting().Replace("\n", string.Empty);
+            //                TxRxValues += dR49ChComObj.ReadExisting().Replace("\n", string.Empty);
             //                //TapThread.Sleep(200);
 
             //            } while (!TxRxValues.Replace("\n", string.Empty).Contains("Sub Menu Selection:"));
@@ -721,14 +726,14 @@ namespace RjioMRU
 
             //            Read_Capture_Power_Meter = true;
 
-            //            DR49Ch1ComObj.WriteLine("99");
+            //            dR49ChComObj.WriteLine("99");
             //        }
             //    }
 
 
             //    if (readValue.Contains("Exiting program"))
             //    {
-            //        DR49Ch1ComObj.WriteLine(Environment.NewLine);
+            //        dR49ChComObj.WriteLine(Environment.NewLine);
             //        break;
             //    }
 

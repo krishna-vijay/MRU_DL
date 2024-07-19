@@ -64,9 +64,9 @@ namespace RjioMRU
         public string EquipmentNumber { get => equipmentNumber; set => equipmentNumber = value; }
         string csvStorageFolder = string.Empty;
         
-        string groupName = string.Empty;
-        [Display("Group Name", Description: "Enter the Group Name", Group: "CSV Informations", Order: 6)]
-        public string GroupName { get => groupName; set => groupName = value; }
+        //string groupName = string.Empty;
+        //[Display("Group Name", Description: "Enter the Group Name", Group: "CSV Informations", Order: 6)]
+        //public string GroupName { get => groupName; set => groupName = value; }
 
 
         string slot = string.Empty;
@@ -77,9 +77,9 @@ namespace RjioMRU
         [Display("Credentials", Description: "Enter the Credentials", Group: "CSV Informations", Order: 8)]
         public string Credentials { get => credentials; set => credentials = value; }
 
-        string operationMode = string.Empty;
+        OperationCodes operationMode = OperationCodes.PRODUCTION;
         [Display("Operation Mode", Description: "Enter the Operation Mode", Group: "CSV Informations", Order: 9)]
-        public string OperationMode { get => operationMode; set => operationMode = value; }
+        public OperationCodes OperationMode { get => operationMode; set => operationMode = value; }
 
         string sequenceID = string.Empty;
         [Display("Sequence ID", Description: "Enter the Sequence ID", Group: "CSV Informations", Order: 10)]
@@ -366,11 +366,11 @@ namespace RjioMRU
         public override void Open()
         {
 
-            MES_CSV.GroupName = GroupName;
+            //MES_CSV.GroupName = GroupName;
             MES_CSV.Equipment_Number = EquipmentNumber;
             MES_CSV.Slot = Slot;
             MES_CSV.Credentials = Credentials;
-            MES_CSV.Operation_Mode = OperationMode;
+            MES_CSV.Operation_Mode =Enum.GetName(typeof(OperationCodes),OperationMode);
             MES_CSV.SequenceID = SequenceID;
             MES_CSV.Overall_Defect_Code = OverallDefectCode;
 
@@ -436,6 +436,10 @@ namespace RjioMRU
         public int level { get; set; }
         public string path { get; set; }
         public bool cycle { get; set; }
+    }
+    public enum OperationCodes
+    {
+        PRODUCTION,ENGINEERING,CALIBRATION,SKIPPING,TESTING
     }
 }
 

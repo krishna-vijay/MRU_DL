@@ -68,7 +68,7 @@ namespace RjioMRU
             {
                 UpgradeVerdict(Verdict.Fail);
             }
-            MES_CSV.UpdateMESCSV_Parametric_List(MES_CSV.GroupName, this.StepRun.TestStepName, this.Verdict.ToString(), "NA", "25000Mb/s", "NA", "NA", "NA", "NA");
+            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, this.Verdict.ToString(), "NA", "25000Mb/s", "NA", "NA", "NA", "NA");
             // If no verdict is used, the verdict will default to NotSet.
             // You can change the verdict using UpgradeVerdict() as shown below.
             // UpgradeVerdict(Verdict.Pass);
@@ -120,7 +120,7 @@ namespace RjioMRU
             {
                 UpgradeVerdict(Verdict.Fail);
             }
-            MES_CSV.UpdateMESCSV_Parametric_List(MES_CSV.GroupName, this.StepRun.TestStepName, this.Verdict.ToString(), "NA", ipChangeStatus.ToString(), "TRUE", "EQ", "TRUE", "NA");
+            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, this.Verdict.ToString(), "NA", ipChangeStatus.ToString(), "TRUE", "EQ", "TRUE", "NA");
             // If no verdict is used, the verdict will default to NotSet.
             // You can change the verdict using UpgradeVerdict() as shown below.
             // UpgradeVerdict(Verdict.Pass);
@@ -216,7 +216,7 @@ namespace RjioMRU
             RunChildSteps(); //If the step supports child steps.
 
             UpgradeVerdict(Verdict.Pass);
-            MES_CSV.UpdateMESCSV_Parametric_List(MES_CSV.GroupName, this.StepRun.TestStepName, this.Verdict.ToString(), "NA", "NA", "NA", "NA", "NA", "NA");
+            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, this.Verdict.ToString(), "NA", "NA", "NA", "NA", "NA", "NA");
         }
     }
 
@@ -272,7 +272,7 @@ namespace RjioMRU
             //if (PingTestStatus)
             //{
             UpgradeVerdict(Verdict.Pass);
-            MES_CSV.UpdateMESCSV_Parametric_List(MES_CSV.GroupName, this.StepRun.TestStepName, Verdict.ToString(), "NA", Verdict.ToString(), Verdict.ToString(), "EQ", "TRUE", "NA");
+            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, Verdict.ToString(), "NA", Verdict.ToString(), Verdict.ToString(), "EQ", "TRUE", "NA");
 
 
             //}
@@ -334,7 +334,7 @@ namespace RjioMRU
             //{
 
             UpgradeVerdict(Verdict.Pass);
-            MES_CSV.UpdateMESCSV_Parametric_List(MES_CSV.GroupName, this.StepRun.TestStepName, this.Verdict.ToString(), "NA", "NA", "NA", "NA", "NA", "NA");
+            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, this.Verdict.ToString(), "NA", "NA", "NA", "NA", "NA", "NA");
 
             //}
             //else
@@ -396,7 +396,7 @@ namespace RjioMRU
             {
                 UpgradeVerdict(Verdict.Fail);
             }
-            MES_CSV.UpdateMESCSV_Parametric_List(MES_CSV.GroupName, this.StepRun.TestStepName, this.Verdict.ToString(), "NA", resultStatus.ToString(), "TRUE", "EQ", "TRUE", "NA");
+            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, this.Verdict.ToString(), "NA", resultStatus.ToString(), "TRUE", "EQ", "TRUE", "NA");
 
         }
 
@@ -443,7 +443,7 @@ namespace RjioMRU
             RunChildSteps(); //If the step supports child steps
 
             UpgradeVerdict(Verdict.Pass);
-            MES_CSV.UpdateMESCSV_Parametric_List(MES_CSV.GroupName, this.StepRun.TestStepName, this.Verdict.ToString(), "NA", "NA", "NA", "NA", "NA", "NA");
+            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, this.Verdict.ToString(), "NA", "NA", "NA", "NA", "NA", "NA");
         }
 
     }
@@ -546,7 +546,7 @@ namespace RjioMRU
             // If no verdict is used, the verdict will default to NotSet.
             // You can change the verdict using UpgradeVerdict() as shown below.
             UpgradeVerdict(Verdict.Pass);
-            MES_CSV.UpdateMESCSV_Parametric_List(MES_CSV.GroupName, this.StepRun.TestStepName, this.Verdict.ToString(), "NA", "NA", "NA", "NA", "NA", "NA");
+            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, this.Verdict.ToString(), "NA", "NA", "NA", "NA", "NA", "NA");
         }
     }
 
@@ -646,7 +646,7 @@ namespace RjioMRU
             {
                 UpgradeVerdict(Verdict.Fail);
             }
-            MES_CSV.UpdateMESCSV_Parametric_List(MES_CSV.GroupName, this.StepRun.TestStepName, this.Verdict.ToString(), CAResult.ToString(), "NA", "TRUE", "EQ", "TRUE", "NA");
+            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, this.Verdict.ToString(), CAResult.ToString(), "NA", "TRUE", "EQ", "TRUE", "NA");
 
             //UpgradeVerdict(Verdict.Pass);
         }

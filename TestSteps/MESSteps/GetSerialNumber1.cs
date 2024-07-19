@@ -112,7 +112,11 @@ namespace RjioMRU
             }
             MES_CSV.MRU_Serial_number = serialNumberByUser;
 
-            MES_CSV.UpdateMESCSV_Parametric_List(MES_CSV.GroupName, this.StepRun.TestStepName  , Verdict.ToString(),"NA", SerialnumberByUser, "NA", "NA", "NA", "NA");
+            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName  , Verdict.ToString(),"NA", SerialnumberByUser, "NA", "NA", "NA", "NA");
+            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName  , Verdict.ToString(),"NA", MacID, "NA", "NA", "NA", "NA");
+            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName  , Verdict.ToString(),"NA", ProductID, "NA", "NA", "NA", "NA");
+            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName  , Verdict.ToString(),"NA", HstbID, "NA", "NA", "NA", "NA");
+            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName  , Verdict.ToString(),"NA", RffeID, "NA", "NA", "NA", "NA");
             RunChildSteps(); //If the step supports child steps.
         }
     }

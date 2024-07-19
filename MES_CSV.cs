@@ -19,7 +19,7 @@ namespace RjioMRU
         public static string MRU_Serial_number { get; set; }
 
 
-        public static string GroupName { get; set; }
+        public static int GroupName { get; set; }
         public static string Equipment_Number { get; set; }
         public static string Equipment_ID {  get; set; }
         public static string Slot { get; set; }
