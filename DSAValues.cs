@@ -12,11 +12,17 @@ namespace RjioMRU
     {
         private string[] hexValuesCh1 = new string[16] { "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F" };
         private string[] hexValuesCh2 = new string[16] { "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F" };
+        private string[] powerFactorHexValuesCh1 = new string[16] { "0xFFFF", "0xFFFF", "0xFFFF", "0xFFFF", "0xFFFF", "0xFFFF", "0xFFFF", "0xFFFF", "0xFFFF", "0xFFFF", "0xFFFF", "0xFFFF", "0xFFFF", "0xFFFF", "0xFFFF", "0xFFFF" };
+        private string[] powerFactorHexValuesCh2 = new string[16] { "0xFFFF", "0xFFFF", "0xFFFF", "0xFFFF", "0xFFFF", "0xFFFF", "0xFFFF", "0xFFFF", "0xFFFF", "0xFFFF", "0xFFFF", "0xFFFF", "0xFFFF", "0xFFFF", "0xFFFF", "0xFFFF" };
 
         [Display("Hex valus for Channel1", Description: "HexValuesCh1")]
         public string[] HexValuesCh1 { get => hexValuesCh1; set => hexValuesCh1 = value; }
         [Display("Hex valus for Channel2", Description: "HexValuesCh2")]
         public string[] HexValuesCh2 { get => hexValuesCh2; set => hexValuesCh2 = value; }
+        [Display("Power Factor Hex Values Channel 1",Description:"Power factor ch1")]
+        public string[] PowerFactorHexValuesCh1 { get => powerFactorHexValuesCh1; set => powerFactorHexValuesCh1 = value; }
+        [Display("Power Factor Hex Values Channel 2",Description:"Power factor ch2")]
+        public string[] PowerFactorHexValuesCh2 { get => powerFactorHexValuesCh2; set => powerFactorHexValuesCh2 = value; }
     }
     public class DSAValues
     {
@@ -30,6 +36,7 @@ namespace RjioMRU
         {
             DecimalVaues = decimalVaues;
             this.HexValues = hexValues;
+
         }
         public string DecimalVaues { get => decimalVaues; set => decimalVaues = value; }
         public string HexValues { get => hexValues; set => hexValues = value; }

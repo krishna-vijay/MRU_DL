@@ -200,16 +200,8 @@ namespace RjioMRU.TestSteps
             //    //    }
             //    //}
             //}
-
-
-            for (int iteration = 0; iteration < ((int)ChannelsSelection == 1 ? CalibrationStep_CH1.powerFactorValues.Length : CalibrationStep_CH2.powerFactorValues.Length); iteration++)
-            {
-                hexValuesCh1[iteration] = $"0x{((int)ChannelsSelection == 1 ? CalibrationStep_CH1.powerFactorValues[iteration] : CalibrationStep_CH2.powerFactorValues[iteration]):X}";
-                //hexValuesCh1
-            }
-
-
-            MruObj.Dr49_CH_WritePowerFactorToEEPROM(AutomaticDSAWriting ? hexValuesCh1 : channelValues.HexValuesCh1, dR49Ch1ComObj: MruObj.GetDR49Ch1ComObj());
+ 
+            MruObj.Dr49_CH_WritePowerFactorToEEPROM(AutomaticDSAWriting ?(ChannelsSelection == Channels.Channel1? CalibrationStep_CH1.powerFactorValues:CalibrationStep_CH2.powerFactorValues) :(ChannelsSelection== Channels.Channel1?channelValues.PowerFactorHexValuesCh1: channelValues.PowerFactorHexValuesCh2), ( (channelsSelection == Channels.Channel1? MruObj.GetDR49Ch1ComObj():MruObj.GetDR49Ch2ComObj())));
             Log.Info("DSA Values has been update in EEPROM of Channel 1");
             // ToDo: Add test case code.
             RunChildSteps(); //If the step supports child steps.
