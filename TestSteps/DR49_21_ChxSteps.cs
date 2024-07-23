@@ -32,8 +32,7 @@ namespace RjioMRU.TestSteps
     public class DR49_Ch1_DSA_Write : TestStep
     {
         #region Settings
-        Input<int> dsaHigherLimit ;
-        Input<int> dsaLowerLimit ;
+
 
         MRU_Rjio mruObj;
         private string[] hexValuesCh1 = new string[16] { "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F" };
@@ -43,46 +42,41 @@ namespace RjioMRU.TestSteps
 
         public DR49_Ch1_DSA_Write()
         {
-            DsaHigherLimit = new Input<int>();
-            DsaLowerLimit = new Input<int>();
+
             // ToDo: Set default values for properties / settings.
         }
 
         public MRU_Rjio MruObj { get => mruObj; set => mruObj = value; }
         [Display("Select Automatic and Manual ", Order: 0, Description: "Enter Hex Values for DSA")]
         public bool AutomaticDSAWriting { get => automaticDSAWriting; set => automaticDSAWriting = value; }
-        [Display("DSA Lower Limit", Order: 0, Description: "Enter DSA Lower Limit")]
-        public Input<int> DsaLowerLimit { get => dsaLowerLimit; set => dsaLowerLimit = value; }
-        [Display("DSA Higher Limit", Order: 0, Description: "Enter DSA Higher Limit")]
-        public Input<int> DsaHigherLimit { get => dsaHigherLimit; set => dsaHigherLimit = value; }
+
 
         public override void Run()
         {
             DSACHexValues channelValues = new DSACHexValues();
-            foreach (var item in CalibrationStep_CH1.HexValues4DSAWriging)
-            {
-                if (item>DsaHigherLimit.Value||item<DsaLowerLimit.Value)
-                {
-                   var messageDecision = MessageBox.Show("DSA Value is out of range :Lower Limit ="+DsaLowerLimit.Value +" DSA Higher Limit :" + DsaHigherLimit.Value +" Measured DSA :"+item +", Do you want to exit?","DSA Out of Range",MessageBoxButtons.YesNo);
-                    if (messageDecision == DialogResult.Yes)
-                    {
-                        return;
-                    }
-                }
-            }
+            //foreach (var item in CalibrationStep_CH1.HexValues4DSAWriging)
+            //{
+            //    if (item > DsaHigherLimit.Value || item < DsaLowerLimit.Value)
+            //    {
+            //        var messageDecision = MessageBox.Show("DSA Value is out of range :Lower Limit =" + DsaLowerLimit.Value + " DSA Higher Limit :" + DsaHigherLimit.Value + " Measured DSA :" + item + ", Do you want to exit?", "DSA Out of Range", MessageBoxButtons.YesNo);
+            //        if (messageDecision == DialogResult.Yes)
+            //        {
+            //            return;
+            //        }
+            //    }
+            //}
 
 
             if (AutomaticDSAWriting)
             {
                 for (int iteration = 0; iteration < CalibrationStep_CH1.HexValues4DSAWriging.Length; iteration++)
                 {
-
                     hexValuesCh1[iteration] = $"0x{CalibrationStep_CH1.HexValues4DSAWriging[iteration]:X}";
                     //hexValuesCh1
                 }
             }
-           
-            MruObj.Dr49_CH1_WriteDSAToEEPROM(AutomaticDSAWriting ? hexValuesCh1 : channelValues.HexValuesCh1);
+
+            MruObj.Dr49_CH_WriteDSAToEEPROM(AutomaticDSAWriting ? hexValuesCh1 : channelValues.HexValuesCh1, MruObj.GetDR49Ch1ComObj());
             Log.Info("DSA Values has been update in EEPROM of Channel 1");
             // ToDo: Add test case code.
             RunChildSteps(); //If the step supports child steps.
@@ -98,47 +92,41 @@ namespace RjioMRU.TestSteps
     public class DR49_Ch2_DSA_Write : TestStep
     {
         #region Settings
-        Input<int> dsaHigherLimit;
-        Input<int> dsaLowerLimit;
+
+
         MRU_Rjio mruObj;
         private string[] hexValuesCh2 = new string[16] { "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F" };
         bool automaticDSAWriting = false;
-        [Display("Select Automatic and Manual ", Order: 0, Description: "Enter Hex Values for DSA")]
-        public bool AutomaticDSAWriting { get => automaticDSAWriting; set => automaticDSAWriting = value; }
-        [Display("DSA Lower Limit", Order: 0, Description: "Enter DSA Lower Limit")]
-        public Input<int> DsaLowerLimit { get => dsaLowerLimit; set => dsaLowerLimit = value; }
-        [Display("DSA Higher Limit", Order: 0, Description: "Enter DSA Higher Limit")]
-        public Input<int> DsaHigherLimit { get => dsaHigherLimit; set => dsaHigherLimit = value; }
-
         // ToDo: Add property here for each parameter the end user should be able to change
-
-
         #endregion
 
         public DR49_Ch2_DSA_Write()
         {
-            DsaHigherLimit = new Input<int>();
-            DsaLowerLimit = new Input<int>();
 
             // ToDo: Set default values for properties / settings.
         }
 
         public MRU_Rjio MruObj { get => mruObj; set => mruObj = value; }
+        [Display("Select Automatic and Manual ", Order: 0, Description: "Enter Hex Values for DSA")]
+        public bool AutomaticDSAWriting { get => automaticDSAWriting; set => automaticDSAWriting = value; }
+
 
         public override void Run()
         {
             DSACHexValues channelValues = new DSACHexValues();
-            foreach (var item in CalibrationStep_CH2.HexValues4DSAWriging)
-            {
-                if (item > DsaHigherLimit.Value || item < DsaLowerLimit.Value)
-                {
-                    var messageDecision = MessageBox.Show("DSA Value is out of range :Lower Limit =" + DsaLowerLimit.Value + " DSA Higher Limit :" + DsaHigherLimit.Value + " Measured DSA :" + item + ", Do you want to exit?", "DSA Out of Range", MessageBoxButtons.YesNo);
-                    if (messageDecision == DialogResult.Yes)
-                    {
-                        return;
-                    }
-                }
-            }
+            //foreach (var item in CalibrationStep_CH1.HexValues4DSAWriging)
+            //{
+            //    if (item > DsaHigherLimit.Value || item < DsaLowerLimit.Value)
+            //    {
+            //        var messageDecision = MessageBox.Show("DSA Value is out of range :Lower Limit =" + DsaLowerLimit.Value + " DSA Higher Limit :" + DsaHigherLimit.Value + " Measured DSA :" + item + ", Do you want to exit?", "DSA Out of Range", MessageBoxButtons.YesNo);
+            //        if (messageDecision == DialogResult.Yes)
+            //        {
+            //            return;
+            //        }
+            //    }
+            //}
+
+
             if (AutomaticDSAWriting)
             {
                 for (int iteration = 0; iteration < CalibrationStep_CH2.HexValues4DSAWriging.Length; iteration++)
@@ -147,11 +135,9 @@ namespace RjioMRU.TestSteps
                     //hexValuesCh1
                 }
             }
-            MruObj.Dr49_CH2_WriteDSAToEEPROM(AutomaticDSAWriting ? hexValuesCh2 : channelValues.HexValuesCh2);
 
-            //MruObj.Dr49_CH2_WriteDSAToEEPROM(CalibrationStep_CH2.HexValues4DSAWriging);
+            MruObj.Dr49_CH_WriteDSAToEEPROM(AutomaticDSAWriting ? hexValuesCh2 : channelValues.HexValuesCh2, MruObj.GetDR49Ch2ComObj());
             Log.Info("DSA Values has been update in EEPROM of Channel 2");
-
             // ToDo: Add test case code.
             RunChildSteps(); //If the step supports child steps.
 
@@ -163,7 +149,144 @@ namespace RjioMRU.TestSteps
 
 
 
+    [Display("DR49 Write PowerFactor", Group: "RjioMRU", Description: "Insert a description here")]
+    public class DR49_Write_PowerFactor : TestStep
+    {
+        #region Settings
+        //Input<int> dsaHigherLimit ;
+        //Input<int> dsaLowerLimit ;
+        public enum Channels
+        {
+            Channel1 = 1,
+            Channel2
+        };
+        Channels channelsSelection;
+        MRU_Rjio mruObj;
+        private string[] hexValuesCh1 = new string[16] { "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F" };
+        bool automaticDSAWriting = false;
+        // ToDo: Add property here for each parameter the end user should be able to change
+        #endregion
 
+        public DR49_Write_PowerFactor()
+        {
+            //DsaHigherLimit = new Input<int>();
+            //DsaLowerLimit = new Input<int>();
+            // ToDo: Set default values for properties / settings.
+        }
+
+        public MRU_Rjio MruObj { get => mruObj; set => mruObj = value; }
+        [Display("Select Automatic and Manual ", Order: 0, Description: "Enter Hex Values for DSA")]
+        public bool AutomaticDSAWriting { get => automaticDSAWriting; set => automaticDSAWriting = value; }
+
+        [Display("Select Channel", Order: 0, Description: "Select Channel")]
+        public Channels ChannelsSelection { get => channelsSelection; set => channelsSelection = value; }
+
+        //[Display("DSA Lower Limit", Order: 0, Description: "Enter DSA Lower Limit")]
+        //public Input<int> DsaLowerLimit { get => dsaLowerLimit; set => dsaLowerLimit = value; }
+        //[Display("DSA Higher Limit", Order: 0, Description: "Enter DSA Higher Limit")]
+        //public Input<int> DsaHigherLimit { get => dsaHigherLimit; set => dsaHigherLimit = value; }
+
+        public override void Run()
+        {
+            DSACHexValues channelValues = new DSACHexValues();
+            //foreach (var item in (int)ChannelsSelection==1?CalibrationStep_CH1.HexValues4DSAWriging:CalibrationStep_CH2.HexValues4DSAWriging)
+            //{
+            //    //if (item>DsaHigherLimit.Value||item<DsaLowerLimit.Value)
+            //    //{
+            //    //   var messageDecision = MessageBox.Show("DSA Value is out of range :Lower Limit ="+DsaLowerLimit.Value +" DSA Higher Limit :" + DsaHigherLimit.Value +" Measured DSA :"+item +", Do you want to exit?","DSA Out of Range",MessageBoxButtons.YesNo);
+            //    //    if (messageDecision == DialogResult.Yes)
+            //    //    {
+            //    //        return;
+            //    //    }
+            //    //}
+            //}
+
+
+            for (int iteration = 0; iteration < ((int)ChannelsSelection == 1 ? CalibrationStep_CH1.powerFactorValues.Length : CalibrationStep_CH2.powerFactorValues.Length); iteration++)
+            {
+                hexValuesCh1[iteration] = $"0x{((int)ChannelsSelection == 1 ? CalibrationStep_CH1.powerFactorValues[iteration] : CalibrationStep_CH2.powerFactorValues[iteration]):X}";
+                //hexValuesCh1
+            }
+
+
+            MruObj.Dr49_CH_WritePowerFactorToEEPROM(AutomaticDSAWriting ? hexValuesCh1 : channelValues.HexValuesCh1, dR49Ch1ComObj: MruObj.GetDR49Ch1ComObj());
+            Log.Info("DSA Values has been update in EEPROM of Channel 1");
+            // ToDo: Add test case code.
+            RunChildSteps(); //If the step supports child steps.
+
+            // If no verdict is used, the verdict will default to NotSet.
+            // You can change the verdict using UpgradeVerdict() as shown below.
+            // UpgradeVerdict(Verdict.Pass);
+        }
+    }
+
+
+    //[Display("DR49 Ch2 Write DSA", Group: "RjioMRU", Description: "Insert a description here")]
+    //public class DR49_Ch2_DSA_Write : TestStep
+    //{
+    //    #region Settings
+    //    Input<int> dsaHigherLimit;
+    //    Input<int> dsaLowerLimit;
+    //    MRU_Rjio mruObj;
+    //    private string[] hexValuesCh2 = new string[16] { "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F" };
+    //    bool automaticDSAWriting = false;
+    //    [Display("Select Automatic and Manual ", Order: 0, Description: "Enter Hex Values for DSA")]
+    //    public bool AutomaticDSAWriting { get => automaticDSAWriting; set => automaticDSAWriting = value; }
+    //    [Display("DSA Lower Limit", Order: 0, Description: "Enter DSA Lower Limit")]
+    //    public Input<int> DsaLowerLimit { get => dsaLowerLimit; set => dsaLowerLimit = value; }
+    //    [Display("DSA Higher Limit", Order: 0, Description: "Enter DSA Higher Limit")]
+    //    public Input<int> DsaHigherLimit { get => dsaHigherLimit; set => dsaHigherLimit = value; }
+
+    //    // ToDo: Add property here for each parameter the end user should be able to change
+
+
+    //    #endregion
+
+    //    public DR49_Ch2_DSA_Write()
+    //    {
+    //        DsaHigherLimit = new Input<int>();
+    //        DsaLowerLimit = new Input<int>();
+
+    //        // ToDo: Set default values for properties / settings.
+    //    }
+
+    //    public MRU_Rjio MruObj { get => mruObj; set => mruObj = value; }
+
+    //    public override void Run()
+    //    {
+    //        DSACHexValues channelValues = new DSACHexValues();
+    //        foreach (var item in CalibrationStep_CH2.HexValues4DSAWriging)
+    //        {
+    //            if (item > DsaHigherLimit.Value || item < DsaLowerLimit.Value)
+    //            {
+    //                var messageDecision = MessageBox.Show("DSA Value is out of range :Lower Limit =" + DsaLowerLimit.Value + " DSA Higher Limit :" + DsaHigherLimit.Value + " Measured DSA :" + item + ", Do you want to exit?", "DSA Out of Range", MessageBoxButtons.YesNo);
+    //                if (messageDecision == DialogResult.Yes)
+    //                {
+    //                    return;
+    //                }
+    //            }
+    //        }
+    //        if (AutomaticDSAWriting)
+    //        {
+    //            for (int iteration = 0; iteration < CalibrationStep_CH2.HexValues4DSAWriging.Length; iteration++)
+    //            {
+    //                hexValuesCh2[iteration] = $"0x{CalibrationStep_CH2.HexValues4DSAWriging[iteration]:X}";
+    //                //hexValuesCh1
+    //            }
+    //        }
+    //        MruObj.Dr49_CH2_WriteDSAToEEPROM(AutomaticDSAWriting ? hexValuesCh2 : channelValues.HexValuesCh2);
+
+    //        //MruObj.Dr49_CH2_WriteDSAToEEPROM(CalibrationStep_CH2.HexValues4DSAWriging);
+    //        Log.Info("DSA Values has been update in EEPROM of Channel 2");
+
+    //        // ToDo: Add test case code.
+    //        RunChildSteps(); //If the step supports child steps.
+
+    //        // If no verdict is used, the verdict will default to NotSet.
+    //        // You can change the verdict using UpgradeVerdict() as shown below.
+    //        // UpgradeVerdict(Verdict.Pass);
+    //    }
+    //}
 
 
 
@@ -276,7 +399,7 @@ namespace RjioMRU.TestSteps
             {
                 UpgradeVerdict(Verdict.Fail);
             }
-            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, Verdict.ToString(),"NA", Verdict.ToString(), "TRUE", "EQ", "TRUE", "NA");
+            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, Verdict.ToString(), "NA", Verdict.ToString(), "TRUE", "EQ", "TRUE", "NA");
             // ToDo: Add test case code.
             RunChildSteps(); //If the step supports child steps.
 
@@ -447,7 +570,7 @@ namespace RjioMRU.TestSteps
 
         public override void Run()
         {
-          bool ipChangeResult =  MruObj.Dr21MRUIpChange(InterfaceName, IpAddress);
+            bool ipChangeResult = MruObj.Dr21MRUIpChange(InterfaceName, IpAddress);
             // ToDo: Add test case code.
             RunChildSteps(); //If the step supports child steps.
 
@@ -515,7 +638,7 @@ namespace RjioMRU.TestSteps
             {
                 UpgradeVerdict(Verdict.Fail);
             }
-            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, Verdict.ToString(), PingTestStatus? "0% packet loss":"", Verdict.ToString(), "PingTestStatus", "EQ", "TRUE", "NA");
+            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, Verdict.ToString(), PingTestStatus ? "0% packet loss" : "", Verdict.ToString(), "PingTestStatus", "EQ", "TRUE", "NA");
 
             // If no verdict is used, the verdict will default to NotSet.
             // You can change the verdict using UpgradeVerdict() as shown below.
@@ -562,7 +685,7 @@ namespace RjioMRU.TestSteps
             {
                 UpgradeVerdict(Verdict.Fail);
             }
-            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, Verdict.ToString(), PingTestStatus ? "TRUE" : "", Verdict.ToString(),PingTestStatus.ToString(), "EQ", "TRUE", "NA");
+            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, Verdict.ToString(), PingTestStatus ? "TRUE" : "", Verdict.ToString(), PingTestStatus.ToString(), "EQ", "TRUE", "NA");
 
             // If no verdict is used, the verdict will default to NotSet.
             // You can change the verdict using UpgradeVerdict() as shown below.
@@ -657,7 +780,7 @@ namespace RjioMRU.TestSteps
             {
                 UpgradeVerdict(Verdict.Fail);
             }
-            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, Verdict.ToString(), "NA", PingTestStatus? "PTP synchronization detected established!" :"", "TRUE", "EQ", "TRUE", "NA");
+            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, Verdict.ToString(), "NA", PingTestStatus ? "PTP synchronization detected established!" : "", "TRUE", "EQ", "TRUE", "NA");
 
             // If no verdict is used, the verdict will default to NotSet.
             // You can change the verdict using UpgradeVerdict() as shown below.
@@ -702,7 +825,7 @@ namespace RjioMRU.TestSteps
             {
                 UpgradeVerdict(Verdict.Fail);
             }
-            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, Verdict.ToString(), "NA", PingTestStatus? "Modem initialization is in process" : "", "TRUE", "EQ", "TRUE", "NA");
+            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, Verdict.ToString(), "NA", PingTestStatus ? "Modem initialization is in process" : "", "TRUE", "EQ", "TRUE", "NA");
 
             // If no verdict is used, the verdict will default to NotSet.
             // You can change the verdict using UpgradeVerdict() as shown below.
@@ -1292,7 +1415,7 @@ namespace RjioMRU.TestSteps
 
             int StringOk = string.Compare(slot21dr, slot49DrCh1);
             int string2OK = string.Compare(slot21dr, slot49DrCh2);
-            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, Verdict.ToString(),"NA", slot21dr.ToString() +":"+ slot49DrCh1.ToString(), Verdict.ToString(),"EQ", slot21dr.ToString()+"="+ slot49DrCh1.ToString(), "NA");
+            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, Verdict.ToString(), "NA", slot21dr.ToString() + ":" + slot49DrCh1.ToString(), Verdict.ToString(), "EQ", slot21dr.ToString() + "=" + slot49DrCh1.ToString(), "NA");
 
             if (StringOk != 0)
             {
@@ -1348,7 +1471,7 @@ namespace RjioMRU.TestSteps
             }
 
             UpgradeVerdict(Verdict.Pass);
-            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, Verdict.ToString(), "NA", Verdict.ToString() , "TRUE", "EQ", "TRUE", "NA");
+            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, Verdict.ToString(), "NA", Verdict.ToString(), "TRUE", "EQ", "TRUE", "NA");
 
             // ToDo: Add test case code.
             RunChildSteps(); //If the step supports child steps.
@@ -1491,6 +1614,35 @@ namespace RjioMRU.TestSteps
     }
 
 
+    [Display("21Dr Remove IP from Eth2", Group: "RjioMRU", Description: "Insert a description here")]
+    public class Dr21RemoveIP4mETH : TestStep
+    {
 
+        #region Settings
+        MRU_Rjio mruObj;
+        // ToDo: Add property here for each parameter the end user should be able to change
+        #endregion
+
+        public Dr21RemoveIP4mETH()
+        {
+            // ToDo: Set default values for properties / settings.
+        }
+        public MRU_Rjio MruObj { get => mruObj; set => mruObj = value; }
+
+
+
+        public override void Run()
+        {
+            MruObj.RemoveIP4mETH2();
+
+
+            UpgradeVerdict(Verdict.Pass);
+            // ToDo: Add test case code.
+            RunChildSteps(); //If the step supports child steps.
+            // If no verdict is used, the verdict will default to NotSet.
+            // You can change the verdict using UpgradeVerdict() as shown below.
+            // UpgradeVerdict(Verdict.Pass);
+        }
+    }
 
 }

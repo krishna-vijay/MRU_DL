@@ -24,6 +24,7 @@ using System.Collections.ObjectModel;
 using System.Runtime.Remoting.Channels;
 using System.Windows.Forms;
 using System.Net;
+using RjioMRU.TestSteps;
 
 namespace RjioMRU
 {
@@ -411,6 +412,10 @@ namespace RjioMRU
         public SerialPort GetDR49Ch1ComObj()
         {
             return DR49Ch1ComObj;
+        }
+        public SerialPort GetDR49Ch2ComObj()
+        {
+            return DR49Ch2ComObj;
         }
 
         public bool Dr49_DPD_Measurement(int channelNumber, out double Txvalue, out double RxValue, SerialPort dR49ChComObj)
@@ -2322,28 +2327,74 @@ namespace RjioMRU
             } while (true);
         }
 
-        internal void Dr49_CH1_WriteDSAToEEPROM(string[] hexValues)
+         
+
+        internal void Dr49_CH_WriteDSAToEEPROM(string[] hexValues, SerialPort dR49ChComObj)
         {
-            DR49Ch1ComObj.ReadExisting();
+            dR49ChComObj.ReadExisting();
             string command4EEPROM_DSA = "rj-rfeeprom-updater -upd_dsa_tx " + hexValues[0] + "," + hexValues[1] + "," + hexValues[2] + "," + hexValues[3] + "," + hexValues[4] + "," + hexValues[5] + "," + hexValues[6] + "," + hexValues[7] + "," + hexValues[8] + "," + hexValues[9] + "," + hexValues[10] + "," + hexValues[11] + "," + hexValues[12] + "," + hexValues[13] + "," + hexValues[14] + "," + hexValues[15] + " -upd_dsa_fb 0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f -upd_dac0 0x47E -upd_dac1 0x64B -upd_fw_ver 1.0 -upd_hw_ver B -upd_prv_valid";
             Log.Info(command4EEPROM_DSA);
-            DR49Ch1ComObj.WriteLine(command4EEPROM_DSA);
+            dR49ChComObj.WriteLine(command4EEPROM_DSA);
+        }
+        //internal void Dr49_CH2_WriteDSAToEEPROM(string[] hexValues)
+        //{
+        //    DR49Ch1ComObj.ReadExisting();
+        //    string command4EEPROM_DSA = "rj-rfeeprom-updater -upd_dsa_tx " + hexValues[0] + "," + hexValues[1] + "," + hexValues[2] + "," + hexValues[3] + "," + hexValues[4] + "," + hexValues[5] + "," + hexValues[6] + "," + hexValues[7] + "," + hexValues[8] + "," + hexValues[9] + "," + hexValues[10] + "," + hexValues[11] + "," + hexValues[12] + "," + hexValues[13] + "," + hexValues[14] + "," + hexValues[15] + " -upd_dsa_fb 0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f -upd_dac0 0x47E -upd_dac1 0x64B -upd_fw_ver 1.0 -upd_hw_ver B -upd_prv_valid";
+        //    Log.Info(command4EEPROM_DSA);
+        //    DR49Ch2ComObj.WriteLine(command4EEPROM_DSA);
+
+
+        //}
+
+        
+
+        internal void Dr49_CH_WritePowerFactorToEEPROM(string[] hexValues, SerialPort dR49Ch1ComObj)
+        {
+            dR49Ch1ComObj.ReadExisting();
+            string command4EEPROM_PowerFactor = "rj-rfeeprom-updater -upd_pwr_fact_tx " + hexValues[0] + "," + hexValues[1] + "," + hexValues[2] + "," + hexValues[3] + "," + hexValues[4] + "," + hexValues[5] + "," + hexValues[6] + "," + hexValues[7] + "," + hexValues[8] + "," + hexValues[9] + "," + hexValues[10] + "," + hexValues[11] + "," + hexValues[12] + "," + hexValues[13] + "," + hexValues[14] + "," + hexValues[15] ;
+            Log.Info(command4EEPROM_PowerFactor);
+            DR49Ch1ComObj.WriteLine(command4EEPROM_PowerFactor);
 
 
         }
-        internal void Dr49_CH2_WriteDSAToEEPROM(string[] hexValues)
-        {
-            DR49Ch1ComObj.ReadExisting();
-            string command4EEPROM_DSA = "rj-rfeeprom-updater -upd_dsa_tx " + hexValues[0] + "," + hexValues[1] + "," + hexValues[2] + "," + hexValues[3] + "," + hexValues[4] + "," + hexValues[5] + "," + hexValues[6] + "," + hexValues[7] + "," + hexValues[8] + "," + hexValues[9] + "," + hexValues[10] + "," + hexValues[11] + "," + hexValues[12] + "," + hexValues[13] + "," + hexValues[14] + "," + hexValues[15] + " -upd_dsa_fb 0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f -upd_dac0 0x47E -upd_dac1 0x64B -upd_fw_ver 1.0 -upd_hw_ver B -upd_prv_valid";
-            Log.Info(command4EEPROM_DSA);
-            DR49Ch2ComObj.WriteLine(command4EEPROM_DSA);
 
+        internal string calcualtePowerFactor(double measuredPowerValue, double rxvalue, double txvalue, int iteration, string channel  )
+        {/*[Yesterday 15:46] Naresh3 K (External)
+          * for power factor calculation 
+          * (Channel Power Measured - DPD FB Power ) * 100
+          * [Yesterday 15:47] Naresh3 K (External)
+          * example --> (38-(-17.4))*100 = 55.4*100 = 5540 = 0x15A4
+          * */
 
+            //double powerFactor = (measuredPowerValue - rxvalue) * 100;
+            // Assuming powerFactor calculation is done here
+            double powerFactor = (measuredPowerValue - rxvalue) * 100;
+
+            // Convert powerFactor to an integer
+            int powerFactorInt = (int)Math.Round(powerFactor);
+
+            // Convert the integer to a hexadecimal string
+            string powerFactorHex = Convert.ToString(powerFactorInt, 16).ToUpper();
+            if (channel == "CH1")
+            {
+                CalibrationStep_CH1.powerFactorValues[iteration] = powerFactorHex;
+            }
+            else
+            {
+                CalibrationStep_CH2.powerFactorValues[iteration] = powerFactorHex;
+            }
+            return powerFactorHex;
+            // Now powerFactorHex contains the hexadecimal representation of the power factor
         }
         #endregion DR21Functions
 
 
-
+        internal void RemoveIP4mETH2()
+        {
+            DR21ComObj.ReadExisting();
+           
+            DR21ComObj.WriteLine("scriptToRemoveAddressBlock.sh");
+        }
 
     }
 }
