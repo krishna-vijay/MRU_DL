@@ -466,8 +466,7 @@ namespace RjioMRU
                 ///DPD HOST Example Application MAIN MENU
                 if (readValue.Replace("\n", string.Empty).Contains("Selection:") && (
                     readValue.Replace("\n", string.Empty).Contains("Open DPD Host Interface") ||
-                    readValue.Contains("DFE System Reset") ||
-                    readValue.Contains("")))
+                    readValue.Contains("DFE System Reset") ))
                 {
                     if (!Read_Capture_Power_Meter)
                     {
@@ -482,7 +481,7 @@ namespace RjioMRU
 
 
 
-                if (readValue.Replace("\n", string.Empty).Contains("DPD User Interface Base Address: [0xa0060000]") || readValue.Replace("\n", string.Empty).Contains("DPD User Interface Base Address: [0xa4060000]"))
+                if (readValue.Replace("\n", string.Empty).Contains("DPD User Interface Base Address: [0xa0060000]") || readValue.Replace("\n", string.Empty).Contains("DPD User Interface Base Address: [0xa4060000]")|| readValue.Replace("\n", string.Empty).Contains("DPD User Interface Base Address: [0xa00e0000]:"))
                 {
                     dR49ChComObj.WriteLine(Environment.NewLine);
                 }

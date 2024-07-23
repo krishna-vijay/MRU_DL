@@ -25,7 +25,7 @@ namespace RjioMRU.TestSteps
     [Display("CalibrationStep Ch1", Group: "RjioMRU.Calibration", Description: "Insert a description here")]
     public class CalibrationStep_CH1 : TestStep
     {
-        GeneralFunctions dsaConstruction = new GeneralFunctions();
+        GeneralFunctions genericFunctions= new GeneralFunctions();
         //tempevary variables.
         double measuredPowerValueBeforeDPD = double.NaN;
         bool ChannelPowerOk = false, EVMOK = false, ACLR_L1OK = false, ACLR_L2OK = false, ACLR_R1OK = false, ACLR_R2OK = false, FREQERROK = false;
@@ -149,6 +149,8 @@ namespace RjioMRU.TestSteps
             readDSA_CableLossFile(DSA_CableLossFile, out strHexValues, out CableLosses);
             double[] ACPValues = new double[4];
 
+            
+
             for (int iteration = 0; iteration < 16; iteration++)
             {
                 HexValues[iteration] = int.Parse(strHexValues[iteration], System.Globalization.NumberStyles.HexNumber);
@@ -159,6 +161,10 @@ namespace RjioMRU.TestSteps
             {
                 for (int iteration = calStartPort; iteration <= CalEndPort; iteration++)
                 {
+                    //genericFunctions.SetupSequencerForMeasurement(CableLosses[iteration],ChannelPower, E6680InsturmentTrx1);
+                    //genericFunctions.SetupSequencerForMeasurement(CableLosses[iteration],ChannelPower, E6680InsturmentTrx2);
+                    
+
                     DSATrailsCount = 0;
                     EVMOK = false;
                     ACLR_L1OK = false;
@@ -175,7 +181,7 @@ namespace RjioMRU.TestSteps
                     else
                         E6680InsturmentTrx2.SetRFInputPort((iteration % 8) + 1);
 
-                    DSACommand = dsaConstruction.GenerateCommand(iteration, HexValues[iteration]);
+                    DSACommand = genericFunctions.GenerateCommand(iteration, HexValues[iteration]);
                     Log.Info("Initialization Command for Ch" + iteration + " " + DSACommand);
                     MRU_DUT.DR49CH1executeCALDSAScripts(DSACommand, "rjInitialConfiguration Completed");
                     TapThread.Sleep(2000);
@@ -426,7 +432,7 @@ namespace RjioMRU.TestSteps
 
                         }
                         ///Calibraiton logic starts........................................................................................
-                        DSACommand = dsaConstruction.GenerateCommand(iteration, HexValues[iteration]);
+                        DSACommand = genericFunctions.GenerateCommand(iteration, HexValues[iteration]);
                         MRU_DUT.DR49CH1executeCALDSAScripts(DSACommand, "rjInitialConfiguration Completed");
                         TapThread.Sleep(2000);
                         //TapThread.Sleep(10000);
@@ -511,6 +517,7 @@ namespace RjioMRU.TestSteps
             }
         }
 
+       
         //private string calcualtePowerFactor(double measuredPowerValue, double rxvalue, double txvalue, int iteration,ref string[] powerFactorValues)
         //{
         //    /*[Yesterday 15:46] Naresh3 K (External)
@@ -609,7 +616,7 @@ namespace RjioMRU.TestSteps
     [Display("CalibrationStep Ch2", Group: "RjioMRU.Calibration", Description: "Insert a description here")]
     public class CalibrationStep_CH2 : TestStep
     {
-        GeneralFunctions dsaConstruction = new GeneralFunctions();
+        GeneralFunctions genericFunctions = new GeneralFunctions();
         //tempavary veriables
         double measuredPowerBeforeDPD = double.NaN;
 
@@ -746,6 +753,9 @@ namespace RjioMRU.TestSteps
             {
                 for (int iteration = calStartPort; iteration <= CalEndPort; iteration++)
                 {
+                    //genericFunctions.SetupSequencerForMeasurement(CableLosses[iteration], ChannelPower, E6680InsturmentTrx3);
+                    //genericFunctions.SetupSequencerForMeasurement(CableLosses[iteration], ChannelPower, E6680InsturmentTrx4);
+
                     #region InitialMeasurement
                     DSATrailsCount = 0;
                     EVMOK = false;
@@ -761,7 +771,7 @@ namespace RjioMRU.TestSteps
                     else
                         E6680InsturmentTrx4.SetRFInputPort((iteration % 8) + 1);
 
-                    DSACommand = dsaConstruction.GenerateCommand(iteration, HexValues[iteration]);
+                    DSACommand =genericFunctions.GenerateCommand(iteration, HexValues[iteration]);
                     Log.Info("Initialization Command for Ch" + iteration + " " + DSACommand);
                     MRU_DUT.DR49CH2executeCALDSAScripts(DSACommand, "rjInitialConfiguration Completed");
                     TapThread.Sleep(2000);
@@ -1010,7 +1020,7 @@ namespace RjioMRU.TestSteps
                             break;
 
                         }
-                        DSACommand = dsaConstruction.GenerateCommand(iteration, HexValues[iteration]);
+                        DSACommand = genericFunctions.GenerateCommand(iteration, HexValues[iteration]);
                         MRU_DUT.DR49CH2executeCALDSAScripts(DSACommand, "rjInitialConfiguration Completed");
                         TapThread.Sleep(2000);
                         //TapThread.Sleep(10000);
@@ -1556,6 +1566,21 @@ namespace RjioMRU.TestSteps
      */
     public class GeneralFunctions
     {
+        public void SetupSequencerForMeasurement(double CableLoss, double channelPower, EXM_E6680A e6680InsturmentTrx1)
+        {
+            string currentScreen = e6680InsturmentTrx1.getInstrumentSCreen();
+            e6680InsturmentTrx1.SelectInstScreen("SEQ");
+            e6680InsturmentTrx1.SequenceExpectedPower(channelPower - CableLoss);
+            e6680InsturmentTrx1.SequencePeakPower((channelPower + CableLoss)+3);
+            e6680InsturmentTrx1.TriggerLevel((channelPower - CableLoss)-4);
+
+            e6680InsturmentTrx1.SelectInstScreen(currentScreen);
+
+
+
+        }
+
+
         public string GenerateCommand(int portNumber, int HexNumber)
         {
             if (HexNumber < 0)

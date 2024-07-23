@@ -504,6 +504,12 @@ namespace RjioMRU
         {
             ScpiCommand(":TRIG:SEQ:RFB:LEV:ABS " + level);
         }
+
+        internal string getInstrumentSCreen()
+        {
+          return  ScpiQuery<string>(":INSTrument:SCReen:SELect?");
+
+        }
         #region Enums
 
         public enum RfOutputPorts
