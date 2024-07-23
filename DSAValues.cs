@@ -24,22 +24,22 @@ namespace RjioMRU
         [Display("Power Factor Hex Values Channel 2",Description:"Power factor ch2")]
         public string[] PowerFactorHexValuesCh2 { get => powerFactorHexValuesCh2; set => powerFactorHexValuesCh2 = value; }
     }
-    public class DSAValues
-    {
-        private string decimalVaues;
-        private string hexValues;
-        //public string[] DecimalVaues = new string[16] { "31", "31", "31", "31", "31", "31", "31", "31", "31", "31", "31", "31", "31", "31", "31", "31" };
-        //public string[] HexValues = new string[16] { "1F", "1F", "1F", "1F", "1F", "1F", "1F", "1F", "1F", "1F", "1F", "1F", "1F", "1F", "1F", "1F" }; 
-        //public string DecimalVaues = new string[16] { "31", "31", "31", "31", "31", "31", "31", "31", "31", "31", "31", "31", "31", "31", "31", "31" };
-        //public string HexValues = new string[16] { "1F", "1F", "1F", "1F", "1F", "1F", "1F", "1F", "1F", "1F", "1F", "1F", "1F", "1F", "1F", "1F" };
-        public DSAValues(string decimalVaues, string hexValues)
-        {
-            DecimalVaues = decimalVaues;
-            this.HexValues = hexValues;
+    //public class DSAValues
+    //{
+    //    private string decimalVaues;
+    //    private string hexValues;
+    //    //public string[] DecimalVaues = new string[16] { "31", "31", "31", "31", "31", "31", "31", "31", "31", "31", "31", "31", "31", "31", "31", "31" };
+    //    //public string[] HexValues = new string[16] { "1F", "1F", "1F", "1F", "1F", "1F", "1F", "1F", "1F", "1F", "1F", "1F", "1F", "1F", "1F", "1F" }; 
+    //    //public string DecimalVaues = new string[16] { "31", "31", "31", "31", "31", "31", "31", "31", "31", "31", "31", "31", "31", "31", "31", "31" };
+    //    //public string HexValues = new string[16] { "1F", "1F", "1F", "1F", "1F", "1F", "1F", "1F", "1F", "1F", "1F", "1F", "1F", "1F", "1F", "1F" };
+    //    public DSAValues(string decimalVaues, string hexValues)
+    //    {
+    //        DecimalVaues = decimalVaues;
+    //        this.HexValues = hexValues;
 
-        }
-        public string DecimalVaues { get => decimalVaues; set => decimalVaues = value; }
-        public string HexValues { get => hexValues; set => hexValues = value; }
-    }
+    //    }
+    //    public string DecimalVaues { get => decimalVaues; set => decimalVaues = value; }
+    //    public string HexValues { get => hexValues; set => hexValues = value; }
+    //}
 }
 

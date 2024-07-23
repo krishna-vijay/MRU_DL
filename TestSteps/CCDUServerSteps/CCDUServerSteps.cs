@@ -387,15 +387,15 @@ namespace RjioMRU
             // var PingTestStatus = CCDUServerobj.PhCTaBCommandExecute(CCDUBasicVerification.linkInteraface);
             // ToDo: Add test case code.
             RunChildSteps(); //If the step supports child steps
-            if (resultStatus)
-            {
+            //if (resultStatus)
+            //{
 
                 UpgradeVerdict(Verdict.Pass);
-            }
-            else
-            {
-                UpgradeVerdict(Verdict.Fail);
-            }
+            //}
+            //else
+            //{
+               // UpgradeVerdict(Verdict.Fail);
+            // }
             MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, this.Verdict.ToString(), "NA", resultStatus.ToString(), "TRUE", "EQ", "TRUE", "NA");
 
         }

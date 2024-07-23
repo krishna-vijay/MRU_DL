@@ -2352,9 +2352,18 @@ namespace RjioMRU
             dR49Ch1ComObj.ReadExisting();
             string command4EEPROM_PowerFactor = "rj-rfeeprom-updater -upd_pwr_fact_tx " + hexValues[0] + "," + hexValues[1] + "," + hexValues[2] + "," + hexValues[3] + "," + hexValues[4] + "," + hexValues[5] + "," + hexValues[6] + "," + hexValues[7] + "," + hexValues[8] + "," + hexValues[9] + "," + hexValues[10] + "," + hexValues[11] + "," + hexValues[12] + "," + hexValues[13] + "," + hexValues[14] + "," + hexValues[15] ;
             Log.Info(command4EEPROM_PowerFactor);
-            DR49Ch1ComObj.WriteLine(command4EEPROM_PowerFactor);
+            dR49Ch1ComObj.WriteLine(command4EEPROM_PowerFactor);
 
 
+        }
+        
+        internal string Dr49_CH_ReadTemperature( SerialPort dR49ChComObj,int chainNumber, string tempScript = "rj-dac-tmp -mru_dac_all")
+        {
+            dR49ChComObj.ReadExisting();
+            dR49ChComObj.WriteLine(tempScript);
+            //  Log.Info(command4EEPROM_PowerFactor);
+           var temperatureValues = dR49ChComObj.ReadExisting(); 
+            return temperatureValues.ToString();    
         }
 
         internal string calcualtePowerFactor(double measuredPowerValue, double rxvalue, double txvalue, int iteration, string channel  )

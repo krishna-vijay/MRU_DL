@@ -336,6 +336,7 @@ namespace RjioMRU.TestSteps
                             MeasuredPowerValue += (CableLosses[iteration] * -1);
 
                             string CalculatedPowerFactor = MRU_DUT.calcualtePowerFactor(MeasuredPowerValue, rxvalue, txvalue, iteration, "CH1");
+                            string Temperature = MRU_DUT.Dr49_CH_ReadTemperature( MRU_DUT.GetDR49Ch1ComObj(), iteration, "rj-dac-tmp -mru_dac_all");
 
                             //string CalculatedPowerFactor = calcualtePowerFactor(MeasuredPowerValue,rxvalue, txvalue, iteration, powerFactorValues);
 
@@ -409,6 +410,8 @@ namespace RjioMRU.TestSteps
                                 MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName + " Chain " + iteration + " ACLR R1", "NA", "NA", ACPValues[2].ToString(), ACLR_R1_Limit.ToString(), "LE", "NA", "dBc");
 
                                 MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName + " Chain " + iteration + " ACLR R2", "NA", "NA", ACPValues[3].ToString(), ACLR_R2_Limit.ToString(), "LE", "NA", "dBc");
+                                MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName + " Chain " + iteration + " Power Factor", "NA", "NA", powerFactorValues[iteration].ToString(), "NA".ToString(), "NA", "NA", "NA");
+                                MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName + " Chain " + iteration + " Temperature ", "NA", "NA", Temperature, "NA".ToString(), "NA", "NA", "NA");
 
 
 
@@ -927,6 +930,8 @@ namespace RjioMRU.TestSteps
                             MeasuredPowerValue += (CableLosses[iteration] * -1);
 
                             string CalculatedPowerFactor= MRU_DUT.calcualtePowerFactor(MeasuredPowerValue, rxvalue, txvalue, iteration,"CH2");
+                            string Temperature = MRU_DUT.Dr49_CH_ReadTemperature( MRU_DUT.GetDR49Ch2ComObj(), iteration, "rj-dac-tmp -mru_dac_all");
+
 
 
                             Log.Info("CH2 DSA Command Used: " + DSACommand);
@@ -1001,6 +1006,8 @@ namespace RjioMRU.TestSteps
                                 MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName + " Chain " + iteration + " ACLR R1", "NA", "NA", ACPValues[2].ToString(), ACLR_R1_Limit.ToString(), "LE", "NA", "dBc");
 
                                 MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName + " Chain " + iteration + " ACLR R2", "NA", "NA", ACPValues[3].ToString(), ACLR_R2_Limit.ToString(), "LE", "NA", "dBc");
+                                MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName + " Chain " + iteration + " Power Factor", "NA", "NA", powerFactorValues[iteration].ToString(), "NA".ToString(), "NA", "NA", "NA");
+                                MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName + " Chain " + iteration + " Temperature ", "NA", "NA", Temperature, "NA".ToString(), "NA", "NA", "NA");
 
 
                                 HexValues4DSAWriging[iteration] = HexValues[iteration];
