@@ -211,6 +211,60 @@ namespace RjioMRU.TestSteps
             // UpgradeVerdict(Verdict.Pass);
         }
     }
+    
+    
+    [Display("DR49 Read Tempertaure", Group: "RjioMRU", Description: "Insert a description here")]
+    public class DR49_Read_Temperature: TestStep
+    {
+        #region Settings
+        //Input<int> dsaHigherLimit ;
+        //Input<int> dsaLowerLimit ;
+        public enum Channels
+        {
+            Channel1 = 1,
+            Channel2
+        };
+        Channels channelsSelection;
+        MRU_Rjio mruObj;
+        private string[] hexValuesCh1 = new string[16] { "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F" };
+        
+        // ToDo: Add property here for each parameter the end user should be able to change
+        #endregion
+
+        public DR49_Read_Temperature()
+        {
+            //DsaHigherLimit = new Input<int>();
+            //DsaLowerLimit = new Input<int>();
+            // ToDo: Set default values for properties / settings.
+        }
+
+        public MRU_Rjio MruObj { get => mruObj; set => mruObj = value; }
+       
+        [Display("Select Channel", Order: 0, Description: "Select Channel")]
+        public Channels ChannelsSelection { get => channelsSelection; set => channelsSelection = value; }
+        [Display("Chain Number", Order: 2, Description: "Enter Chain Number")]
+        public int ChainNumber { get; set; }
+
+        [Display("Temperature Read Script", Order: 6, Description: "Enter Temperature Read Script")]
+        public string TemperatureReadScript { get; set; } = "rj-dac-tmp -mru_dac_all";
+        //[Display("DSA Lower Limit", Order: 0, Description: "Enter DSA Lower Limit")]
+        //public Input<int> DsaLowerLimit { get => dsaLowerLimit; set => dsaLowerLimit = value; }
+        //[Display("DSA Higher Limit", Order: 0, Description: "Enter DSA Higher Limit")]
+        //public Input<int> DsaHigherLimit { get => dsaHigherLimit; set => dsaHigherLimit = value; }
+
+        public override void Run()
+        {           
+ 
+           string temperaureValue = MruObj.Dr49_CH_ReadTemperature((channelsSelection == Channels.Channel1 ? MruObj.GetDR49Ch1ComObj() : MruObj.GetDR49Ch2ComObj()), ChainNumber,TemperatureReadScript);
+            Log.Info("Temperature values measure for chain : {0} is {1}",ChainNumber, temperaureValue);
+            // ToDo: Add test case code.
+            RunChildSteps(); //If the step supports child steps.
+
+            // If no verdict is used, the verdict will default to NotSet.
+            // You can change the verdict using UpgradeVerdict() as shown below.
+            // UpgradeVerdict(Verdict.Pass);
+        }
+    }
 
 
     //[Display("DR49 Ch2 Write DSA", Group: "RjioMRU", Description: "Insert a description here")]
