@@ -336,7 +336,7 @@ namespace RjioMRU.TestSteps
                             MeasuredPowerValue += (CableLosses[iteration] * -1);
 
                             string CalculatedPowerFactor = MRU_DUT.calcualtePowerFactor(MeasuredPowerValue, rxvalue, txvalue, iteration, "CH1");
-                            string Temperature = MRU_DUT.Dr49_CH_ReadTemperature( MRU_DUT.GetDR49Ch1ComObj(), iteration, "rj-dac-tmp -mru_dac_all");
+                            string Temperature = MRU_DUT.Dr49_CH_ReadTemperature( MRU_DUT.GetDR49Ch1ComObj(), iteration, "rj-dac-tmp -mru_dac_num");
                             Log.Info("Temperature measured CH1:"+Temperature);
                             //string CalculatedPowerFactor = calcualtePowerFactor(MeasuredPowerValue,rxvalue, txvalue, iteration, powerFactorValues);
 
@@ -931,7 +931,7 @@ namespace RjioMRU.TestSteps
                             MeasuredPowerValue += (CableLosses[iteration] * -1);
 
                             string CalculatedPowerFactor= MRU_DUT.calcualtePowerFactor(MeasuredPowerValue, rxvalue, txvalue, iteration,"CH2");
-                            string Temperature = MRU_DUT.Dr49_CH_ReadTemperature( MRU_DUT.GetDR49Ch2ComObj(), iteration, "rj-dac-tmp -mru_dac_all");
+                            string Temperature = MRU_DUT.Dr49_CH_ReadTemperature( MRU_DUT.GetDR49Ch2ComObj(), iteration, "rj-dac-tmp -mru_dac_num");
                             Log.Info("Temperature measured CH2:" + Temperature);
 
 

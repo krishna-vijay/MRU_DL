@@ -226,6 +226,7 @@ namespace RjioMRU.TestSteps
         };
         Channels channelsSelection;
         MRU_Rjio mruObj;
+        private string tobeParsed = "MRU DAC temp read tool:3.0\r\nChannel-0\r\nDAC:0    Temp:23.94 degC\r\nDAC:1    Temp:24.12 degC\r\nDAC:2    Temp:24.31 degC\r\nDAC:3    Temp:24.19 degC\r\nDAC:4    Temp:23.88 degC\r\nDAC:5    Temp:24.12 degC\r\nDAC:6    Temp:24.06 degC\r\nDAC:7    Temp:24.12 degC\r\nChannel-1\r\nDAC:0    Temp:23.31 degC\r\nDAC:1    Temp:24.25 degC\r\nDAC:2    Temp:23.94 degC\r\nDAC:3    Temp:24.06 degC\r\nDAC:4    Temp:23.50 degC\r\nDAC:5    Temp:23.94 degC\r\nDAC:6    Temp:24.25 degC\r\nDAC:7    Temp:23.94 degC\r\n";
         private string[] hexValuesCh1 = new string[16] { "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F" };
         
         // ToDo: Add property here for each parameter the end user should be able to change
@@ -246,7 +247,7 @@ namespace RjioMRU.TestSteps
         public int ChainNumber { get; set; }
 
         [Display("Temperature Read Script", Order: 6, Description: "Enter Temperature Read Script")]
-        public string TemperatureReadScript { get; set; } = "rj-dac-tmp -mru_dac_all";
+        public string TemperatureReadScript { get; set; } = "rj-dac-tmp -mru_dac_num";
         //[Display("DSA Lower Limit", Order: 0, Description: "Enter DSA Lower Limit")]
         //public Input<int> DsaLowerLimit { get => dsaLowerLimit; set => dsaLowerLimit = value; }
         //[Display("DSA Higher Limit", Order: 0, Description: "Enter DSA Higher Limit")]

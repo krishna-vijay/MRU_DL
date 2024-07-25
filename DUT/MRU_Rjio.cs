@@ -2357,13 +2357,17 @@ namespace RjioMRU
 
         }
         
-        internal string Dr49_CH_ReadTemperature( SerialPort dR49ChComObj,int chainNumber, string tempScript = "rj-dac-tmp -mru_dac_all")
+        internal string Dr49_CH_ReadTemperature( SerialPort dR49ChComObj,int chainNumber, string tempScript = "rj-dac-tmp -mru_dac_num")
         {
             dR49ChComObj.ReadExisting();
-            dR49ChComObj.WriteLine(tempScript);
+            dR49ChComObj.WriteLine(tempScript+ " " +chainNumber/2);
+            Thread.Sleep(200);
             //  Log.Info(command4EEPROM_PowerFactor);
-           var temperatureValues = dR49ChComObj.ReadExisting(); 
-            return temperatureValues.ToString();    
+           var temperatureValues = dR49ChComObj.ReadExisting();
+            string[] tempArray = temperatureValues.Split(new string[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
+            var a1 = Array.FindAll(tempArray, s => s.Contains("Channel "+chainNumber%2+""));
+            var temperature = a1[0].Split(new string[] { "Temp:" }, StringSplitOptions.RemoveEmptyEntries)[1];
+            return temperature;    
         }
 
         internal string calcualtePowerFactor(double measuredPowerValue, double rxvalue, double txvalue, int iteration, string channel  )

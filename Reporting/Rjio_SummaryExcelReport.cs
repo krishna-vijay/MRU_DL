@@ -249,11 +249,7 @@ namespace RjioMRU
 
 
                 using (SLDocument sl = new SLDocument(TempletepathSUM, "Sheet1"))
-                {
-
-
-
-                    RowNumber = 1;
+                {                    RowNumber = 1;
                     for (int iteration = 0; iteration < result.Columns.Length; iteration++)
                     {
                         switch (result.Columns[iteration].Name)
