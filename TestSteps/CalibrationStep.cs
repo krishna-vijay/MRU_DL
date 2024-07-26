@@ -397,19 +397,19 @@ namespace RjioMRU.TestSteps
                             /////////////////////////////////////////////////////////////
                             if ((ChannelPowerOk && ACLR_L1OK && ACLR_L2OK && ACLR_R1OK && ACLR_R2OK && FREQERROK && EVMOK) || AttemptNumber > 2)
                             {
-                                MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName +" Chain "+iteration+ " Channel Power", "NA", (ChannelPower - ChannelPowerLimit).ToString(), MeasuredPowerValue.ToString(), (ChannelPower + ChannelPowerLimit).ToString(), "GELE", ChannelPower.ToString(), "dBm");
+                                MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName +" Chain "+iteration+ " Channel Power", ChannelPowerOk?"PASS":"FAIL", (ChannelPower - ChannelPowerLimit).ToString(), MeasuredPowerValue.ToString(), (ChannelPower + ChannelPowerLimit).ToString(), "GELE", ChannelPower.ToString(), "dBm");
 
-                                MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName + " Chain " + iteration +" EVM", "NA", "NA", Convert.ToDouble(resultStrings[1]).ToString(), EVMLimit.ToString(), "LE", "NA", "%");
+                                MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName + " Chain " + iteration +" EVM", EVMOK ? "PASS" : "FAIL", "NA", Convert.ToDouble(resultStrings[1]).ToString(), EVMLimit.ToString(), "LE", "NA", "%");
 
-                                MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName + " Chain " + iteration + " Frequency Error", "NA", (fREQErrorLimit * -1).ToString(), Convert.ToDouble(resultStrings[3]).ToString(), fREQErrorLimit.ToString(), "GELE", "NA", "Hz");
+                                MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName + " Chain " + iteration + " Frequency Error", FREQERROK ? "PASS" : "FAIL", (fREQErrorLimit * -1).ToString(), Convert.ToDouble(resultStrings[3]).ToString(), fREQErrorLimit.ToString(), "GELE", "NA", "Hz");
 
-                                MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName + " Chain " + iteration +" ACLR L1", "NA", "NA", ACPValues[0].ToString(), ACLR_L1_Limit.ToString(), "LE", "NA", "dBc");
+                                MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName + " Chain " + iteration +" ACLR L1", ACLR_L1OK ? "PASS" : "FAIL", "NA", ACPValues[0].ToString(), ACLR_L1_Limit.ToString(), "LE", "NA", "dBc");
 
-                                MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName + " Chain " + iteration + " ACLR L2", "NA", "NA", ACPValues[1].ToString(), ACLR_L2_Limit.ToString(), "LE", "NA", "dBc");
+                                MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName + " Chain " + iteration + " ACLR L2", ACLR_L2OK ? "PASS" : "FAIL", "NA", ACPValues[1].ToString(), ACLR_L2_Limit.ToString(), "LE", "NA", "dBc");
 
-                                MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName + " Chain " + iteration + " ACLR R1", "NA", "NA", ACPValues[2].ToString(), ACLR_R1_Limit.ToString(), "LE", "NA", "dBc");
+                                MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName + " Chain " + iteration + " ACLR R1", ACLR_R1OK ? "PASS" : "FAIL", "NA", ACPValues[2].ToString(), ACLR_R1_Limit.ToString(), "LE", "NA", "dBc");
 
-                                MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName + " Chain " + iteration + " ACLR R2", "NA", "NA", ACPValues[3].ToString(), ACLR_R2_Limit.ToString(), "LE", "NA", "dBc");
+                                MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName + " Chain " + iteration + " ACLR R2", ACLR_R2OK ? "PASS" : "FAIL", "NA", ACPValues[3].ToString(), ACLR_R2_Limit.ToString(), "LE", "NA", "dBc");
                                 MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName + " Chain " + iteration + " Feedback Power", "NA", "NA", rxvalue.ToString(), "NA".ToString(), "NA", "NA", "NA");
 
                                 MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName + " Chain " + iteration + " Power Factor", "NA", "NA", powerFactorValues[iteration].ToString(), "NA".ToString(), "NA", "NA", "NA");
@@ -606,7 +606,7 @@ namespace RjioMRU.TestSteps
                 {
                     MRURjioReportCls.Measurements += item + ";";
                 }
-                Results.Publish<RjioReportCls>("Report", MRURjioReportCls);
+                Results.Publish<RjioReportCls>(MRURjioReportCls.ProductSerialNumber, MRURjioReportCls);
                 Log.Info("Measurements : " + MRURjioReportCls.Measurements);
                 MES_CSV.UpdateHeader(MES_CSV.MRU_Serial_number, MES_CSV.PART_Number,MES_CSV.Equipment_ID, MES_CSV.Slot, MES_CSV.Credentials, this.PlanRun.Verdict.ToString(), MES_CSV.Operation_Mode, this.PlanRun.StartTime.ToString("dd/MM/yyyy HH:mm:ss,"), DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss,"), MES_CSV.SequenceID, MES_CSV.Overall_Defect_Code);
                 MES_CSV.WrteMESCSVFile();
@@ -995,19 +995,19 @@ namespace RjioMRU.TestSteps
                             // MRURjioReportCls.Measurements += StrChannelMeasurements[iteration] + "," + resultStrings[1] + "," + resultStrings[3] + ";";
                             if ((ChannelPowerOk && ACLR_R1OK && ACLR_L2OK && ACLR_L1OK && ACLR_R2OK && FREQERROK && EVMOK) || AttemptNumber > 2)
                             {
-                                MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName + " Chain " + iteration + " Channel Power", "NA", (ChannelPower - ChannelPowerLimit).ToString(), MeasuredPowerValue.ToString(), (ChannelPower + ChannelPowerLimit).ToString(), "GELE", ChannelPower.ToString(), "dBm");
+                                MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName + " Chain " + iteration + " Channel Power", ChannelPowerOk ? "PASS" : "FAIL", (ChannelPower - ChannelPowerLimit).ToString(), MeasuredPowerValue.ToString(), (ChannelPower + ChannelPowerLimit).ToString(), "GELE", ChannelPower.ToString(), "dBm");
 
-                                MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName + " Chain " + iteration + " EVM", "NA", "NA", Convert.ToDouble(resultStrings[1]).ToString(), EVMLimit.ToString(), "LE", "NA", "%");
+                                MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName + " Chain " + iteration + " EVM", EVMOK ? "PASS" : "FAIL", "NA", Convert.ToDouble(resultStrings[1]).ToString(), EVMLimit.ToString(), "LE", "NA", "%");
 
-                                MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName + " Chain " + iteration + " Frequency Error", "NA", (fREQErrorLimit * -1).ToString(), Convert.ToDouble(resultStrings[3]).ToString(), fREQErrorLimit.ToString(), "GELE", "NA", "Hz");
+                                MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName + " Chain " + iteration + " Frequency Error", FREQERROK ? "PASS" : "FAIL", (fREQErrorLimit * -1).ToString(), Convert.ToDouble(resultStrings[3]).ToString(), fREQErrorLimit.ToString(), "GELE", "NA", "Hz");
 
-                                MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName + " Chain " + iteration + " ACLR L1", "NA", "NA", ACPValues[0].ToString(), ACLR_L1_Limit.ToString(), "LE", "NA", "dBc");
+                                MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName + " Chain " + iteration + " ACLR L1", ACLR_L1OK ? "PASS" : "FAIL", "NA", ACPValues[0].ToString(), ACLR_L1_Limit.ToString(), "LE", "NA", "dBc");
 
-                                MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName + " Chain " + iteration + " ACLR L2", "NA", "NA", ACPValues[1].ToString(), ACLR_L2_Limit.ToString(), "LE", "NA", "dBc");
+                                MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName + " Chain " + iteration + " ACLR L2", ACLR_L2OK ? "PASS" : "FAIL", "NA", ACPValues[1].ToString(), ACLR_L2_Limit.ToString(), "LE", "NA", "dBc");
 
-                                MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName + " Chain " + iteration + " ACLR R1", "NA", "NA", ACPValues[2].ToString(), ACLR_R1_Limit.ToString(), "LE", "NA", "dBc");
+                                MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName + " Chain " + iteration + " ACLR R1", ACLR_R1OK ? "PASS" : "FAIL", "NA", ACPValues[2].ToString(), ACLR_R1_Limit.ToString(), "LE", "NA", "dBc");
 
-                                MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName + " Chain " + iteration + " ACLR R2", "NA", "NA", ACPValues[3].ToString(), ACLR_R2_Limit.ToString(), "LE", "NA", "dBc");
+                                MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName + " Chain " + iteration + " ACLR R2", ACLR_R2OK ? "PASS" : "FAIL", "NA", ACPValues[3].ToString(), ACLR_R2_Limit.ToString(), "LE", "NA", "dBc");
                                 MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName + " Chain " + iteration + " Feedback Power", "NA", "NA", rxvalue.ToString(), "NA".ToString(), "NA", "NA", "NA");
                                 MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName + " Chain " + iteration + " Power Factor", "NA", "NA", powerFactorValues[iteration].ToString(), "NA".ToString(), "NA", "NA", "NA");
                                
@@ -1163,19 +1163,20 @@ namespace RjioMRU.TestSteps
             {
                 RjioReportCls.reportGenerated = true;
                 RjioReportCls MRURjioReportCls = new RjioReportCls();
+                MRURjioReportCls.SWVersion = DR21Login.softwareVersion;
+                MRURjioReportCls.EMPID = DR21Login.EmpID;
+                MRURjioReportCls.TestStartTime = DR21Login.TestPlanStartTime;
+                MRURjioReportCls.TestEndTime = DateTime.Now.ToLongTimeString();
+                MRURjioReportCls.testStage = DR21Login.testStage;
+                MRURjioReportCls.TotalTestTime = (DateTime.Now - DR21Login.testplanStartTime_dateTime).TotalMinutes.ToString();
                 MRURjioReportCls.ProdID = DR21_ReadInfo.ProdID;
                 MRURjioReportCls.MACID1 = DR21_ReadInfo.MAC1;
                 MRURjioReportCls.MACID2 = DR21_ReadInfo.MAC2;
                 MRURjioReportCls.MACID3 = DR21_ReadInfo.MAC3;
                 MRURjioReportCls.MACID4 = DR21_ReadInfo.MAC4;
                 MRURjioReportCls.PcbSerialNumber = DR21_ReadInfo.PCBserialNumber;
-                MRURjioReportCls.ProductSerialNumber = DR21_ReadInfo.ProductSerialNumber;
-                MRURjioReportCls.TestStartTime = DR21Login.TestPlanStartTime;
-                MRURjioReportCls.TestEndTime = DateTime.Now.ToLongTimeString();
-                MRURjioReportCls.TotalTestTime = (DateTime.Now - DR21Login.testplanStartTime_dateTime).TotalMinutes.ToString();
-                MRURjioReportCls.SWVersion = DR21Login.softwareVersion;
-                MRURjioReportCls.testStage = DR21Login.testStage;
-                MRURjioReportCls.EMPID = DR21Login.EmpID;
+                MRURjioReportCls.ProductSerialNumber = MES_CSV.MRU_Serial_number;
+              
 
                 foreach (var item in RjioMRU.TestSteps.CalibrationStep_CH1.StrChannelMeasurementsCh1)
                 {
@@ -1186,9 +1187,9 @@ namespace RjioMRU.TestSteps
                 {
                     MRURjioReportCls.Measurements += item + ";";
                 }
-                Results.Publish<RjioReportCls>("Report", MRURjioReportCls);
+                Results.Publish<RjioReportCls>(MRURjioReportCls.ProductSerialNumber, MRURjioReportCls);
                 Log.Info("Measurements : " + MRURjioReportCls.Measurements);
-                MES_CSV.UpdateHeader(MES_CSV.MRU_Serial_number, MES_CSV.PART_Number, MES_CSV.Equipment_ID, MES_CSV.Slot, MES_CSV.Credentials, this.PlanRun.Verdict.ToString(), MES_CSV.Operation_Mode, this.PlanRun.StartTimeStamp.ToString(), DateTime.Now.ToLongTimeString(), MES_CSV.SequenceID, MES_CSV.Overall_Defect_Code);
+                MES_CSV.UpdateHeader(MES_CSV.MRU_Serial_number, MES_CSV.PART_Number, MES_CSV.Equipment_ID, MES_CSV.Slot, MES_CSV.Credentials, this.PlanRun.Verdict.ToString(), MES_CSV.Operation_Mode, this.PlanRun.StartTime.ToString("dd/MM/yyyy HH:mm:ss,"), DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss,"), MES_CSV.SequenceID, MES_CSV.Overall_Defect_Code);                
                 MES_CSV.WrteMESCSVFile();
             }
         }
