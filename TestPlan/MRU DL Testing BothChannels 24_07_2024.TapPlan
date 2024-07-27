@@ -524,6 +524,7 @@
       <DSACalCycles1>10</DSACalCycles1>
       <DSAHigherLimit>63</DSAHigherLimit>
       <DSAlowerLimit>5</DSAlowerLimit>
+      <Enabled>false</Enabled>
       <Name Metadata="Step Name">CalibrationStep Ch2</Name>
     </TestStep>
     <TestStep type="RjioMRU.TestSteps.DR49_Ch2DSAScript" Id="56b0dc71-afd9-4488-ac12-2a0bd77fb536" OpenTap.Visibility="Visible">
@@ -548,6 +549,7 @@
           </InputVerdict>
           <TargetVerdict>Pass</TargetVerdict>
           <Action>RunChildren</Action>
+          <Enabled>false</Enabled>
           <Name Metadata="Step Name">If Verdict (2)</Name>
           <ChildTestSteps>
             <TestStep type="RjioMRU.TestSteps.DR49_Ch1_DSA_Write" Id="70719e01-cfa3-490b-aa24-68f4ee92a0d0">
