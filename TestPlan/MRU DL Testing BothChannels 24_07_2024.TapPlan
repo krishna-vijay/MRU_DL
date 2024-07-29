@@ -524,7 +524,6 @@
       <DSACalCycles1>10</DSACalCycles1>
       <DSAHigherLimit>63</DSAHigherLimit>
       <DSAlowerLimit>5</DSAlowerLimit>
-      <Enabled>false</Enabled>
       <Name Metadata="Step Name">CalibrationStep Ch2</Name>
     </TestStep>
     <TestStep type="RjioMRU.TestSteps.DR49_Ch2DSAScript" Id="56b0dc71-afd9-4488-ac12-2a0bd77fb536" OpenTap.Visibility="Visible">
@@ -540,6 +539,7 @@
       </InputVerdict>
       <TargetVerdict>Pass</TargetVerdict>
       <Action>RunChildren</Action>
+      <Enabled>false</Enabled>
       <Name Metadata="Step Name">If Verdict (1)</Name>
       <ChildTestSteps>
         <TestStep type="OpenTap.Plugins.BasicSteps.IfStep" Id="a979fd82-f13d-4f4a-915d-3ba4d24982f5" OpenTap.Visibility="Visible">
@@ -654,6 +654,26 @@
       <Name Metadata="Step Name">Delay (5s)</Name>
     </TestStep>
     <TestStep type="RjioMRU.TestSteps.DR21_ReadInfo" Id="e72dca14-096f-4762-9838-56e5bcac1f78">
+      <SerialNumber>
+        <PropertyName>RjioMRU.MesCheckToStart|Serialnumber</PropertyName>
+        <Step>9e4126a1-8927-4f5f-b7ae-d819a111549f</Step>
+      </SerialNumber>
+      <ProductID>
+        <PropertyName>RjioMRU.MesCheckToStart|ProductID</PropertyName>
+        <Step>9e4126a1-8927-4f5f-b7ae-d819a111549f</Step>
+      </ProductID>
+      <MacID>
+        <PropertyName>RjioMRU.MesCheckToStart|MacID</PropertyName>
+        <Step>9e4126a1-8927-4f5f-b7ae-d819a111549f</Step>
+      </MacID>
+      <IhstbID>
+        <PropertyName>RjioMRU.MesCheckToStart|HstbID</PropertyName>
+        <Step>9e4126a1-8927-4f5f-b7ae-d819a111549f</Step>
+      </IhstbID>
+      <RffeID>
+        <PropertyName>RjioMRU.MesCheckToStart|RffeID</PropertyName>
+        <Step>9e4126a1-8927-4f5f-b7ae-d819a111549f</Step>
+      </RffeID>
       <MruObj Source="OpenTap.DutSettings">RjioMRU</MruObj>
       <Name Metadata="Step Name">DR21 Read info</Name>
     </TestStep>
