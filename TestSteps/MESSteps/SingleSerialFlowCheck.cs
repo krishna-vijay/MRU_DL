@@ -18,7 +18,7 @@ namespace RjioMRU.TestSteps.MESSteps
     {
         #region Settings
         ClsMES mesResource = null;
-        string serialNumber = string.Empty;
+        string serialNumber = "JITSAF1LIMRU00006";
         // ToDo: Add property here for each parameter the end user should be able to change
         #endregion
 
