@@ -3,9 +3,9 @@
   <Steps>
     <TestStep type="RjioMRU.TestSteps.MESSteps.SingleSerialFlowCheck" Id="b476c126-a6bb-45ae-9b1f-0043cb1ffd9d">
       <MesResource Source="OpenTap.InstrumentSettings">MES</MesResource>
-      <SerialNumber>JITSAF1FKMRU00016</SerialNumber>
+      <SerialNumber>JITSAF1FKMRU00006</SerialNumber>
       <ServerURL>http://42qconduituat2.42-q.com:18003/conduit</ServerURL>
-      <ClientID>p5547dc2_uat</ClientID>
+      <ClientID>p5599dc1uat</ClientID>
       <EmployeeID>62153666</EmployeeID>
       <Name Metadata="Step Name">SingleSerialFlowCheck</Name>
     </TestStep>
