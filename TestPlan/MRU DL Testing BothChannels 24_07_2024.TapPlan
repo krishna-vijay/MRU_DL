@@ -13,7 +13,7 @@
     </TestStep>
     <TestStep type="RjioMRU.TestSteps.MESSteps.SingleSerialFlowCheck" Id="7b3170eb-30e4-4ffb-9140-7e086a6b8720">
       <MesResource Source="OpenTap.InstrumentSettings">MES</MesResource>
-      <SerialNumber></SerialNumber>
+      <SerialNumber>JITSAF1LIMRU00015</SerialNumber>
       <Name Metadata="Step Name">SingleSerialFlowCheck</Name>
     </TestStep>
     <TestStep type="RjioMRU.TestSteps.PowerSupplySteps" Id="8b1396ef-16df-459b-b23e-47cdb90f5f88">
