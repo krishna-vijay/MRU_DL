@@ -48,7 +48,7 @@ namespace RjioMRU
         public string MESInfoUrl { get => mESInfoUrl; set => mESInfoUrl = value; }
         [Display("Result Sever URL", Description: "Enter Result server URL", Order: 3)]
         public string ResultServerURL { get => resultServerURL; set => resultServerURL = value; }
-       
+
 
         string resultServerURL = string.Empty;
 
@@ -60,10 +60,10 @@ namespace RjioMRU
         public string CsvStorageFolder { get => csvStorageFolder; set => csvStorageFolder = value; }
 
         string equipmentNumber = string.Empty;
-        [Display("Equipment Number", Description: "Enter the Equipment Number",Group:"CSV Informations", Order: 5)]
+        [Display("Equipment Number", Description: "Enter the Equipment Number", Group: "CSV Informations", Order: 5)]
         public string EquipmentNumber { get => equipmentNumber; set => equipmentNumber = value; }
         string csvStorageFolder = string.Empty;
-        
+
         //string groupName = string.Empty;
         //[Display("Group Name", Description: "Enter the Group Name", Group: "CSV Informations", Order: 6)]
         //public string GroupName { get => groupName; set => groupName = value; }
@@ -88,14 +88,14 @@ namespace RjioMRU
         string overallDefectCode = string.Empty;
         [Display("Overall Defect Code", Description: "Enter the Overall Defect Code", Group: "CSV Informations", Order: 11)]
         public string OverallDefectCode { get => overallDefectCode; set => overallDefectCode = value; }
-        
+
 
         string partNumber = string.Empty;
-        [Display("Part Number",Description:"Enter the Part Number",Group: "CSV Informations",Order:12)]
+        [Display("Part Number", Description: "Enter the Part Number", Group: "CSV Informations", Order: 12)]
         public string PartNumber { get => partNumber; set => partNumber = value; }
 
         string equipment_ID = string.Empty;
-        [Display("Equipment ID",Description:"Enter equipment ID",Group: "CSV Informations", Order: 13)]
+        [Display("Equipment ID", Description: "Enter equipment ID", Group: "CSV Informations", Order: 13)]
         public string Equipment_ID { get => equipment_ID; set => equipment_ID = value; }
 
 
@@ -182,9 +182,9 @@ namespace RjioMRU
         //    return rep;
         //}
 
-    
+
         public async Task<ComponentData> GetMesInformationResponse(string serialNumberByUser)
-        {           
+        {
             ComponentData componentData = new ComponentData();
             try
             {
@@ -225,7 +225,7 @@ namespace RjioMRU
                         Log.Info("Level: " + component.level);
                         Log.Info("Path: " + component.path);
                         Log.Info("Cycle: " + component.cycle);
-                    }             
+                    }
                 }
             }
             catch (Exception ex)
@@ -234,10 +234,10 @@ namespace RjioMRU
             }
             return componentData;
         }
-               
-        
-        
-        public async Task<bool> SingleSerialFlowCheck(string serverURL,string client_id= "p5599dc1uat",string employeeID= "62153666",string serialNumber = "JITSAF1LIMRU00006")
+
+
+
+        public async Task<bool> SingleSerialFlowCheck(string serverURL, string client_id = "p5599dc1uat", string employeeID = "62153666", string serialNumber = "JITSAF1LIMRU00006")
         {
             ComponentData componentData = new ComponentData();
             try
@@ -252,49 +252,17 @@ namespace RjioMRU
                     Method = HttpMethod.Post,
                     RequestUri = new Uri(serverURL),
                     Headers ={
-                        { "User-Agent", "insomnia/9.2.0" } , },
-                   // Content = new StringContent("{\r\n\"version\": \"1.0\",\r\n\"source\": {\r\n\"client_id\": \""+ client_id + "\",\r\n\"employee\": \""+ employeeID + "\",\r\n\"password\": \"\",\r\n\"workstation\": {\r\n\"type\": \"Device\",\r\n\"station\": \"903\"\r\n}\r\n},\r\n\"refresh_unit\": true,\r\n\"token\": \"\",\r\n\"keep_alive\": false,\r\n\"single_transaction\": false,\r\n\"options\": {\r\n\"skip_data\": [\r\n\"defects\",\r\n\"comments\",\r\n\"components\",\r\n\"attributes\"\r\n]\r\n},\r\n\"transactions\": [\r\n{\r\n\"unit\": {\r\n\"unit_id\": \""+serialNumber+"\",\r\n\"part_number\": \"\",\r\n\"revision\": }\r\n}\r\n]\r\n}")
-                
-                   // Content = new StringContent("{\r\n\"version\": \"1.0\",\r\n\"source\": {\r\n\"client_id\": \"p5599dc1uat\",\r\n\"employee\": \"62153666\",\r\n\"password\": \"\",\r\n\"workstation\": {\r\n\"type\": \"Device\",\r\n\"station\": \" 539 \"\r\n}\r\n},\r\n\"refresh_unit\": true,\r\n\"token\": \"\",\r\n\"keep_alive\": false,\r\n\"single_transaction\": false,\r\n\"options\": {\r\n\"skip_data\": [\r\n\"defects\",\r\n\" comments\",\r\n\"components\",\r\n\"attributes\"\r\n]\r\n},\r\n\"transactions\": [\r\n{\r\n\"unit\": {\r\n\"unit_id\": \"JITSAF1FKMRU00006\",\r\n\"part_number\": \"\",\r\n\"revision\": \"\"\r\n}\r\n}\r\n]\r\n}")
-                    Content = new StringContent("{\r\n\"version\": \"1.0\",\r\n\"source\": {\r\n\"client_id\": \""+ client_id + "\",\r\n\"employee\": \"\"+ employeeID + \"\",\r\n\"password\": \"\",\r\n\"workstation\": {\r\n\"type\": \"Device\",\r\n\"station\": \" 539 \"\r\n}\r\n},\r\n\"refresh_unit\": true,\r\n\"token\": \"\",\r\n\"keep_alive\": false,\r\n\"single_transaction\": false,\r\n\"options\": {\r\n\"skip_data\": [\r\n\"defects\",\r\n\" comments\",\r\n\"components\",\r\n\"attributes\"\r\n]\r\n},\r\n\"transactions\": [\r\n{\r\n\"unit\": {\r\n\"unit_id\": \""+serialNumber+"\",\r\n\"part_number\": \"\",\r\n\"revision\": \"\"\r\n}\r\n}\r\n]\r\n}")
+                        { 
+                            "User-Agent", "insomnia/9.2.0"
+                        },
+                    },
+                    // Content = new StringContent("{\r\n\"version\": \"1.0\",\r\n\"source\": {\r\n\"client_id\": \""+ client_id + "\",\r\n\"employee\": \""+ employeeID + "\",\r\n\"password\": \"\",\r\n\"workstation\": {\r\n\"type\": \"Device\",\r\n\"station\": \"903\"\r\n}\r\n},\r\n\"refresh_unit\": true,\r\n\"token\": \"\",\r\n\"keep_alive\": false,\r\n\"single_transaction\": false,\r\n\"options\": {\r\n\"skip_data\": [\r\n\"defects\",\r\n\"comments\",\r\n\"components\",\r\n\"attributes\"\r\n]\r\n},\r\n\"transactions\": [\r\n{\r\n\"unit\": {\r\n\"unit_id\": \""+serialNumber+"\",\r\n\"part_number\": \"\",\r\n\"revision\": }\r\n}\r\n]\r\n}")
 
-
+                   //  Content = new StringContent("{\r\n\"version\": \"1.0\",\r\n\"source\": {\r\n\"client_id\": \"p5599dc1uat\",\r\n\"employee\": \"62153666\",\r\n\"password\": \"\",\r\n\"workstation\": {\r\n\"type\": \"Device\",\r\n\"station\": \" 539 \"\r\n}\r\n},\r\n\"refresh_unit\": true,\r\n\"token\": \"\",\r\n\"keep_alive\": false,\r\n\"single_transaction\": false,\r\n\"options\": {\r\n\"skip_data\": [\r\n\"defects\",\r\n\" comments\",\r\n\"components\",\r\n\"attributes\"\r\n]\r\n},\r\n\"transactions\": [\r\n{\r\n\"unit\": {\r\n\"unit_id\": \"JITSAF1FKMRU00006\",\r\n\"part_number\": \"\",\r\n\"revision\": \"\"\r\n}\r\n}\r\n]\r\n}")
+                   Content = new StringContent("{\r\n\"version\": \"1.0\",\r\n\"source\": {\r\n\"client_id\": \"" + client_id + "\",\r\n\"employee\": \"\"+ employeeID + \"\",\r\n\"password\": \"\",\r\n\"workstation\": {\r\n\"type\": \"Device\",\r\n\"station\": \" 539 \"\r\n}\r\n},\r\n\"refresh_unit\": true,\r\n\"token\": \"\",\r\n\"keep_alive\": false,\r\n\"single_transaction\": false,\r\n\"options\": {\r\n\"skip_data\": [\r\n\"defects\",\r\n\" comments\",\r\n\"components\",\r\n\"attributes\"\r\n]\r\n},\r\n\"transactions\": [\r\n{\r\n\"unit\": {\r\n\"unit_id\": \"" + serialNumber + "\",\r\n\"part_number\": \"\",\r\n\"revision\": \"\"\r\n}\r\n}\r\n]\r\n}")
                 };
 
-                /*{
-"version": "1.0",
-"source": {
-"client_id": "p5599dc1uat",
-"employee": "62153666",
-"password": "",
-"workstation": {
-"type": "Device",
-"station": " 539 "
-}
-},
-"refresh_unit": true,
-"token": "",
-"keep_alive": false,
-"single_transaction": false,
-"options": {
-"skip_data": [
-"defects",
-" comments",
-"components",
-"attributes"
-]
-},
-"transactions": [
-{
-"unit": {
-"unit_id": "JITSAF1FKMRU00006",
-"part_number": "",
-"revision": ""
-}
-}
-]
-}*/
-                ///Client ID, Employee, Station, Unit_id are the parameters to be passed in the request body
+                 ///Client ID, Employee, Station, Unit_id are the parameters to be passed in the request body
                 using (var response = await client.SendAsync(request))
                 {
                     response.EnsureSuccessStatusCode();
@@ -406,7 +374,7 @@ namespace RjioMRU
             MES_CSV.Equipment_Number = EquipmentNumber;
             MES_CSV.Slot = Slot;
             MES_CSV.Credentials = Credentials;
-            MES_CSV.Operation_Mode =Enum.GetName(typeof(OperationCodes),OperationMode);
+            MES_CSV.Operation_Mode = Enum.GetName(typeof(OperationCodes), OperationMode);
             MES_CSV.SequenceID = SequenceID;
             MES_CSV.Overall_Defect_Code = OverallDefectCode;
 
@@ -459,7 +427,7 @@ namespace RjioMRU
 
     public class Component
     {
-        
+
         public int serial_key { get; set; }
         public string serial_number { get; set; }
         public int part_key { get; set; }
@@ -475,7 +443,7 @@ namespace RjioMRU
     }
     public enum OperationCodes
     {
-        PRODUCTION,ENGINEERING,CALIBRATION,SKIPPING,TESTING
+        PRODUCTION, ENGINEERING, CALIBRATION, SKIPPING, TESTING
     }
 }
 
