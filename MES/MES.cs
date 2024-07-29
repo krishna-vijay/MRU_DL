@@ -237,7 +237,7 @@ namespace RjioMRU
                
         
         
-        public async Task<bool> SingleSerialFlowCheck(string serialNumber = "JITSAF1LIMRU00006")
+        public async Task<bool> SingleSerialFlowCheck(string serverURL,string client_id,string employeeID,string serialNumber = "JITSAF1LIMRU00006")
         {
             ComponentData componentData = new ComponentData();
             try
@@ -250,10 +250,10 @@ namespace RjioMRU
                 var request = new HttpRequestMessage
                 {
                     Method = HttpMethod.Post,
-                    RequestUri = new Uri(ResultServerURL),
+                    RequestUri = new Uri(serverURL),
                     Headers ={
                         { "User-Agent", "insomnia/9.2.0" } , },
-                    Content = new StringContent("{\r\n\"version\": \"1.0\",\r\n\"source\": {\r\n\"client_id\": \"p5547dc2_uat\",\r\n\"employee\": \"24098\",\r\n\"password\": \"\",\r\n\"workstation\": {\r\n\"type\": \"Device\",\r\n\"station\": \"903\"\r\n}\r\n},\r\n\"refresh_unit\": true,\r\n\"token\": \"\",\r\n\"keep_alive\": false,\r\n\"single_transaction\": false,\r\n\"options\": {\r\n\"skip_data\": [\r\n\"defects\",\r\n\"comments\",\r\n\"components\",\r\n\"attributes\"\r\n]\r\n},\r\n\"transactions\": [\r\n{\r\n\"unit\": {\r\n\"unit_id\": \"42Q203800003\",\r\n\"part_number\": \"\",\r\n\"revision\": }\r\n}\r\n]\r\n}")
+                    Content = new StringContent("{\r\n\"version\": \"1.0\",\r\n\"source\": {\r\n\"client_id\": \""+ client_id + "\",\r\n\"employee\": \""+ employeeID + "\",\r\n\"password\": \"\",\r\n\"workstation\": {\r\n\"type\": \"Device\",\r\n\"station\": \"903\"\r\n}\r\n},\r\n\"refresh_unit\": true,\r\n\"token\": \"\",\r\n\"keep_alive\": false,\r\n\"single_transaction\": false,\r\n\"options\": {\r\n\"skip_data\": [\r\n\"defects\",\r\n\"comments\",\r\n\"components\",\r\n\"attributes\"\r\n]\r\n},\r\n\"transactions\": [\r\n{\r\n\"unit\": {\r\n\"unit_id\": \""+serialNumber+"\",\r\n\"part_number\": \"\",\r\n\"revision\": }\r\n}\r\n]\r\n}")
                 };
 
               ///Client ID, Employee, Station, Unit_id are the parameters to be passed in the request body
@@ -262,9 +262,7 @@ namespace RjioMRU
                     response.EnsureSuccessStatusCode();
                     var body = await response.Content.ReadAsStringAsync();
                     Log.Info(body);
-
                     //body status ok return true else false
-                   
                 }
             }
             catch (Exception)

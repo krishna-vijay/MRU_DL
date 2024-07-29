@@ -31,9 +31,14 @@ namespace RjioMRU.TestSteps.MESSteps
         [Display("Serial Number", Order: 1)]
         public string SerialNumber { get => serialNumber; set => serialNumber = value; }
 
+        public string ServerURL { get; set; } = "http://42qconduituat2.42-q.com:18003/conduit";
+        public string ClientID { get; set; } = "p5547dc2_uat";
+        public string EmployeeID { get; set; } = "62153666";
+
+
         public override void Run()
         {
-          var value1 =  MesResource.SingleSerialFlowCheck(SerialNumber);
+          var value1 =  MesResource.SingleSerialFlowCheck(ServerURL, ClientID, EmployeeID, SerialNumber);
             Log.Info("Single Serial Flow Check:  " + value1.Result.ToString());
             // ToDo: Add test case code.
             RunChildSteps(); //If the step supports child steps.
