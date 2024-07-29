@@ -44,6 +44,14 @@ namespace RjioMRU.TestSteps.MESSteps
           var value1 =  MesResource.SingleSerialFlowCheck(ServerURL, ClientID, EmployeeID, SerialNumber,stageID);
             Log.Info("Single Serial Flow Check:  " + value1.Result.ToString());
             // ToDo: Add test case code.
+            if(value1.Result)
+            {
+                UpgradeVerdict(Verdict.Pass);
+            }
+            else
+            {
+                UpgradeVerdict(Verdict.Fail);
+            }   
             RunChildSteps(); //If the step supports child steps.
 
             // If no verdict is used, the verdict will default to NotSet.

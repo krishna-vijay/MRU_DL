@@ -14,6 +14,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using DocumentFormat.OpenXml.Office2013.Drawing.ChartStyle;
 
+
 //Note this template assumes that you have a SCPI based instrument, and accordingly
 //extends the ScpiInstrument base class.
 
@@ -239,6 +240,7 @@ namespace RjioMRU
 
         public async Task<bool> SingleSerialFlowCheck(string serverURL, string client_id = "p5599dc1uat", string employeeID = "62153666", string serialNumber = "JITSAF1LIMRU00006",string stageID = "553")
         {
+            bool returnValue = false;
             string stringContents = "{\r\n\"version\": \"1.0\",\r\n\"source\": {\r\n\"client_id\": \""+ client_id + "\",\r\n\"employee\": \""+ employeeID + "\",\r\n\"password\": \"\",\r\n\"workstation\": {\r\n\"type\": \"Device\",\r\n\"station\": \" "+stageID+" \"\r\n}\r\n},\r\n\"refresh_unit\": true,\r\n\"token\": \"\",\r\n\"keep_alive\": false,\r\n\"single_transaction\": false,\r\n\"options\": {\r\n\"skip_data\": [\r\n\"defects\",\r\n\" comments\",\r\n\"components\",\r\n\"attributes\"\r\n]\r\n},\r\n\"transactions\": [\r\n{\r\n\"unit\": {\r\n\"unit_id\": \"" + serialNumber + "\",\r\n\"part_number\": \"\",\r\n\"revision\": \"\"\r\n}\r\n}\r\n]\r\n}";
             ComponentData componentData = new ComponentData();
             try
@@ -257,10 +259,7 @@ namespace RjioMRU
                             "User-Agent", "insomnia/9.2.0"
                         },
                     },
-                    // Content = new StringContent("{\r\n\"version\": \"1.0\",\r\n\"source\": {\r\n\"client_id\": \""+ client_id + "\",\r\n\"employee\": \""+ employeeID + "\",\r\n\"password\": \"\",\r\n\"workstation\": {\r\n\"type\": \"Device\",\r\n\"station\": \"903\"\r\n}\r\n},\r\n\"refresh_unit\": true,\r\n\"token\": \"\",\r\n\"keep_alive\": false,\r\n\"single_transaction\": false,\r\n\"options\": {\r\n\"skip_data\": [\r\n\"defects\",\r\n\"comments\",\r\n\"components\",\r\n\"attributes\"\r\n]\r\n},\r\n\"transactions\": [\r\n{\r\n\"unit\": {\r\n\"unit_id\": \""+serialNumber+"\",\r\n\"part_number\": \"\",\r\n\"revision\": }\r\n}\r\n]\r\n}")
-
                     Content = new StringContent(stringContents)
-                   //Content = new StringContent("{\r\n\"version\": \"1.0\",\r\n\"source\": {\r\n\"client_id\": \"" + client_id + "\",\r\n\"employee\": \"\"+ employeeID + \"\",\r\n\"password\": \"\",\r\n\"workstation\": {\r\n\"type\": \"Device\",\r\n\"station\": \" 539 \"\r\n}\r\n},\r\n\"refresh_unit\": true,\r\n\"token\": \"\",\r\n\"keep_alive\": false,\r\n\"single_transaction\": false,\r\n\"options\": {\r\n\"skip_data\": [\r\n\"defects\",\r\n\" comments\",\r\n\"components\",\r\n\"attributes\"\r\n]\r\n},\r\n\"transactions\": [\r\n{\r\n\"unit\": {\r\n\"unit_id\": \"" + serialNumber + "\",\r\n\"part_number\": \"\",\r\n\"revision\": \"\"\r\n}\r\n}\r\n]\r\n}")
                    
                 };
                 Log.Info(stringContents);
@@ -269,8 +268,17 @@ namespace RjioMRU
                 {
                     response.EnsureSuccessStatusCode();
                     var body = await response.Content.ReadAsStringAsync();
-                    Log.Info(body);
+                    Log.Info("Returned Jzon : "+body);
+                   var statusBody = JsonConvert.DeserializeObject<Root>(body);
                     //body status ok return true else false
+                    if (statusBody.Status.Code =="OK")
+                    {
+                        returnValue= true;
+                    }
+                    else
+                    {
+                        returnValue= false;
+                    }
                 }
             }
             catch (Exception)
@@ -278,7 +286,11 @@ namespace RjioMRU
 
                 throw;
             }
-            return true; // return true if EnsureSuccessStatusCode(); is success else return false.
+            return returnValue;
+            
+            
+            
+            // return true if EnsureSuccessStatusCode(); is success else return false.
             /*
              {
                 "success": true,
@@ -361,7 +373,283 @@ namespace RjioMRU
 
         }
 
+        #region Internal clases
+        public class Root
+        {
+            ////[JsonPropertyName("source")]
+            public Source Source { get; set; }
 
+            //[JsonPropertyName("status")]
+            public Status Status { get; set; }
+
+            //[JsonPropertyName("transaction_responses")]
+            public List<TransactionResponse> TransactionResponses { get; set; }
+
+            //[JsonPropertyName("version")]
+            public string Version { get; set; }
+        }
+
+        public class Source
+        {
+            //[JsonPropertyName("agent")]
+            public string Agent { get; set; }
+
+            //[JsonPropertyName("client_id")]
+            public string ClientId { get; set; }
+
+            //[JsonPropertyName("employee")]
+            public string Employee { get; set; }
+
+            //[JsonPropertyName("password")]
+            public string Password { get; set; }
+
+            //[JsonPropertyName("workstation")]
+            public Workstation Workstation { get; set; }
+        }
+
+        public class Workstation
+        {
+            //[JsonPropertyName("station")]
+            public string Station { get; set; }
+
+            //[JsonPropertyName("type")]
+            public string Type { get; set; }
+        }
+
+        public class Status
+        {
+            //[JsonPropertyName("code")]
+            public string Code { get; set; }
+
+            //[JsonPropertyName("message")]
+            public string Message { get; set; }
+        }
+
+        public class TransactionResponse
+        {
+            //[JsonPropertyName("command_responses")]
+            public object CommandResponses { get; set; }
+
+            //[JsonPropertyName("scanned_unit")]
+            public ScannedUnit ScannedUnit { get; set; }
+
+            //[JsonPropertyName("status")]
+            public Status Status { get; set; }
+        }
+
+        public class ScannedUnit
+        {
+            //[JsonPropertyName("status")]
+            public Status Status { get; set; }
+
+            //[JsonPropertyName("unit")]
+            public Unit Unit { get; set; }
+
+            //[JsonPropertyName("unit_info")]
+            public UnitInfo UnitInfo { get; set; }
+        }
+
+        public class Unit
+        {
+            //[JsonPropertyName("part_number")]
+            public string PartNumber { get; set; }
+
+            //[JsonPropertyName("quantity")]
+            public string Quantity { get; set; }
+
+            //[JsonPropertyName("revision")]
+            public string Revision { get; set; }
+
+            //[JsonPropertyName("unit_id")]
+            public string UnitId { get; set; }
+        }
+
+        public class UnitInfo
+        {
+            //[JsonPropertyName("active_hold_type")]
+            public string ActiveHoldType { get; set; }
+
+            //[JsonPropertyName("assembly_count")]
+            public int AssemblyCount { get; set; }
+
+            //[JsonPropertyName("attr_def_count")]
+            public int AttrDefCount { get; set; }
+
+            //[JsonPropertyName("auto_commands")]
+            public object AutoCommands { get; set; }
+
+            //[JsonPropertyName("c_level_key")]
+            public object CLevelKey { get; set; }
+
+            //[JsonPropertyName("client_id")]
+            public string ClientId { get; set; }
+
+            //[JsonPropertyName("command_template")]
+            public List<object> CommandTemplate { get; set; }
+
+            //[JsonPropertyName("container_config")]
+            public object ContainerConfig { get; set; }
+
+            //[JsonPropertyName("container_quantity")]
+            public int ContainerQuantity { get; set; }
+
+            //[JsonPropertyName("container_serial_key")]
+            public object ContainerSerialKey { get; set; }
+
+            //[JsonPropertyName("defect_seq")]
+            public int DefectSeq { get; set; }
+
+            //[JsonPropertyName("description")]
+            public string Description { get; set; }
+
+            //[JsonPropertyName("detailed_unit_set")]
+            public object DetailedUnitSet { get; set; }
+
+            //[JsonPropertyName("employee_key")]
+            public int EmployeeKey { get; set; }
+
+            //[JsonPropertyName("fail_to_loc_key")]
+            public object FailToLocKey { get; set; }
+
+            //[JsonPropertyName("finisher_executed")]
+            public string FinisherExecuted { get; set; }
+
+            //[JsonPropertyName("item_num")]
+            public int ItemNum { get; set; }
+
+            //[JsonPropertyName("loc_ts")]
+            public string LocTs { get; set; }
+
+            //[JsonPropertyName("location_key")]
+            public int LocationKey { get; set; }
+
+            //[JsonPropertyName("long_workstation")]
+            public string LongWorkstation { get; set; }
+
+            //[JsonPropertyName("lot_serial_key")]
+            public object LotSerialKey { get; set; }
+
+            //[JsonPropertyName("mtl_count")]
+            public int MtlCount { get; set; }
+
+            //[JsonPropertyName("order_line_key")]
+            public object OrderLineKey { get; set; }
+
+            //[JsonPropertyName("part_family")]
+            public object PartFamily { get; set; }
+
+            //[JsonPropertyName("part_key")]
+            public int PartKey { get; set; }
+
+            //[JsonPropertyName("part_number")]
+            public string PartNumber { get; set; }
+
+            //[JsonPropertyName("pass_fail_seq")]
+            public int PassFailSeq { get; set; }
+
+            //[JsonPropertyName("pass_to_loc_key")]
+            public object PassToLocKey { get; set; }
+
+            //[JsonPropertyName("pass_to_location")]
+            public object PassToLocation { get; set; }
+
+            //[JsonPropertyName("pass_to_process")]
+            public object PassToProcess { get; set; }
+
+            //[JsonPropertyName("process_key")]
+            public int ProcessKey { get; set; }
+
+            //[JsonPropertyName("process_name")]
+            public string ProcessName { get; set; }
+
+            //[JsonPropertyName("quantity")]
+            public int Quantity { get; set; }
+
+            //[JsonPropertyName("revision")]
+            public string Revision { get; set; }
+
+            //[JsonPropertyName("route_key")]
+            public int RouteKey { get; set; }
+
+            //[JsonPropertyName("scanning_location_key")]
+            public int ScanningLocationKey { get; set; }
+
+            //[JsonPropertyName("scanning_process_key")]
+            public int ScanningProcessKey { get; set; }
+
+            //[JsonPropertyName("scanning_process_name")]
+            public string ScanningProcessName { get; set; }
+
+            //[JsonPropertyName("scanning_template")]
+            public List<object> ScanningTemplate { get; set; }
+
+            //[JsonPropertyName("scanning_workstation")]
+            public string ScanningWorkstation { get; set; }
+
+            //[JsonPropertyName("serial_key")]
+            public int SerialKey { get; set; }
+
+            //[JsonPropertyName("serial_number")]
+            public string SerialNumber { get; set; }
+
+            //[JsonPropertyName("sfdc_key")]
+            public int SfdcKey { get; set; }
+
+            //[JsonPropertyName("ship_notify_key")]
+            public object ShipNotifyKey { get; set; }
+
+            //[JsonPropertyName("shop_order_key")]
+            public int ShopOrderKey { get; set; }
+
+            //[JsonPropertyName("shop_order_number")]
+            public string ShopOrderNumber { get; set; }
+
+            //[JsonPropertyName("short_workstation")]
+            public string ShortWorkstation { get; set; }
+
+            //[JsonPropertyName("sit_range_key")]
+            public object SitRangeKey { get; set; }
+
+            //[JsonPropertyName("unit_elements")]
+            public UnitElements UnitElements { get; set; }
+
+            //[JsonPropertyName("unit_set")]
+            public List<string> UnitSet { get; set; }
+
+            //[JsonPropertyName("unit_status")]
+            public string UnitStatus { get; set; }
+
+            //[JsonPropertyName("unit_status_key")]
+            public int UnitStatusKey { get; set; }
+
+            //[JsonPropertyName("unit_type")]
+            public int UnitType { get; set; }
+
+            //[JsonPropertyName("uom")]
+            public object Uom { get; set; }
+
+            //[JsonPropertyName("user_defined")]
+            public string UserDefined { get; set; }
+
+            //[JsonPropertyName("work_order_key")]
+            public object WorkOrderKey { get; set; }
+        }
+
+        public class UnitElements
+        {
+            //[JsonPropertyName("attributes")]
+            public List<object> Attributes { get; set; }
+
+            //[JsonPropertyName("comments")]
+            public List<object> Comments { get; set; }
+
+            //[JsonPropertyName("components")]
+            public List<object> Components { get; set; }
+
+            //[JsonPropertyName("defects")]
+            public List<object> Defects { get; set; }
+        }
+        #endregion
 
         #endregion Methods
 
