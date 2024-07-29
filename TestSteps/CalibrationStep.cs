@@ -380,7 +380,7 @@ namespace RjioMRU.TestSteps
                             else
                             {
                                 MeasuredPowerValue = (Math.Abs((ChannelPower - MeasuredPowerValue)) > (Math.Abs(channelPower - Convert.ToDouble(resultStrings[22])))) ? Convert.ToDouble(resultStrings[22]) : MeasuredPowerValue;
-                                StrChannelMeasurementsCh1[iteration] += "," + resultStrings[1] + "," + resultStrings[3] + "," + measuredPowerValueBeforeDPD;
+                                StrChannelMeasurementsCh1[iteration] += "," + resultStrings[1] + "," + resultStrings[3] + "," + measuredPowerValueBeforeDPD + "," + CalculatedPowerFactor + "," + Temperature + "," + rxvalue;
                             }
                             if (iteration <= 7)
                             {
@@ -976,7 +976,7 @@ namespace RjioMRU.TestSteps
                             {
 
                                 MeasuredPowerValue = (Math.Abs((ChannelPower - MeasuredPowerValue)) > (Math.Abs(channelPower - Convert.ToDouble(resultStrings[22])))) ? Convert.ToDouble(resultStrings[22]) : MeasuredPowerValue;
-                                StrChannelMeasurementsCh2[iteration] += "," + resultStrings[1] + "," + resultStrings[3] + "," + measuredPowerBeforeDPD;
+                                StrChannelMeasurementsCh2[iteration] += "," + resultStrings[1] + "," + resultStrings[3] + "," + measuredPowerBeforeDPD + "," + CalculatedPowerFactor + "," + Temperature + "," + rxvalue;
                             }
                             if (iteration <= 7)
                             {

@@ -1245,6 +1245,20 @@ namespace RjioMRU.TestSteps
         public static string ProdID = string.Empty;
         #region Settings
         MRU_Rjio mruObj;
+        [Display("Serial Number", Order: 10, Description: "Read the serial number")]
+        public Input<string> SerialNumber { get; set; }
+
+        [Display("Product ID", Order: 11, Description: "Read the Product ID")]
+        public Input<string> ProductID { get; set; }
+
+        [Display("MAC ID", Order: 12, Description: "MAC ID")]
+        public Input<string> MacID { get; set; }
+
+        [Display("Ihstb ID", Order: 13, Description: "Read ihstb ID")]
+        public Input<string> IhstbID { get; set; }
+
+        [Display("Rffe ID", Order: 14, Description: "Rffe ID")]
+        public Input<string> RffeID { get; set; }
 
         // ToDo: Add property here for each parameter the end user should be able to change
 
@@ -1252,6 +1266,11 @@ namespace RjioMRU.TestSteps
 
         public DR21_ReadInfo()
         {
+            SerialNumber = new Input<string>();
+            ProductID = new Input<string>();
+            MacID = new Input<string>();
+            IhstbID = new Input<string>();
+            RffeID = new Input<string>();
             // ToDo: Set default values for properties / settings.
         }
 
@@ -1262,11 +1281,13 @@ namespace RjioMRU.TestSteps
         {
 
             var returnValue = MruObj.Dr21GetEepromInfo(out MAC1, out MAC2, out MAC3, out MAC4, out ProductSerialNumber, out PCBserialNumber, out ProdID);
-            if (returnValue)
-                UpgradeVerdict(Verdict.Pass);
-            else
+            if (SerialNumber.Value != ProductSerialNumber || ProductID.Value != ProdID || MacID.Value != MAC1)
             {
                 UpgradeVerdict(Verdict.Fail);
+            }
+            else
+            {
+                UpgradeVerdict(Verdict.Pass);
             }
 
 
