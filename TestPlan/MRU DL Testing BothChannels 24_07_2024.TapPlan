@@ -11,6 +11,11 @@
       <RffeID>JITSAMRUFKMRB00016</RffeID>
       <Name Metadata="Step Name">MES Check To Start</Name>
     </TestStep>
+    <TestStep type="RjioMRU.TestSteps.MESSteps.SingleSerialFlowCheck" Id="7b3170eb-30e4-4ffb-9140-7e086a6b8720">
+      <MesResource Source="OpenTap.InstrumentSettings">MES</MesResource>
+      <SerialNumber></SerialNumber>
+      <Name Metadata="Step Name">SingleSerialFlowCheck</Name>
+    </TestStep>
     <TestStep type="RjioMRU.TestSteps.PowerSupplySteps" Id="8b1396ef-16df-459b-b23e-47cdb90f5f88">
       <Agilent_N5767A_powerSupply Source="OpenTap.InstrumentSettings">KeithleyPS</Agilent_N5767A_powerSupply>
       <PowerOn1>false</PowerOn1>
