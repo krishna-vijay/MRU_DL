@@ -184,9 +184,7 @@ namespace RjioMRU
 
     
         public async Task<ComponentData> GetMesInformationResponse(string serialNumberByUser)
-        {
-
-           
+        {           
             ComponentData componentData = new ComponentData();
             try
             {
