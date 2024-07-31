@@ -1,20 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <TestPlan type="OpenTap.TestPlan">
   <Steps>
-    <TestStep type="RjioMRU.MesCheckToStart" Id="9e4126a1-8927-4f5f-b7ae-d819a111549f" OpenTap.Visibility="Visible">
-      <MesResource Source="OpenTap.InstrumentSettings">MES</MesResource>
-      <SerialnumberByUser>JITSAF1FKMRU00016</SerialnumberByUser>
-      <Serialnumber>JITSAF1FKMRU00016</Serialnumber>
-      <ProductID>JITSAF1MRU01</ProductID>
-      <MacID>A0:73:FC:04:00:07</MacID>
-      <HstbID>JITSAMRUFKHSB00003</HstbID>
-      <RffeID>JITSAMRUFKMRB00016</RffeID>
-      <Name Metadata="Step Name">MES Check To Start</Name>
-    </TestStep>
     <TestStep type="RjioMRU.TestSteps.MESSteps.SingleSerialFlowCheck" Id="7b3170eb-30e4-4ffb-9140-7e086a6b8720">
       <MesResource Source="OpenTap.InstrumentSettings">MES</MesResource>
       <SerialNumber>JITSAF1LIMRU00015</SerialNumber>
+      <ServerURL>http://42qconduituat2.42-q.com:18003/conduit</ServerURL>
       <Name Metadata="Step Name">SingleSerialFlowCheck</Name>
+    </TestStep>
+    <TestStep type="RjioMRU.MesCheckToStart" Id="9e4126a1-8927-4f5f-b7ae-d819a111549f" OpenTap.Visibility="Visible">
+      <MesResource Source="OpenTap.InstrumentSettings">MES</MesResource>
+      <Serialnumber>
+        <PropertyName>RjioMRU.TestSteps.MESSteps.SingleSerialFlowCheck|SerialNumber</PropertyName>
+        <Step>7b3170eb-30e4-4ffb-9140-7e086a6b8720</Step>
+      </Serialnumber>
+      <MacID>A0:73:FC:04:00:07</MacID>
+      <ProductID>JITSAF1MRU01</ProductID>
+      <PCBSerialNumber_HSTB></PCBSerialNumber_HSTB>
+      <RFBSerialNumber></RFBSerialNumber>
+      <Name Metadata="Step Name">MES Check To Start</Name>
     </TestStep>
     <TestStep type="RjioMRU.TestSteps.PowerSupplySteps" Id="8b1396ef-16df-459b-b23e-47cdb90f5f88">
       <Agilent_N5767A_powerSupply Source="OpenTap.InstrumentSettings">KeithleyPS</Agilent_N5767A_powerSupply>
@@ -488,6 +491,8 @@
       <DSACalCycles1>15</DSACalCycles1>
       <DSAHigherLimit>63</DSAHigherLimit>
       <DSAlowerLimit>5</DSAlowerLimit>
+      <TemperatureHighLimit>0</TemperatureHighLimit>
+      <TemperatureLowLimit>0</TemperatureLowLimit>
       <Name Metadata="Step Name">CalibrationStep Ch1</Name>
     </TestStep>
     <TestStep type="RjioMRU.TestSteps.DR49_Ch1DSAScript" Id="4f524807-6f73-49f0-969c-aa1b304b1adc" OpenTap.Visibility="Visible">
@@ -529,6 +534,8 @@
       <DSACalCycles1>10</DSACalCycles1>
       <DSAHigherLimit>63</DSAHigherLimit>
       <DSAlowerLimit>5</DSAlowerLimit>
+      <TemperatureHighLimit>0</TemperatureHighLimit>
+      <TemperatureLowLimit>0</TemperatureLowLimit>
       <Name Metadata="Step Name">CalibrationStep Ch2</Name>
     </TestStep>
     <TestStep type="RjioMRU.TestSteps.DR49_Ch2DSAScript" Id="56b0dc71-afd9-4488-ac12-2a0bd77fb536" OpenTap.Visibility="Visible">
@@ -658,29 +665,77 @@
       <DelaySecs>5</DelaySecs>
       <Name Metadata="Step Name">Delay (5s)</Name>
     </TestStep>
+    <TestStep type="RjioMRU.TestSteps.DR49_Read_RFB_SER_NUM" Id="2cd437ca-fcda-4bca-9dbe-68b460e6b81a">
+      <MruObj Source="OpenTap.DutSettings">RjioMRU</MruObj>
+      <ChannelsSelection>Channel1</ChannelsSelection>
+      <RFBReadScript>rj-rfeeprom-updater -rd_rfb_info</RFBReadScript>
+      <RFBReadValue />
+      <Name Metadata="Step Name">DR49 Read RFB_SER_NUM from {Select Channel}</Name>
+    </TestStep>
+    <TestStep type="RjioMRU.TestSteps.DR49_Read_RFB_SER_NUM" Id="9422bf9f-4f06-4d18-8424-4e40b4b2d267">
+      <MruObj Source="OpenTap.DutSettings">RjioMRU</MruObj>
+      <ChannelsSelection>Channel2</ChannelsSelection>
+      <RFBReadScript>rj-rfeeprom-updater -rd_rfb_info</RFBReadScript>
+      <RFBReadValue />
+      <Name Metadata="Step Name">DR49 Read RFB_SER_NUM from {Select Channel}</Name>
+    </TestStep>
     <TestStep type="RjioMRU.TestSteps.DR21_ReadInfo" Id="e72dca14-096f-4762-9838-56e5bcac1f78">
+      <MruObj Source="OpenTap.DutSettings">RjioMRU</MruObj>
+      <MAC2></MAC2>
+      <MAC1></MAC1>
+      <MAC3></MAC3>
+      <MAC4></MAC4>
+      <ProductSerialNumber></ProductSerialNumber>
+      <PCBserialNumber></PCBserialNumber>
+      <ProdID></ProdID>
+      <Name Metadata="Step Name">DR21 Read info</Name>
+    </TestStep>
+    <TestStep type="RjioMRU.TestSteps.CrossCheckParameters" Id="c6b89d0f-42b5-4d09-adb7-baf0a5b47044">
       <SerialNumber>
-        <PropertyName>RjioMRU.MesCheckToStart|Serialnumber</PropertyName>
-        <Step>9e4126a1-8927-4f5f-b7ae-d819a111549f</Step>
+        <PropertyName>RjioMRU.TestSteps.DR21_ReadInfo|ProductSerialNumber</PropertyName>
+        <Step>e72dca14-096f-4762-9838-56e5bcac1f78</Step>
       </SerialNumber>
-      <ProductID>
-        <PropertyName>RjioMRU.MesCheckToStart|ProductID</PropertyName>
-        <Step>9e4126a1-8927-4f5f-b7ae-d819a111549f</Step>
-      </ProductID>
+      <PCBSerialNumber>
+        <PropertyName>RjioMRU.TestSteps.DR21_ReadInfo|PCBserialNumber</PropertyName>
+        <Step>e72dca14-096f-4762-9838-56e5bcac1f78</Step>
+      </PCBSerialNumber>
       <MacID>
+        <PropertyName>RjioMRU.TestSteps.DR21_ReadInfo|MAC2</PropertyName>
+        <Step>e72dca14-096f-4762-9838-56e5bcac1f78</Step>
+      </MacID>
+      <ProductID>
+        <PropertyName>RjioMRU.TestSteps.DR21_ReadInfo|ProdID</PropertyName>
+        <Step>e72dca14-096f-4762-9838-56e5bcac1f78</Step>
+      </ProductID>
+      <RFB_SeriaNumber49DRCh1>
+        <PropertyName>RjioMRU.TestSteps.DR49_Read_RFB_SER_NUM|RFBReadValue</PropertyName>
+        <Step>2cd437ca-fcda-4bca-9dbe-68b460e6b81a</Step>
+      </RFB_SeriaNumber49DRCh1>
+      <RFB_SeriaNumber49DRCh2>
+        <PropertyName>RjioMRU.TestSteps.DR49_Read_RFB_SER_NUM|RFBReadValue</PropertyName>
+        <Step>9422bf9f-4f06-4d18-8424-4e40b4b2d267</Step>
+      </RFB_SeriaNumber49DRCh2>
+      <Product_SerialnumberMES>
+        <PropertyName>RjioMRU.TestSteps.MESSteps.SingleSerialFlowCheck|SerialNumber</PropertyName>
+        <Step>7b3170eb-30e4-4ffb-9140-7e086a6b8720</Step>
+      </Product_SerialnumberMES>
+      <MacID_MES>
         <PropertyName>RjioMRU.MesCheckToStart|MacID</PropertyName>
         <Step>9e4126a1-8927-4f5f-b7ae-d819a111549f</Step>
-      </MacID>
-      <IhstbID>
-        <PropertyName>RjioMRU.MesCheckToStart|HstbID</PropertyName>
+      </MacID_MES>
+      <ProductID_MES>
+        <PropertyName>RjioMRU.MesCheckToStart|ProductID</PropertyName>
         <Step>9e4126a1-8927-4f5f-b7ae-d819a111549f</Step>
-      </IhstbID>
-      <RffeID>
-        <PropertyName>RjioMRU.MesCheckToStart|RffeID</PropertyName>
+      </ProductID_MES>
+      <PCBSerialNumber_HSTB_MES>
+        <PropertyName>RjioMRU.MesCheckToStart|PCBSerialNumber_HSTB</PropertyName>
         <Step>9e4126a1-8927-4f5f-b7ae-d819a111549f</Step>
-      </RffeID>
-      <MruObj Source="OpenTap.DutSettings">RjioMRU</MruObj>
-      <Name Metadata="Step Name">DR21 Read info</Name>
+      </PCBSerialNumber_HSTB_MES>
+      <RFBSerialNumber_MES>
+        <PropertyName>RjioMRU.MesCheckToStart|RFBSerialNumber</PropertyName>
+        <Step>9e4126a1-8927-4f5f-b7ae-d819a111549f</Step>
+      </RFBSerialNumber_MES>
+      <Name Metadata="Step Name">CrossCheckParameters</Name>
     </TestStep>
     <TestStep type="RjioMRU.CloseAllPlugins" Id="eb89d8f1-26e2-4deb-84b4-434516059b8b" OpenTap.Visibility="Visible">
       <Name Metadata="Step Name">Close all Plugins</Name>
@@ -689,6 +744,18 @@
       <Agilent_N5767A_powerSupply Source="OpenTap.InstrumentSettings">KeithleyPS</Agilent_N5767A_powerSupply>
       <PowerOn1>false</PowerOn1>
       <Name Metadata="Step Name">Power supply OFF</Name>
+    </TestStep>
+    <TestStep type="RjioMRU.MES.TestStatusToMES" Id="19cd3a2d-c1bc-48fe-ba65-a593ac904729">
+      <MesResource Source="OpenTap.InstrumentSettings">MES</MesResource>
+      <ServerURL>
+        <PropertyName>RjioMRU.TestSteps.MESSteps.SingleSerialFlowCheck|ServerURL</PropertyName>
+        <Step>7b3170eb-30e4-4ffb-9140-7e086a6b8720</Step>
+      </ServerURL>
+      <SerialNumber>
+        <PropertyName>RjioMRU.TestSteps.MESSteps.SingleSerialFlowCheck|SerialNumber</PropertyName>
+        <Step>7b3170eb-30e4-4ffb-9140-7e086a6b8720</Step>
+      </SerialNumber>
+      <Name Metadata="Step Name">Test Status To MES</Name>
     </TestStep>
   </Steps>
   <Package.Dependencies>

@@ -466,7 +466,7 @@ namespace RjioMRU
                 ///DPD HOST Example Application MAIN MENU
                 if (readValue.Replace("\n", string.Empty).Contains("Selection:") && (
                     readValue.Replace("\n", string.Empty).Contains("Open DPD Host Interface") ||
-                    readValue.Contains("DFE System Reset") ))
+                    readValue.Contains("DFE System Reset")))
                 {
                     if (!Read_Capture_Power_Meter)
                     {
@@ -481,7 +481,7 @@ namespace RjioMRU
 
 
 
-                if (readValue.Replace("\n", string.Empty).Contains("DPD User Interface Base Address: [0xa0060000]") || readValue.Replace("\n", string.Empty).Contains("DPD User Interface Base Address: [0xa4060000]")|| readValue.Replace("\n", string.Empty).Contains("DPD User Interface Base Address: [0xa00e0000]:"))
+                if (readValue.Replace("\n", string.Empty).Contains("DPD User Interface Base Address: [0xa0060000]") || readValue.Replace("\n", string.Empty).Contains("DPD User Interface Base Address: [0xa4060000]") || readValue.Replace("\n", string.Empty).Contains("DPD User Interface Base Address: [0xa00e0000]:"))
                 {
                     dR49ChComObj.WriteLine(Environment.NewLine);
                 }
@@ -2165,6 +2165,17 @@ namespace RjioMRU
 
         public bool Dr21GetEepromInfo(out string MAC1, out string MAC2, out string MAC3, out string MAC4, out string ProductSerialNumber, out string PCBSerialNumber, out string ProdID)
         {
+            MAC1 = string.Empty;
+            MAC2 = string.Empty;
+            MAC3 = string.Empty;
+            MAC4 = string.Empty;
+            ProductSerialNumber = string.Empty;
+            PCBSerialNumber = string.Empty;
+            ProdID = string.Empty;
+            try
+            {
+
+            
             MAC1 = string.Empty; MAC2 = string.Empty; MAC3 = string.Empty; MAC4 = string.Empty; ProductSerialNumber = string.Empty; PCBSerialNumber = string.Empty; ProdID = string.Empty;
             DR21ComObj.WriteLine("hstb-m-eeprom -read_info");
             TapThread.Sleep(100);
@@ -2206,6 +2217,12 @@ namespace RjioMRU
                     }
                 }
                 //ProdID = returnValue.Substring(returnValue.IndexOf("PROD_ID :") + "PROD_ID :".Length + 1, returnValue.IndexOf("app ver") - (returnValue.IndexOf("PROD_ID :") + "PROD_ID :".Length + 1));
+            }
+            }
+            catch (Exception)
+            {
+
+                 return false;
             }
             return true;
         }
@@ -2326,7 +2343,7 @@ namespace RjioMRU
             } while (true);
         }
 
-         
+
 
         internal void Dr49_CH_WriteDSAToEEPROM(string[] hexValues, SerialPort dR49ChComObj)
         {
@@ -2345,32 +2362,49 @@ namespace RjioMRU
 
         //}
 
-        
+
 
         internal void Dr49_CH_WritePowerFactorToEEPROM(string[] hexValues, SerialPort dR49Ch1ComObj)
         {
             dR49Ch1ComObj.ReadExisting();
-            string command4EEPROM_PowerFactor = "rj-rfeeprom-updater -upd_pwr_fact_tx " + hexValues[0] + "," + hexValues[1] + "," + hexValues[2] + "," + hexValues[3] + "," + hexValues[4] + "," + hexValues[5] + "," + hexValues[6] + "," + hexValues[7] + "," + hexValues[8] + "," + hexValues[9] + "," + hexValues[10] + "," + hexValues[11] + "," + hexValues[12] + "," + hexValues[13] + "," + hexValues[14] + "," + hexValues[15] ;
+            string command4EEPROM_PowerFactor = "rj-rfeeprom-updater -upd_pwr_fact_tx " + hexValues[0] + "," + hexValues[1] + "," + hexValues[2] + "," + hexValues[3] + "," + hexValues[4] + "," + hexValues[5] + "," + hexValues[6] + "," + hexValues[7] + "," + hexValues[8] + "," + hexValues[9] + "," + hexValues[10] + "," + hexValues[11] + "," + hexValues[12] + "," + hexValues[13] + "," + hexValues[14] + "," + hexValues[15];
             Log.Info(command4EEPROM_PowerFactor);
             dR49Ch1ComObj.WriteLine(command4EEPROM_PowerFactor);
 
 
         }
-        
-        internal string Dr49_CH_ReadTemperature( SerialPort dR49ChComObj,int chainNumber, string tempScript = "rj-dac-tmp -mru_dac_num")
+
+        internal string Dr49_CH_ReadTemperature(SerialPort dR49ChComObj, int chainNumber, string tempScript = "rj-dac-tmp -mru_dac_num")
         {
             dR49ChComObj.ReadExisting();
-            dR49ChComObj.WriteLine(tempScript+ " " +chainNumber/2);
+            dR49ChComObj.WriteLine(tempScript + " " + chainNumber / 2);
             Thread.Sleep(200);
             //  Log.Info(command4EEPROM_PowerFactor);
-           var temperatureValues = dR49ChComObj.ReadExisting();
+            var temperatureValues = dR49ChComObj.ReadExisting();
             string[] tempArray = temperatureValues.Split(new string[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
-            var a1 = Array.FindAll(tempArray, s => s.Contains("Channel "+chainNumber%2+""));
+            var a1 = Array.FindAll(tempArray, s => s.Contains("Channel " + chainNumber % 2 + ""));
             var temperature = a1[0].Split(new string[] { "Temp:" }, StringSplitOptions.RemoveEmptyEntries)[1];
-            return temperature;    
+            temperature = temperature.Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries)[0];
+            return temperature;
         }
 
-        internal string calcualtePowerFactor(double measuredPowerValue, double rxvalue, double txvalue, int iteration, string channel  )
+
+
+        internal string Dr49_ReadRFBSerialNumber(SerialPort dR49ChComObj, string tempScript = "rj-rfeeprom-updater -rd_rfb_info")
+        {
+            dR49ChComObj.ReadExisting();
+            dR49ChComObj.WriteLine(tempScript);
+            Thread.Sleep(200);
+            //  Log.Info(command4EEPROM_PowerFactor);
+            var RFBValues = dR49ChComObj.ReadExisting();
+            string[] tempArray = RFBValues.Split(new string[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
+            var a1 = Array.FindAll(tempArray, s => s.Contains("RFB_SER_NUM:"));
+            var RFBSerialNumber = a1[0].Split(new string[] { "RFB_SER_NUM:" }, StringSplitOptions.RemoveEmptyEntries);
+            RFBSerialNumber[0] = RFBSerialNumber[0].Trim();
+            return RFBSerialNumber[0];
+        }
+
+        internal string calcualtePowerFactor(double measuredPowerValue, double rxvalue, double txvalue, int iteration, string channel)
         {/*[Yesterday 15:46] Naresh3 K (External)
           * for power factor calculation 
           * (Channel Power Measured - DPD FB Power ) * 100
@@ -2389,11 +2423,11 @@ namespace RjioMRU
             string powerFactorHex = Convert.ToString(powerFactorInt, 16).ToUpper();
             if (channel == "CH1")
             {
-                CalibrationStep_CH1.powerFactorValues[iteration] = "0x"+powerFactorHex;
+                CalibrationStep_CH1.powerFactorValues[iteration] = "0x" + powerFactorHex;
             }
             else
             {
-                CalibrationStep_CH2.powerFactorValues[iteration] = "0x"+powerFactorHex;
+                CalibrationStep_CH2.powerFactorValues[iteration] = "0x" + powerFactorHex;
             }
             return powerFactorHex;
             // Now powerFactorHex contains the hexadecimal representation of the power factor
@@ -2404,7 +2438,7 @@ namespace RjioMRU
         internal void RemoveIP4mETH2()
         {
             DR21ComObj.ReadExisting();
-           
+
             DR21ComObj.WriteLine("scriptToRemoveAddressBlock.sh");
         }
 

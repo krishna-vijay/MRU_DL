@@ -26,8 +26,6 @@ namespace RjioMRU.TestSteps
             }*/
 
 
-
-
     [Display("DR49 Ch1 Write DSA", Group: "RjioMRU", Description: "Insert a description here")]
     public class DR49_Ch1_DSA_Write : TestStep
     {
@@ -147,8 +145,6 @@ namespace RjioMRU.TestSteps
         }
     }
 
-
-
     [Display("DR49 Write PowerFactor", Group: "RjioMRU", Description: "Insert a description here")]
     public class DR49_Write_PowerFactor : TestStep
     {
@@ -200,8 +196,8 @@ namespace RjioMRU.TestSteps
             //    //    }
             //    //}
             //}
- 
-            MruObj.Dr49_CH_WritePowerFactorToEEPROM(AutomaticDSAWriting ?(ChannelsSelection == Channels.Channel1? CalibrationStep_CH1.powerFactorValues:CalibrationStep_CH2.powerFactorValues) :(ChannelsSelection== Channels.Channel1?channelValues.PowerFactorHexValuesCh1: channelValues.PowerFactorHexValuesCh2), ( (channelsSelection == Channels.Channel1? MruObj.GetDR49Ch1ComObj():MruObj.GetDR49Ch2ComObj())));
+
+            MruObj.Dr49_CH_WritePowerFactorToEEPROM(AutomaticDSAWriting ? (ChannelsSelection == Channels.Channel1 ? CalibrationStep_CH1.powerFactorValues : CalibrationStep_CH2.powerFactorValues) : (ChannelsSelection == Channels.Channel1 ? channelValues.PowerFactorHexValuesCh1 : channelValues.PowerFactorHexValuesCh2), ((channelsSelection == Channels.Channel1 ? MruObj.GetDR49Ch1ComObj() : MruObj.GetDR49Ch2ComObj())));
             Log.Info("DSA Values has been update in EEPROM of Channel 1");
             // ToDo: Add test case code.
             RunChildSteps(); //If the step supports child steps.
@@ -211,10 +207,10 @@ namespace RjioMRU.TestSteps
             // UpgradeVerdict(Verdict.Pass);
         }
     }
-    
-    
+
+
     [Display("DR49 Read Tempertaure", Group: "RjioMRU", Description: "Insert a description here")]
-    public class DR49_Read_Temperature: TestStep
+    public class DR49_Read_Temperature : TestStep
     {
         #region Settings
         //Input<int> dsaHigherLimit ;
@@ -228,7 +224,7 @@ namespace RjioMRU.TestSteps
         MRU_Rjio mruObj;
         private string tobeParsed = "MRU DAC temp read tool:3.0\r\nChannel-0\r\nDAC:0    Temp:23.94 degC\r\nDAC:1    Temp:24.12 degC\r\nDAC:2    Temp:24.31 degC\r\nDAC:3    Temp:24.19 degC\r\nDAC:4    Temp:23.88 degC\r\nDAC:5    Temp:24.12 degC\r\nDAC:6    Temp:24.06 degC\r\nDAC:7    Temp:24.12 degC\r\nChannel-1\r\nDAC:0    Temp:23.31 degC\r\nDAC:1    Temp:24.25 degC\r\nDAC:2    Temp:23.94 degC\r\nDAC:3    Temp:24.06 degC\r\nDAC:4    Temp:23.50 degC\r\nDAC:5    Temp:23.94 degC\r\nDAC:6    Temp:24.25 degC\r\nDAC:7    Temp:23.94 degC\r\n";
         private string[] hexValuesCh1 = new string[16] { "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F" };
-        
+
         // ToDo: Add property here for each parameter the end user should be able to change
         #endregion
 
@@ -240,7 +236,7 @@ namespace RjioMRU.TestSteps
         }
 
         public MRU_Rjio MruObj { get => mruObj; set => mruObj = value; }
-       
+
         [Display("Select Channel", Order: 0, Description: "Select Channel")]
         public Channels ChannelsSelection { get => channelsSelection; set => channelsSelection = value; }
         [Display("Chain Number", Order: 2, Description: "Enter Chain Number")]
@@ -254,10 +250,88 @@ namespace RjioMRU.TestSteps
         //public Input<int> DsaHigherLimit { get => dsaHigherLimit; set => dsaHigherLimit = value; }
 
         public override void Run()
-        {           
- 
-           string temperaureValue = MruObj.Dr49_CH_ReadTemperature((channelsSelection == Channels.Channel1 ? MruObj.GetDR49Ch1ComObj() : MruObj.GetDR49Ch2ComObj()), ChainNumber,TemperatureReadScript);
-            Log.Info("Temperature values measure for chain : {0} is {1}",ChainNumber, temperaureValue);
+        {
+
+            string temperaureValue = MruObj.Dr49_CH_ReadTemperature((channelsSelection == Channels.Channel1 ? MruObj.GetDR49Ch1ComObj() : MruObj.GetDR49Ch2ComObj()), ChainNumber, TemperatureReadScript);
+            Log.Info("Temperature values measure for chain : {0} is {1}", ChainNumber, temperaureValue);
+            // ToDo: Add test case code.
+            RunChildSteps(); //If the step supports child steps.
+
+            // If no verdict is used, the verdict will default to NotSet.
+            // You can change the verdict using UpgradeVerdict() as shown below.
+            // UpgradeVerdict(Verdict.Pass);
+        }
+    }
+
+
+
+    [Display("DR49 Read RFB_SER_NUM", Group: "RjioMRU", Description: "Insert a description here")]
+    public class DR49_Read_RFB_SER_NUM : TestStep
+    {
+        /*
+          rj-rfeeprom-updater -rd_rfb_info
+MRU EEPROM tool version:4.1
+RFB_SER_NUM:  JITSAMRUFKMRB00016
+RFB_RF_FWVER:  1.0
+RFB_RF_HWVER:  B
+TX_DSA_VAL:  0x1a 0x19 0x1a 0x18 0x1f 0x18 0x1f 0x1b 0x1d 0x19 0x21 0x1a 0x1c 0x19 0x1a 0x13
+FB_DSA_VAL:  0xf 0xf 0xf 0xf 0xf 0xf 0xf 0xf 0xf 0xf 0xf 0xf 0xf 0xf 0xf 0xf
+RFB_DAC_VAL:  1150 1611
+RFB_EPDATA_CRC 0x1654
+RX_DSA_VAL:  0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff
+RFB_RXDSA_CRC 0xffff
+RFB_PROD_VAL 0xc3
+TX_PWR_FACT:  0x155a 0x15b4 0x1543 0x157d 0x15bc 0x158b 0x1569 0x15c7 0x154d 0x15ad 0x1514 0x15b7 0x1592 0x15bd 0x15d5 0x15f2
+TX_PWR_FACT_CRC 0x2fb4
+TX_PWR_FACT_STATUS:  1
+End of MRU-EEPROM Read and Write Utility
+
+         */
+        #region Settings
+        //Input<int> dsaHigherLimit ;
+        //Input<int> dsaLowerLimit ;
+        public enum Channels
+        {
+            Channel1 = 1,
+            Channel2
+        };
+        Channels channelsSelection;
+        MRU_Rjio mruObj;
+
+
+        // ToDo: Add property here for each parameter the end user should be able to change
+        #endregion
+
+        public DR49_Read_RFB_SER_NUM()
+        {
+            //DsaHigherLimit = new Input<int>();
+            //DsaLowerLimit = new Input<int>();
+            // ToDo: Set default values for properties / settings.
+        }
+
+        public MRU_Rjio MruObj { get => mruObj; set => mruObj = value; }
+
+        [Display("Select Channel", Order: 0, Description: "Select Channel")]
+        public Channels ChannelsSelection { get => channelsSelection; set => channelsSelection = value; }
+
+
+        [Display(" Read RFB Script", Order: 6, Description: "Enter Temperature Read Script")]
+        public string RFBReadScript { get; set; } = "rj-rfeeprom-updater -rd_rfb_info";
+        [Output]
+        public string RFBReadValue { get; set; }
+        //[Display("DSA Lower Limit", Order: 0, Description: "Enter DSA Lower Limit")]
+        //public Input<int> DsaLowerLimit { get => dsaLowerLimit; set => dsaLowerLimit = value; }
+        //[Display("DSA Higher Limit", Order: 0, Description: "Enter DSA Higher Limit")]
+        //public Input<int> DsaHigherLimit { get => dsaHigherLimit; set => dsaHigherLimit = value; }
+
+        public override void Run()
+        {
+            string RFBReadValue = MruObj.Dr49_ReadRFBSerialNumber((channelsSelection == Channels.Channel1 ? MruObj.GetDR49Ch1ComObj() : MruObj.GetDR49Ch2ComObj()), RFBReadScript);
+
+            Log.Info($"RFB Serial number for 49Dr Channel {ChannelsSelection} is " + RFBReadValue);
+
+
+
             // ToDo: Add test case code.
             RunChildSteps(); //If the step supports child steps.
 
@@ -446,7 +520,7 @@ namespace RjioMRU.TestSteps
             {
                 UpgradeVerdict(Verdict.Fail);
             }
-            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, Verdict.ToString(), "NA", Verdict.ToString(), "TRUE", "EQ", "TRUE", "NA");
+            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, Verdict.ToString(), " ", Verdict.ToString(), "TRUE", "EQ", "TRUE", " ");
             // ToDo: Add test case code.
             RunChildSteps(); //If the step supports child steps.
 
@@ -484,7 +558,7 @@ namespace RjioMRU.TestSteps
             {
                 UpgradeVerdict(Verdict.Fail);
             }
-            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, Verdict.ToString(), "NA", Verdict.ToString(), "TRUE", "EQ", "TRUE", "NA");
+            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, Verdict.ToString(), " ", Verdict.ToString(), "TRUE", "EQ", "TRUE", " ");
 
             // ToDo: Add test case code.
             RunChildSteps(); //If the step supports child steps.
@@ -495,8 +569,6 @@ namespace RjioMRU.TestSteps
         }
 
     }
-
-
 
 
     [Display("DR21 Login", Group: "RjioMRU", Description: "Insert a description here")]
@@ -531,7 +603,7 @@ namespace RjioMRU.TestSteps
             {
                 UpgradeVerdict(Verdict.Fail);
             }
-            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, Verdict.ToString(), "NA", Verdict.ToString(), "TRUE", "EQ", "TRUE", "NA");
+            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, Verdict.ToString(), " ", Verdict.ToString(), "TRUE", "EQ", "TRUE", " ");
 
             // ToDo: Add test case code.
             RunChildSteps(); //If the step supports child steps.
@@ -585,7 +657,7 @@ namespace RjioMRU.TestSteps
         public override void Run()
         {
             MruObj.Dr21_ap_calib_Rx_Tx_Functions();
-            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, Verdict.ToString(), "NA", Verdict.ToString(), "TRUE", "EQ", "TRUE", "NA");
+            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, Verdict.ToString(), " ", Verdict.ToString(), "TRUE", "EQ", "TRUE", " ");
 
 
 
@@ -629,7 +701,7 @@ namespace RjioMRU.TestSteps
             {
                 UpgradeVerdict(Verdict.Fail);
             }
-            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, Verdict.ToString(), "NA", Verdict.ToString(), "TRUE", "EQ", "TRUE", "NA");
+            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, Verdict.ToString(), " ", Verdict.ToString(), "TRUE", "EQ", "TRUE", " ");
 
             // If no verdict is used, the verdict will default to NotSet.
             // You can change the verdict using UpgradeVerdict() as shown below.
@@ -685,7 +757,7 @@ namespace RjioMRU.TestSteps
             {
                 UpgradeVerdict(Verdict.Fail);
             }
-            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, Verdict.ToString(), PingTestStatus ? "0% packet loss" : "", Verdict.ToString(), "PingTestStatus", "EQ", "TRUE", "NA");
+            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, Verdict.ToString(), PingTestStatus ? "0% packet loss" : "", Verdict.ToString(), "PingTestStatus", "EQ", "TRUE", " ");
 
             // If no verdict is used, the verdict will default to NotSet.
             // You can change the verdict using UpgradeVerdict() as shown below.
@@ -732,7 +804,7 @@ namespace RjioMRU.TestSteps
             {
                 UpgradeVerdict(Verdict.Fail);
             }
-            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, Verdict.ToString(), PingTestStatus ? "TRUE" : "", Verdict.ToString(), PingTestStatus.ToString(), "EQ", "TRUE", "NA");
+            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, Verdict.ToString(), PingTestStatus ? "TRUE" : "", Verdict.ToString(), PingTestStatus.ToString(), "EQ", "TRUE", " ");
 
             // If no verdict is used, the verdict will default to NotSet.
             // You can change the verdict using UpgradeVerdict() as shown below.
@@ -777,7 +849,7 @@ namespace RjioMRU.TestSteps
             {
                 UpgradeVerdict(Verdict.Fail);
             }
-            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, Verdict.ToString(), "NA", "Modem started", "Modem started", "EQ", "Modem started", "NA");
+            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, Verdict.ToString(), " ", "Modem started", "Modem started", "EQ", "Modem started", " ");
 
             // If no verdict is used, the verdict will default to NotSet.
             // You can change the verdict using UpgradeVerdict() as shown below.
@@ -827,7 +899,7 @@ namespace RjioMRU.TestSteps
             {
                 UpgradeVerdict(Verdict.Fail);
             }
-            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, Verdict.ToString(), "NA", PingTestStatus ? "PTP synchronization detected established!" : "", "TRUE", "EQ", "TRUE", "NA");
+            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, Verdict.ToString(), " ", PingTestStatus ? "PTP synchronization detected established!" : "", "TRUE", "EQ", "TRUE", " ");
 
             // If no verdict is used, the verdict will default to NotSet.
             // You can change the verdict using UpgradeVerdict() as shown below.
@@ -872,7 +944,7 @@ namespace RjioMRU.TestSteps
             {
                 UpgradeVerdict(Verdict.Fail);
             }
-            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, Verdict.ToString(), "NA", PingTestStatus ? "Modem initialization is in process" : "", "TRUE", "EQ", "TRUE", "NA");
+            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, Verdict.ToString(), " ", PingTestStatus ? "Modem initialization is in process" : "", "TRUE", "EQ", "TRUE", " ");
 
             // If no verdict is used, the verdict will default to NotSet.
             // You can change the verdict using UpgradeVerdict() as shown below.
@@ -915,15 +987,13 @@ namespace RjioMRU.TestSteps
             {
                 UpgradeVerdict(Verdict.Fail);
             }
-            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, Verdict.ToString(), "NA", PingTestStatus.ToString(), "TRUE", "EQ", "TRUE", "NA");
+            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, Verdict.ToString(), " ", PingTestStatus.ToString(), "TRUE", "EQ", "TRUE", " ");
 
             // If no verdict is used, the verdict will default to NotSet.
             // You can change the verdict using UpgradeVerdict() as shown below.
             // UpgradeVerdict(Verdict.Pass);
         }
     }
-
-
 
     [Display("DR49 Ch2 DSA Script", Group: "RjioMRU", Description: "Insert a description here")]
     public class DR49_Ch2DSAScript : TestStep
@@ -961,7 +1031,7 @@ namespace RjioMRU.TestSteps
             {
                 UpgradeVerdict(Verdict.Fail);
             }
-            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, Verdict.ToString(), "NA", Verdict.ToString(), "TRUE", "EQ", "TRUE", "NA");
+            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, Verdict.ToString(), " ", Verdict.ToString(), "TRUE", "EQ", "TRUE", " ");
 
             // ToDo: Add test case code.
             RunChildSteps(); //If the step supports child steps.
@@ -1054,7 +1124,7 @@ namespace RjioMRU.TestSteps
             {
                 UpgradeVerdict(Verdict.Fail);
             }
-            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, Verdict.ToString(), "NA", Verdict.ToString(), "TRUE", "EQ", "TRUE", "NA");
+            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, Verdict.ToString(), " ", Verdict.ToString(), "TRUE", "EQ", "TRUE", " ");
 
             // ToDo: Add test case code.
             RunChildSteps(); //If the step supports child steps.
@@ -1102,7 +1172,7 @@ namespace RjioMRU.TestSteps
             {
                 UpgradeVerdict(Verdict.Fail);
             }
-            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, Verdict.ToString(), "NA", Verdict.ToString(), "TRUE", "EQ", "TRUE", "NA");
+            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, Verdict.ToString(), " ", Verdict.ToString(), "TRUE", "EQ", "TRUE", " ");
 
             // ToDo: Add test case code.
             RunChildSteps(); //If the step supports child steps.
@@ -1141,7 +1211,7 @@ namespace RjioMRU.TestSteps
                 UpgradeVerdict(Verdict.Fail);
             }
 
-            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, Verdict.ToString(), "NA", Verdict.ToString(), "TRUE", "EQ", "TRUE", "NA");
+            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, Verdict.ToString(), " ", Verdict.ToString(), "TRUE", "EQ", "TRUE", " ");
 
             // ToDo: Add test case code.
             RunChildSteps(); //If the step supports child steps.
@@ -1236,101 +1306,84 @@ namespace RjioMRU.TestSteps
     [Display("DR21 Read info", Group: "RjioMRU", Description: "Insert a description here")]
     public class DR21_ReadInfo : TestStep
     {
-        public static string MAC1 = string.Empty;
-        public static string MAC2 = string.Empty;
-        public static string MAC3 = string.Empty;
-        public static string MAC4 = string.Empty;
-        public static string ProductSerialNumber = string.Empty;
-        public static string PCBserialNumber = string.Empty;
-        public static string ProdID = string.Empty;
+        public static string MAC1_ = string.Empty;
+        public static string MAC2_ = string.Empty;
+        public static string MAC3_ = string.Empty;
+        public static string MAC4_ = string.Empty;
+        public static string ProductSerialNumber_ = string.Empty;
+        public static string PCBserialNumber_ = string.Empty;
+        public static string ProdID_ = string.Empty;
+
         #region Settings
         MRU_Rjio mruObj;
-        [Display("Serial Number", Order: 10, Description: "Read the serial number")]
-        public Input<string> SerialNumber { get; set; }
 
-        [Display("Product ID", Order: 11, Description: "Read the Product ID")]
-        public Input<string> ProductID { get; set; }
-
-        [Display("MAC ID", Order: 12, Description: "MAC ID")]
-        public Input<string> MacID { get; set; }
-
-        [Display("Ihstb ID", Order: 13, Description: "Read ihstb ID")]
-        public Input<string> IhstbID { get; set; }
-
-        [Display("Rffe ID", Order: 14, Description: "Rffe ID")]
-        public Input<string> RffeID { get; set; }
 
         // ToDo: Add property here for each parameter the end user should be able to change
 
+        [Display("SELECT MRU", Group: "DUT SELECTION ")]
+        public MRU_Rjio MruObj { get => mruObj; set => mruObj = value; }
+
+        string mac2 = string.Empty;
+        [Output]
+        [Display("MAC ID", Order: 1)]
+        public string MAC2 { get { return mac2; } set { mac2 = value; } }
+
+        string mac1 = string.Empty;
+        [Output]
+        [Display("MAC1 ID", Order: 5)]
+        public string MAC1
+        {
+            get { return mac1; }
+            set { mac1 = value; }
+        }
+
+        string mac3 = string.Empty;
+        [Output]
+        [Display("MAC3 ID", Order: 10)]
+        public string MAC3 { get { return mac3; } set { mac3 = value; } }
+        string mac4 = string.Empty;
+        [Output]
+        [Display("MAC4 ID", Order: 15)]
+        public string MAC4 { get { return mac4; } set { mac4 = value; } }
+        string productSerialNumber = string.Empty;
+        [Output]
+        [Display("Product Serial Number", Order: 20)]
+        public string ProductSerialNumber { get { return productSerialNumber; } set { productSerialNumber = value; } }
+        string pcbSerialNumber = string.Empty;
+        [Output]
+        [Display("PCB Serial Number", Order: 25)]
+        public string PCBserialNumber { get { return pcbSerialNumber; } set { pcbSerialNumber = value; } }
+        string prodID = string.Empty;
+        [Output]
+        [Display("Prod ID", Order: 30)]
+        public string ProdID { get { return prodID; } set { prodID = value; } }
         #endregion
+
 
         public DR21_ReadInfo()
         {
-            SerialNumber = new Input<string>();
-            ProductID = new Input<string>();
-            MacID = new Input<string>();
-            IhstbID = new Input<string>();
-            RffeID = new Input<string>();
+
             // ToDo: Set default values for properties / settings.
         }
 
-        public MRU_Rjio MruObj { get => mruObj; set => mruObj = value; }
 
 
         public override void Run()
         {
 
-            var returnValue = MruObj.Dr21GetEepromInfo(out MAC1, out MAC2, out MAC3, out MAC4, out ProductSerialNumber, out PCBserialNumber, out ProdID);
-            if (SerialNumber.Value != ProductSerialNumber || ProductID.Value != ProdID || MacID.Value != MAC1)
-            {
-                UpgradeVerdict(Verdict.Fail);
-            }
-            else
-            {
-                UpgradeVerdict(Verdict.Pass);
-            }
+            var returnValue = MruObj.Dr21GetEepromInfo(out mac1, out mac2, out mac3, out mac4, out productSerialNumber, out pcbSerialNumber, out prodID);
+            MAC1_ = mac1;
+            MAC2_ = mac2;
+            MAC3_ = mac3;
+            MAC4_ = mac4;
+            ProductSerialNumber_ = productSerialNumber;
+            PCBserialNumber_ = pcbSerialNumber;
+            ProdID_ = prodID;
 
-
-            // ToDo: Add test case code.
-            RunChildSteps(); //If the step supports child steps.
-
-            // If no verdict is used, the verdict will default to NotSet.
-            // You can change the verdict using UpgradeVerdict() as shown below.
-            // UpgradeVerdict(Verdict.Pass);
-        }
-    }
-
-    [Display("DR21 Write info", Group: "RjioMRU", Description: "Insert a description here")]
-    public class DR21_WriteInfo : TestStep
-    {
-        public static string MAC1 = string.Empty;
-        public static string MAC2 = string.Empty;
-        public static string MAC3 = string.Empty;
-        public static string MAC4 = string.Empty;
-        public static string ProductSerialNumber = string.Empty;
-        public static string PCBserialNumber = string.Empty;
-        public static string ProdID = string.Empty;
-        #region Settings
-        MRU_Rjio mruObj;
-
-        // ToDo: Add property here for each parameter the end user should be able to change
-
-        #endregion
-
-        public DR21_WriteInfo()
-        {
-            // ToDo: Set default values for properties / settings.
-        }
-
-        public MRU_Rjio MruObj { get => mruObj; set => mruObj = value; }
-
-
-        public override void Run()
-        {
-
-            var returnValue = MruObj.Dr21GetEepromInfo(out MAC1, out MAC2, out MAC3, out MAC4, out ProductSerialNumber, out PCBserialNumber, out ProdID);
             if (returnValue)
+            {
                 UpgradeVerdict(Verdict.Pass);
+            }
             else
             {
                 UpgradeVerdict(Verdict.Fail);
@@ -1345,6 +1398,52 @@ namespace RjioMRU.TestSteps
             // UpgradeVerdict(Verdict.Pass);
         }
     }
+
+    //[Display("DR21 Write info", Group: "RjioMRU", Description: "Insert a description here")]
+    //public class DR21_WriteInfo : TestStep
+    //{
+    //    public static string MAC1 = string.Empty;
+    //    public static string MAC2 = string.Empty;
+    //    public static string MAC3 = string.Empty;
+    //    public static string MAC4 = string.Empty;
+    //    public static string ProductSerialNumber = string.Empty;
+    //    public static string PCBserialNumber = string.Empty;
+    //    public static string ProdID = string.Empty;
+    //    #region Settings
+    //    MRU_Rjio mruObj;
+
+    //    // ToDo: Add property here for each parameter the end user should be able to change
+
+    //    #endregion
+
+    //    public DR21_WriteInfo()
+    //    {
+    //        // ToDo: Set default values for properties / settings.
+    //    }
+
+    //    public MRU_Rjio MruObj { get => mruObj; set => mruObj = value; }
+
+
+    //    public override void Run()
+    //    {
+
+    //        var returnValue = MruObj.Dr21GetEepromInfo(out MAC1, out MAC2, out MAC3, out MAC4, out ProductSerialNumber, out PCBserialNumber, out ProdID);
+    //        if (returnValue)
+    //            UpgradeVerdict(Verdict.Pass);
+    //        else
+    //        {
+    //            UpgradeVerdict(Verdict.Fail);
+    //        }
+
+
+    //        // ToDo: Add test case code.
+    //        RunChildSteps(); //If the step supports child steps.
+
+    //        // If no verdict is used, the verdict will default to NotSet.
+    //        // You can change the verdict using UpgradeVerdict() as shown below.
+    //        // UpgradeVerdict(Verdict.Pass);
+    //    }
+    //}
 
 
     [Display("49DR Ch1 DPD Reset", Group: "RjioMRU", Description: "Insert a description here")]
@@ -1483,7 +1582,7 @@ namespace RjioMRU.TestSteps
 
             int StringOk = string.Compare(slot21dr, slot49DrCh1);
             int string2OK = string.Compare(slot21dr, slot49DrCh2);
-            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, Verdict.ToString(), "NA", slot21dr.ToString() + ":" + slot49DrCh1.ToString(), Verdict.ToString(), "EQ", slot21dr.ToString() + "=" + slot49DrCh1.ToString(), "NA");
+            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, Verdict.ToString(), " ", slot21dr.ToString() + ":" + slot49DrCh1.ToString(), Verdict.ToString(), "EQ", slot21dr.ToString() + "=" + slot49DrCh1.ToString(), " ");
 
             if (StringOk != 0)
             {
@@ -1539,7 +1638,7 @@ namespace RjioMRU.TestSteps
             }
 
             UpgradeVerdict(Verdict.Pass);
-            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, Verdict.ToString(), "NA", Verdict.ToString(), "TRUE", "EQ", "TRUE", "NA");
+            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, Verdict.ToString(), " ", Verdict.ToString(), "TRUE", "EQ", "TRUE", " ");
 
             // ToDo: Add test case code.
             RunChildSteps(); //If the step supports child steps.

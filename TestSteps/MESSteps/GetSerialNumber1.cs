@@ -16,68 +16,53 @@ using System.Windows.Forms;
 
 namespace RjioMRU
 {
-    [Display("MES Check To Start", Group: "RjioMRU.TestSteps.MESSteps", Description: "Insert a description here")]
+    [Display("MES PRODUCT INFORMATION", Group: "RjioMRU.TestSteps.MESSteps", Description: "Insert a description here")]
     public class MesCheckToStart : TestStep
     {
         #region Settings
         ClsMES mesResource = null;
-        string serialNumber = string.Empty;
-        string serialNumberByUser = string.Empty;
+        Input<string> serialNumber;//= string.Empty;
+        //string serialNumberByUser = string.Empty;
         string productID = string.Empty;
         string macID = string.Empty;
-        string hstbID = string.Empty;
-        string rffeID = string.Empty;
+        string pcbSerialNumber_HSTB = string.Empty;
+        string rfbSerialNumber = string.Empty;
         #endregion
 
         public MesCheckToStart()
         {
-            SerialnumberByUser = "JITSAF1LIMRU00006";
+            //SerialnumberByUser = "JITSAF1LIMRU00006";
+            Serialnumber = new Input<string>();
         }
 
         public ClsMES MesResource { get => mesResource; set => mesResource = value; }
 
-        [Display("Enter Serial Number", Order: 1)]
-        public string SerialnumberByUser { get => serialNumberByUser; set => serialNumberByUser = value; }
-
         [Output]
         [Display("Serial Number", Order: 2)]
-        public string Serialnumber { get => serialNumber; set => serialNumber = value; }
-
-        [Output]
-        [Display("Product Number", Order: 3)]
-        public string ProductID { get => productID; set => productID = value; }
+        public Input<string> Serialnumber { get => serialNumber; set => serialNumber = value; }
 
         [Output]
         [Display("MAC ID", Order: 4)]
         public string MacID { get => macID; set => macID = value; }
 
         [Output]
-        [Display("HSTB ID", Order: 5)]
-        public string HstbID { get => hstbID; set => hstbID = value; }
+        [Display("Product id", Order: 6)]
+        public string ProductID { get => productID; set => productID = value; }
 
         [Output]
-        [Display("RFFE ID", Order: 6)]
-        public string RffeID { get => rffeID; set => rffeID = value; }
+        [Display("PCB Serial Number(HSTB)", Order: 8)]
+        public string PCBSerialNumber_HSTB { get => pcbSerialNumber_HSTB; set => pcbSerialNumber_HSTB = value; }
+
+        [Output]
+        [Display("RFB Serial Number", Order: 10)]
+        public string RFBSerialNumber { get => rfbSerialNumber; set => rfbSerialNumber = value; }
 
         public override void Run()
 
         {
             try
             {
-                InputBox inputBox = new InputBox("Barcore Reader", "Please SCAN the QR/ Barcode");
-                if (inputBox.ShowDialog() == DialogResult.OK)
-                {
-                    string inputValue = inputBox.InputValue;
-                    SerialnumberByUser = inputValue;
-                }
-                else
-                {
-                    this.PlanRun.MainThread.Abort();
-                    Log.Info("User has cancelled the Barcode SCAN's operation");
-                }
-
-
-                var componentDataObj = MesResource.GetMesInformationResponse(SerialnumberByUser);
+                var componentDataObj = MesResource.GetMesInformationResponse(Serialnumber.Value);
                 Component[] componentArray = new Component[5];
 
                 for (int i = 0; i < componentDataObj.Result.data.Count; i++)
@@ -85,12 +70,10 @@ namespace RjioMRU
                     componentArray[i] = componentDataObj.Result.data[i];
                 }
 
-                Serialnumber = serialNumberByUser;
-
                 MacID = componentArray[(int)mesSelectoin.MacEnum].component_id.ToString();
                 ProductID = componentArray[(int)mesSelectoin.productIDEnum].component_id.ToString();
-                HstbID = componentArray[(int)mesSelectoin.hstbEnum].component_id.ToString();
-                RffeID = componentArray[(int)mesSelectoin.rffeEnum].component_id.ToString();
+                pcbSerialNumber_HSTB = componentArray[(int)mesSelectoin.PCBSerialNumber_hstbEnum].component_id.ToString();
+                RFBSerialNumber = componentArray[(int)mesSelectoin.rffeEnum].component_id.ToString();
 
 
                 if (componentDataObj.Result.success)
@@ -106,25 +89,25 @@ namespace RjioMRU
 
             catch (Exception ex)
             {
-                MessageBox.Show($"The operator has scanned an incorrect barcode or needs to check the MES database.");
+
                 Log.Error("Error in MesCheckToStart, please check MES Connection: " + ex.Message);
                 UpgradeVerdict(Verdict.Error);
             }
-            MES_CSV.MRU_Serial_number = serialNumberByUser;
+            MES_CSV.MRU_Serial_number = serialNumber.Value;
 
-            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName  , Verdict.ToString(),"NA", SerialnumberByUser, "NA", "NA", "NA", "NA");
-            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName  , Verdict.ToString(),"NA", MacID, "NA", "NA", "NA", "NA");
-            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName  , Verdict.ToString(),"NA", ProductID, "NA", "NA", "NA", "NA");
-            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName  , Verdict.ToString(),"NA", HstbID, "NA", "NA", "NA", "NA");
-            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName  , Verdict.ToString(),"NA", RffeID, "NA", "NA", "NA", "NA");
+            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, Verdict.ToString(), " ", serialNumber.Value, " ", " ", " ", " ");
+            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, Verdict.ToString(), " ", MacID, " ", " ", " ", " ");
+            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, Verdict.ToString(), " ", ProductID, " ", " ", " ", " ");
+            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, Verdict.ToString(), " ", pcbSerialNumber_HSTB, " ", " ", " ", " ");
+            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, Verdict.ToString(), " ", RFBSerialNumber, " ", " ", " ", " ");
             RunChildSteps(); //If the step supports child steps.
         }
     }
     public enum mesSelectoin
     {
-        MacEnum =0,
-        productIDEnum=1,
-        hstbEnum=3, rffeEnum=4
+        MacEnum = 0,
+        productIDEnum = 1,
+        PCBSerialNumber_hstbEnum = 3, rffeEnum = 4
     }
 }
 

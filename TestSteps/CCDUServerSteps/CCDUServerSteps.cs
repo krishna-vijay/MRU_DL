@@ -17,6 +17,65 @@ using System.Threading;
 namespace RjioMRU
 {
     [Display("CCDU Basic Verification", Group: "RjioMRU", Description: "Insert a description here")]
+    public class FileCopyfromCCDU_21DR : TestStep
+    {
+        /* 
+        scp /root/MRUV2_21_37/SKU1-MRU-FW-PKG-2.21.37-FACT-1.3-Sanmina/binaries.tar.gz root@192.168.1.2:/home/root/
+The authenticity of host '192.168.1.2 (192.168.1.2)' can't be established.
+ECDSA key fingerprint is SHA256:cY+BS1XUY83h1Q8RR/YYFHIntdykt59ugx111WUgKzQ.
+ECDSA key fingerprint is MD5:94:b1:1a:4f:13:10:00:68:76:8e:9e:ee:4a:98:ff:ed.
+Are you sure you want to continue connecting (yes/no)? yes
+Warning: Permanently added '192.168.1.2' (ECDSA) to the list of known hosts.
+root@192.168.1.2's password:
+
+         */
+
+        private string command = "scp /root/MRUV2_21_37/SKU1-MRU-FW-PKG-2.21.37-FACT-1.3-Sanmina/binaries.tar.gz root@192.168.1.2:/home/root/";
+
+        private CCDUServer cCDUServerobj;
+
+        #region Settings
+        [Display("CCDU Server", Order: 0, Description: "Select Server")]
+        public CCDUServer CCDUServerobj { get => cCDUServerobj; set => cCDUServerobj = value; }
+        [Display(" Command to CCDU", Order: 1, Description: "server command  ")]
+        public string CommandforCCDU { get => command; set => command = value; }
+
+
+
+        // ToDo: Add property here for each parameter the end user should be able to change
+        #endregion
+
+        public FileCopyfromCCDU_21DR()
+        {
+            // ToDo: Set default values for properties / settings.
+        }
+
+        public override void Run()
+        {
+            var FileCopyReturn = CCDUServerobj.BasicCCDUCommands(CommandforCCDU);
+
+            // ToDo: Add test case code.
+            RunChildSteps(); //If the step supports child steps.
+            if (FileCopyReturn)
+            {
+                UpgradeVerdict(Verdict.Pass);
+            }
+            else
+            {
+                UpgradeVerdict(Verdict.Fail);
+            }        
+
+            // If no verdict is used, the verdict will default to NotSet.
+            // You can change the verdict using UpgradeVerdict() as shown below.
+            // UpgradeVerdict(Verdict.Pass);
+        }
+    }
+
+
+
+
+
+    [Display("CCDU Basic Verification", Group: "RjioMRU", Description: "Insert a description here")]
     public class CCDUBasicVerification : TestStep
     {
         private string basicverificationCommand = "ip link show";
@@ -68,7 +127,7 @@ namespace RjioMRU
             {
                 UpgradeVerdict(Verdict.Fail);
             }
-            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, this.Verdict.ToString(), "NA", "25000Mb/s", "NA", "NA", "NA", "NA");
+            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, this.Verdict.ToString(), " ", "25000Mb/s", " ", " ", " ", " ");
             // If no verdict is used, the verdict will default to NotSet.
             // You can change the verdict using UpgradeVerdict() as shown below.
             // UpgradeVerdict(Verdict.Pass);
@@ -120,7 +179,7 @@ namespace RjioMRU
             {
                 UpgradeVerdict(Verdict.Fail);
             }
-            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, this.Verdict.ToString(), "NA", ipChangeStatus.ToString(), "TRUE", "EQ", "TRUE", "NA");
+            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, this.Verdict.ToString(), " ", ipChangeStatus.ToString(), "TRUE", "EQ", "TRUE", " ");
             // If no verdict is used, the verdict will default to NotSet.
             // You can change the verdict using UpgradeVerdict() as shown below.
             // UpgradeVerdict(Verdict.Pass);
@@ -216,7 +275,7 @@ namespace RjioMRU
             RunChildSteps(); //If the step supports child steps.
 
             UpgradeVerdict(Verdict.Pass);
-            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, this.Verdict.ToString(), "NA", "NA", "NA", "NA", "NA", "NA");
+            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, this.Verdict.ToString(), " ", " ", " ", " ", " ", " ");
         }
     }
 
@@ -272,7 +331,7 @@ namespace RjioMRU
             //if (PingTestStatus)
             //{
             UpgradeVerdict(Verdict.Pass);
-            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, Verdict.ToString(), "NA", Verdict.ToString(), Verdict.ToString(), "EQ", "TRUE", "NA");
+            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, Verdict.ToString(), " ", Verdict.ToString(), Verdict.ToString(), "EQ", "TRUE", " ");
 
 
             //}
@@ -334,7 +393,7 @@ namespace RjioMRU
             //{
 
             UpgradeVerdict(Verdict.Pass);
-            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, this.Verdict.ToString(), "NA", "NA", "NA", "NA", "NA", "NA");
+            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, this.Verdict.ToString(), " ", " ", " ", " ", " ", " ");
 
             //}
             //else
@@ -387,16 +446,16 @@ namespace RjioMRU
             // var PingTestStatus = CCDUServerobj.PhCTaBCommandExecute(CCDUBasicVerification.linkInteraface);
             // ToDo: Add test case code.
             RunChildSteps(); //If the step supports child steps
-            //if (resultStatus)
-            //{
+                             //if (resultStatus)
+                             //{
 
-                UpgradeVerdict(Verdict.Pass);
+            UpgradeVerdict(Verdict.Pass);
             //}
             //else
             //{
-               // UpgradeVerdict(Verdict.Fail);
+            // UpgradeVerdict(Verdict.Fail);
             // }
-            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, this.Verdict.ToString(), "NA", resultStatus.ToString(), "TRUE", "EQ", "TRUE", "NA");
+            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, this.Verdict.ToString(), " ", resultStatus.ToString(), "TRUE", "EQ", "TRUE", " ");
 
         }
 
@@ -443,7 +502,7 @@ namespace RjioMRU
             RunChildSteps(); //If the step supports child steps
 
             UpgradeVerdict(Verdict.Pass);
-            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, this.Verdict.ToString(), "NA", "NA", "NA", "NA", "NA", "NA");
+            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, this.Verdict.ToString(), " ", " ", " ", " ", " ", " ");
         }
 
     }
@@ -527,10 +586,10 @@ namespace RjioMRU
 
         public override void Run()
         {
-            bool returnValue=false;
+            bool returnValue = false;
             try
             {
-              returnValue=  CCDUServerobj.RunVirutalFunctions(Command1, Command2, Command3);
+                returnValue = CCDUServerobj.RunVirutalFunctions(Command1, Command2, Command3);
 
             }
             catch (Exception)
@@ -547,7 +606,7 @@ namespace RjioMRU
             // If no verdict is used, the verdict will default to NotSet.
             // You can change the verdict using UpgradeVerdict() as shown below.
             UpgradeVerdict(Verdict.Pass);
-            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, this.Verdict.ToString(), "NA", returnValue.ToString(), "EQ", "TRUE", "NA", "NA");
+            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, this.Verdict.ToString(), " ", returnValue.ToString(), "EQ", "TRUE", " ", " ");
         }
     }
 
@@ -647,7 +706,7 @@ namespace RjioMRU
             {
                 UpgradeVerdict(Verdict.Fail);
             }
-            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, this.Verdict.ToString(), CAResult.ToString(), "NA", "TRUE", "EQ", "TRUE", "NA");
+            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, this.Verdict.ToString(), CAResult.ToString(), " ", "TRUE", "EQ", "TRUE", " ");
 
             //UpgradeVerdict(Verdict.Pass);
         }

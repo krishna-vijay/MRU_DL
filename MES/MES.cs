@@ -287,9 +287,6 @@ namespace RjioMRU
                 throw;
             }
             return returnValue;
-            
-            
-            
             // return true if EnsureSuccessStatusCode(); is success else return false.
             /*
              {
@@ -369,8 +366,272 @@ namespace RjioMRU
             */
 
             // change the above JSON to a JSON array (e.g. [1,2,3])
+        }
+        
+        public async Task<bool> SingleSerialFail(string serverURL, string client_id = "p5599dc1uat", string employeeID = "62153666", string serialNumber = "JITSAF1LIMRU00006",string stageID = "553")
+        {
+            bool returnValue = true;
+           // string stringContents = "{\r\n\"version\": \"1.0\",\r\n\"source\": {\r\n\"client_id\": \""+ client_id + "\",\r\n\"employee\": \""+ employeeID + "\",\r\n\"password\": \"\",\r\n\"workstation\": {\r\n\"type\": \"Device\",\r\n\"station\": \" "+stageID+" \"\r\n}\r\n},\r\n\"refresh_unit\": true,\r\n\"token\": \"\",\r\n\"keep_alive\": false,\r\n\"single_transaction\": false,\r\n\"options\": {\r\n\"skip_data\": [\r\n\"defects\",\r\n\" comments\",\r\n\"components\",\r\n\"attributes\"\r\n]\r\n},\r\n\"transactions\": [\r\n{\r\n\"unit\": {\r\n\"unit_id\": \"" + serialNumber + "\",\r\n\"part_number\": \"\",\r\n\"revision\": \"\"\r\n}\r\n}\r\n]\r\n}";
+           
+            
+            string stringContents = "{\r\n\"version\": \"1.0\",\r\n\"source\": {\r\n\"client_id\": \""+ client_id + "\",\r\n\"employee\": \""+ employeeID + "\",\r\n\"password\": \"\",\r\n\"workstation\": {\r\n\"type\": \"Device\",\r\n\"station\": \""+stageID+ "\"\r\n}\r\n},\r\n\"refresh_unit\": true,\r\n\"token\": \"\",\r\n\"keep_alive\": false,\r\n\"single_transaction\": false,\r\n\"options\": {\r\n\"skip_data\": [\r\n\"defects\",\r\n\"comments\",\r\n\"components\",\r\n\"attributes\"\r\n]\r\n},\r\n\"transactions\": [\r\n{\r\n\"unit\": {\r\n\"unit_id\": \"" + serialNumber + "\",\r\n\"part_number\": \"\",\r\n\"revision\": \"\"\r\n},\r\n\"commands\": [\r\n{\r\n\"name\": \"RecordDefect\",\r\n\"defect_code\": \"GA01\",\r\n\"ref_designator\": \"C100\",\r\n\"repair_code\": \"NO\"\r\n},\r\n{\r\n\"command\": {\r\n\"name\": \"END\"\r\n}\r\n}\r\n]\r\n}\r\n]\r\n}";
+            ComponentData componentData = new ComponentData();
+            try
+            {
+                var clientHandler = new HttpClientHandler
+                {
+                    UseCookies = false,
+                };
+                var client = new HttpClient(clientHandler);
+                var request = new HttpRequestMessage
+                {
+                    Method = HttpMethod.Post,
+                    RequestUri = new Uri(serverURL),
+                    Headers ={
+                        { 
+                            "User-Agent", "insomnia/9.2.0"
+                        },
+                    },
+                    Content = new StringContent(stringContents)
+                   
+                };
+                Log.Info(stringContents);
+                 ///Client ID, Employee, Station, Unit_id are the parameters to be passed in the request body
+                using (var response = await client.SendAsync(request))
+                {
+                    response.EnsureSuccessStatusCode();
+                    var body = await response.Content.ReadAsStringAsync();
+                    Log.Info("Returned Jzon : "+body);
+                   //var statusBody = JsonConvert.DeserializeObject<Root>(body);
+                   // //body status ok return true else false
+                   // if (statusBody.Status.Code =="OK")
+                   // {
+                   //     returnValue= true;
+                   // }
+                   // else
+                   // {
+                   //     returnValue= false;
+                   // }
+                }
+            }
+            catch (Exception)
+            {
 
+                throw;
+            }
+            return returnValue;
+            // return true if EnsureSuccessStatusCode(); is success else return false.
+            /*
+             {
+                "success": true,
+                "message": "",
+                "data": [
+                    {
+                        "serial_key": 2095440,
+                        "serial_number": "JITSAF1LIMRU00006",
+                        "part_key": 375,
+                        "parent_part_number": "LFIRIL051-7470089-A_1.1",
+                        "component_id": "A0:73:FC:00:BF:9A",
+                        "component_part_key": 0,
+                        "ref_designator": "MAC2",
+                        "removed": 0,
+                        "level": -1,
+                        "path": "{A0:73:FC:00:BF:9A}",
+                        "cycle": false
+                    },
+                    {
+                        "serial_key": 2095440,
+                        "serial_number": "JITSAF1LIMRU00006",
+                        "part_key": 375,
+                        "parent_part_number": "LFIRIL051-7470089-A_1.1",
+                        "component_id": "JITSAF1MRU01",
+                        "component_part_key": 0,
+                        "ref_designator": "PRODUCT CODE",
+                        "removed": 0,
+                        "level": -1,
+                        "path": "{JITSAF1MRU01}",
+                        "cycle": false
+                    },
+                    {
+                        "serial_key": 2095440,
+                        "serial_number": "JITSAF1LIMRU00006",
+                        "part_key": 375,
+                        "parent_part_number": "LFIRIL051-7470089-A_1.1",
+                        "component_id": "MRRFBD22480003",
+                        "component_part_key": 371,
+                        "component_part_number": "LFIRIL002-7470340-B_1.0-SA",
+                        "ref_designator": "SCAN 70340",
+                        "removed": 0,
+                        "level": -1,
+                        "path": "{MRRFBD22480003}",
+                        "cycle": false
+                    },
+                    {
+                        "serial_key": 2095440,
+                        "serial_number": "JITSAF1LIMRU00006",
+                        "part_key": 375,
+                        "parent_part_number": "LFIRIL051-7470089-A_1.1",
+                        "component_id": "JITSAMRUIIHSB00022",
+                        "component_part_key": 355,
+                        "component_part_number": "LFIRIL002-7470341-B_1.4",
+                        "ref_designator": "SACN 70341",
+                        "removed": 0,
+                        "level": -1,
+                        "path": "{JITSAMRUIIHSB00022}",
+                        "cycle": false
+                    },
+                    {
+                        "serial_key": 2084161,
+                        "serial_number": "MRRFBD22480003",
+                        "part_key": 371,
+                        "parent_part_number": "LFIRIL002-7470340-B_1.0-SA",
+                        "component_id": "JITSAMRUHIMRB00018",
+                        "component_part_key": 337,
+                        "component_part_number": "LFIRIL002-7470340-B_1.0",
+                        "ref_designator": "SCAN MRURF PCBA",
+                        "removed": 0,
+                        "level": -2,
+                        "path": "{MRRFBD22480003,JITSAMRUHIMRB00018}",
+                        "cycle": false
+                    }
+                ]
+            }
+            */
 
+            // change the above JSON to a JSON array (e.g. [1,2,3])
+        }
+        
+        
+        public async Task<bool> SingleSerialPass(string serverURL, string client_id = "p5599dc1uat", string employeeID = "62153666", string serialNumber = "JITSAF1LIMRU00006",string stageID = "553")
+        {
+            bool returnValue = true;
+           
+          // string stringContents = "{\r\n\"version\": \"1.0\",\r\n\"source\": {\r\n\"client_id\": \""+ client_id + "\",\r\n\"employee\": \""+ employeeID + "\",\r\n\"password\": \"\",\r\n\"workstation\": {\r\n\"type\": \"Device\",\r\n\"station\": \""+stageID+ "\"\r\n}\r\n},\r\n\"refresh_unit\": true,\r\n\"token\": \"\",\r\n\"keep_alive\": false,\r\n\"single_transaction\": false,\r\n\"options\": {\r\n\"skip_data\": [\r\n\"defects\",\r\n\"comments\",\r\n\"components\",\r\n\"attributes\"\r\n]\r\n},\r\n\"transactions\": [\r\n{\r\n\"unit\": {\r\n\"unit_id\": \"" + serialNumber + "\",\r\n\"part_number\": \"\",\r\n\"revision\": \"\"\r\n},\r\n\"commands\": [\r\n{\r\n\"name\": \"RecordDefect\",\r\n\"defect_code\": \"GA01\",\r\n\"ref_designator\": \"C100\",\r\n\"repair_code\": \"NO\"\r\n},\r\n{\r\n\"command\": {\r\n\"name\": \"END\"\r\n}\r\n}\r\n]\r\n}\r\n]\r\n}";
+            string stringContents = "{\r\n\"version\": \"1.0\",\r\n\"source\": {\r\n\"client_id\": \""+ client_id + "\",\r\n\"employee\": \""+ employeeID + "\",\r\n\"password\": \"\",\r\n\"workstation\": {\r\n\"type\": \"Device\",\r\n\"station\": \""+stageID+ "\"\r\n}\r\n},\r\n\"refresh_unit\": true,\r\n\"token\": \"\",\r\n\"keep_alive\": false,\r\n\"single_transaction\": false,\r\n\"options\": {\r\n\"skip_data\": [\r\n\"defects\",\r\n\"comments\",\r\n\"components\",\r\n\"attributes\"\r\n]\r\n},\r\n\"transactions\": [\r\n{\r\n\"unit\": {\r\n\"unit_id\": \"" + serialNumber + "\",\r\n\"part_number\": \"\",\r\n\"revision\": \"\"\r\n},\r\n\"commands\": [\r\n{\r\n\"command\": {\r\n\"name\": \"END\"\r\n}\r\n}\r\n]\r\n}\r\n]\r\n}";
+            ComponentData componentData = new ComponentData();
+            try
+            {
+                var clientHandler = new HttpClientHandler
+                {
+                    UseCookies = false,
+                };
+                var client = new HttpClient(clientHandler);
+                var request = new HttpRequestMessage
+                {
+                    Method = HttpMethod.Post,
+                    RequestUri = new Uri(serverURL),
+                    Headers ={
+                        { 
+                            "User-Agent", "insomnia/9.2.0"
+                        },
+                    },
+                    Content = new StringContent(stringContents)
+                   
+                };
+                Log.Info(stringContents);
+                 ///Client ID, Employee, Station, Unit_id are the parameters to be passed in the request body
+                using (var response = await client.SendAsync(request))
+                {
+                    response.EnsureSuccessStatusCode();
+                    var body = await response.Content.ReadAsStringAsync();
+                    Log.Info("Returned Jzon : "+body);
+                   //var statusBody = JsonConvert.DeserializeObject<Root>(body);
+                   // //body status ok return true else false
+                   // if (statusBody.Status.Code =="OK")
+                   // {
+                   //     returnValue= true;
+                   // }
+                   // else
+                   // {
+                   //     returnValue= false;
+                   // }
+                }
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+            return returnValue;
+            // return true if EnsureSuccessStatusCode(); is success else return false.
+            /*
+             {
+                "success": true,
+                "message": "",
+                "data": [
+                    {
+                        "serial_key": 2095440,
+                        "serial_number": "JITSAF1LIMRU00006",
+                        "part_key": 375,
+                        "parent_part_number": "LFIRIL051-7470089-A_1.1",
+                        "component_id": "A0:73:FC:00:BF:9A",
+                        "component_part_key": 0,
+                        "ref_designator": "MAC2",
+                        "removed": 0,
+                        "level": -1,
+                        "path": "{A0:73:FC:00:BF:9A}",
+                        "cycle": false
+                    },
+                    {
+                        "serial_key": 2095440,
+                        "serial_number": "JITSAF1LIMRU00006",
+                        "part_key": 375,
+                        "parent_part_number": "LFIRIL051-7470089-A_1.1",
+                        "component_id": "JITSAF1MRU01",
+                        "component_part_key": 0,
+                        "ref_designator": "PRODUCT CODE",
+                        "removed": 0,
+                        "level": -1,
+                        "path": "{JITSAF1MRU01}",
+                        "cycle": false
+                    },
+                    {
+                        "serial_key": 2095440,
+                        "serial_number": "JITSAF1LIMRU00006",
+                        "part_key": 375,
+                        "parent_part_number": "LFIRIL051-7470089-A_1.1",
+                        "component_id": "MRRFBD22480003",
+                        "component_part_key": 371,
+                        "component_part_number": "LFIRIL002-7470340-B_1.0-SA",
+                        "ref_designator": "SCAN 70340",
+                        "removed": 0,
+                        "level": -1,
+                        "path": "{MRRFBD22480003}",
+                        "cycle": false
+                    },
+                    {
+                        "serial_key": 2095440,
+                        "serial_number": "JITSAF1LIMRU00006",
+                        "part_key": 375,
+                        "parent_part_number": "LFIRIL051-7470089-A_1.1",
+                        "component_id": "JITSAMRUIIHSB00022",
+                        "component_part_key": 355,
+                        "component_part_number": "LFIRIL002-7470341-B_1.4",
+                        "ref_designator": "SACN 70341",
+                        "removed": 0,
+                        "level": -1,
+                        "path": "{JITSAMRUIIHSB00022}",
+                        "cycle": false
+                    },
+                    {
+                        "serial_key": 2084161,
+                        "serial_number": "MRRFBD22480003",
+                        "part_key": 371,
+                        "parent_part_number": "LFIRIL002-7470340-B_1.0-SA",
+                        "component_id": "JITSAMRUHIMRB00018",
+                        "component_part_key": 337,
+                        "component_part_number": "LFIRIL002-7470340-B_1.0",
+                        "ref_designator": "SCAN MRURF PCBA",
+                        "removed": 0,
+                        "level": -2,
+                        "path": "{MRRFBD22480003,JITSAMRUHIMRB00018}",
+                        "cycle": false
+                    }
+                ]
+            }
+            */
+
+            // change the above JSON to a JSON array (e.g. [1,2,3])
         }
 
         #region Internal clases

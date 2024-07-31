@@ -11,10 +11,11 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
+using System.Windows.Forms;
 
 namespace RjioMRU.TestSteps.MESSteps
 {
-    [Display("SingleSerialFlowCheck", Group: "RjioMRU.TestSteps.MESSteps", Description: "Insert a description here")]
+    [Display("Single Serial Flow Check", Group: "RjioMRU.TestSteps.MESSteps", Description: "Insert a description here")]
     public class SingleSerialFlowCheck : TestStep
     {
         #region Settings
@@ -29,19 +30,35 @@ namespace RjioMRU.TestSteps.MESSteps
         }
 
         public ClsMES MesResource { get => mesResource; set => mesResource = value; }
+        [Output]
         [Display("Serial Number", Order: 1)]
         public string SerialNumber { get => serialNumber; set => serialNumber = value; }
-
+        [Output]
+        [Display("Server URL", Order: 2)]
         public string ServerURL { get; set; } = "http://42qconduituat2.42-q.com:18003/conduit";
-        public string ClientID { get; set; } = "p5547dc2_uat";
-        public string EmployeeID { get; set; } = "62153666";
+       // public string ClientID { get; set; } = "p5547dc2_uat";
+       // public string EmployeeID { get; set; } = "62153666";
 
-        public string stageID { get; set;} = "553";
+       // public string stageID { get; set;} = "553";
 
 
         public override void Run()
         {
-          var value1 =  MesResource.SingleSerialFlowCheck(ServerURL, ClientID, EmployeeID, SerialNumber,stageID);
+            InputBox inputBox = new InputBox("Barcore Reader", "Please SCAN the QR/ Barcode");
+            if (inputBox.ShowDialog() == DialogResult.OK)
+            {
+                string inputValue = inputBox.InputValue;
+                SerialNumber = inputValue;
+            }
+            else
+            {
+                this.PlanRun.MainThread.Abort();
+                Log.Info("User has cancelled the Barcode SCAN's operation");
+            }
+
+
+
+            var value1 =  MesResource.SingleSerialFlowCheck(ServerURL, MesResource.ClientID, MesResource.Employee, SerialNumber, MesResource.Station);
             Log.Info("Single Serial Flow Check:  " + value1.Result.ToString());
             // ToDo: Add test case code.
             if(value1.Result)
@@ -51,7 +68,9 @@ namespace RjioMRU.TestSteps.MESSteps
             else
             {
                 UpgradeVerdict(Verdict.Fail);
-            }   
+            }
+            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName,Verdict.ToString(), " ",Verdict.ToString(), "TRUE", "EQ", "TRUE", " ");
+
             RunChildSteps(); //If the step supports child steps.
 
             // If no verdict is used, the verdict will default to NotSet.

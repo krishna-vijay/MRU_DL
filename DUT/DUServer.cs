@@ -436,6 +436,41 @@ namespace RjioMRU
 
             return false;
         }
+        
+        
+        public bool BasicCCDUCommands(string BasicverificationCommand)
+        {
+            Stopwatch sp = Stopwatch.StartNew();    
+            WritetoSSH("\x03");
+            WritetoSSH(Environment.NewLine);
+            WritetoSSH(BasicverificationCommand);
+            bool status = true;
+            do
+            {
+                var readValue = ReadFromSSH();
+                if (readValue.Contains("connecting (yes/no)?"))
+                {
+                    WritetoSSH("yes" + Environment.NewLine);
+                }
+                if (readValue.Contains("password:"))
+                {
+                    WritetoSSH("root");
+                    status = true;
+                    break;
+                }
+                if (sp.ElapsedMilliseconds > 10000)
+                {
+                    status = false;
+                    break;
+                }
+
+                Thread.Sleep(100);
+            } while (true);
+         
+            
+           
+            return status;
+        }
 
         public bool ChangeInterfceIP(string interfaceName, string ipAddress)
         {
@@ -459,8 +494,6 @@ namespace RjioMRU
             }
             return true;
         }
-
-
 
         public void PtpTaBCommandExecute(bool KeepTrace)
         {
