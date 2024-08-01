@@ -441,6 +441,7 @@ namespace RjioMRU.TestSteps
                             Log.Error("DSA Value exceeds limits DSA Value :" + HexValues[iteration] + " DSA Higher Limits :" + DSAHigherLimit + " DSA Lower Limit :" + DSAlowerLimit + " Chanin Number : " + iteration);
                             MessageBox.Show("DSA Limit exceeds, Breaking loop");
                             stepPassFlag = false;   
+                            Log.Error("Step Failed at Chain number" + iteration.ToString());
                             break;
 
                         }
@@ -488,6 +489,7 @@ namespace RjioMRU.TestSteps
                         {
                             StrChannelMeasurementsCh1[iteration] = iteration + "," + $" 0x{HexValues[iteration]:X}" + "," + "-999" + "," + "-999" + "," + "-999" + "," + "-999" + "," + "-999" + "," + "" + "," + "";
                             stepPassFlag = false;
+                            Log.Error("Step Failed at Chain number " + iteration.ToString());
                             continue;
                         }
                         else
@@ -509,7 +511,7 @@ namespace RjioMRU.TestSteps
                     var totalCh1CalTime = stopwathCh1.Elapsed;
                     Log.Info("Total Ch1 Cal Time : " + (totalCh1CalTime.TotalMilliseconds / 1000).ToString());
                     stepPassFlag &= ChannelPowerOk && ACLR_R1OK && ACLR_L2OK && ACLR_R2OK && ACLR_L2OK && FREQERROK && EVMOK;
-
+                    Log.Info($"Step Pass Flag Condition at iteration {iteration}: " + stepPassFlag);   
                 }
             }
             catch (Exception ex)
@@ -830,6 +832,7 @@ namespace RjioMRU.TestSteps
                     {
                         StrChannelMeasurementsCh2[iteration] = iteration + "," + $" 0x{HexValues[iteration]:X}" + "," + "-999" + "," + "-999" + "," + "-999" + "," + "-999" + "," + "-999" + "," + "" + "," + "";
                         stepPassFlag = false;
+                        Log.Error("Step Failed at Chain number " + iteration.ToString());   
                         continue;
                     }
 
@@ -1046,7 +1049,8 @@ namespace RjioMRU.TestSteps
                         {
                             Log.Error("DSA Value exceeds limits DSA Value :" + HexValues[iteration] + " DSA Higher Limits :" + DSAHigherLimit + " DSA Lower Limit :" + DSAlowerLimit + " Chanin Number : " + iteration);
                             MessageBox.Show("DSA Limit exceeds, Breaking loop");
-                            stepPassFlag = false;   
+                            stepPassFlag = false;  
+                            Log.Error("Step Failed at Chain number " + iteration.ToString());
                             break;
 
                         }
@@ -1090,6 +1094,7 @@ namespace RjioMRU.TestSteps
                         {
                             StrChannelMeasurementsCh2[iteration] = iteration + "," + $" 0x{HexValues[iteration]:X}" + "," + "-999" + "," + "-999" + "," + "-999" + "," + "-999" + "," + "-999" + "," + "" + "," + "";
                             stepPassFlag = false;
+                            Log.Error("Step Failed at Chain number " + iteration.ToString());   
                             continue;
                         }
                         else
@@ -1110,7 +1115,7 @@ namespace RjioMRU.TestSteps
                     // You can change the verdict using UpgradeVerdict() as shown below.
                     // UpgradeVerdict(Verdict.Pass);
                     stepPassFlag &= ChannelPowerOk && ACLR_R1OK && ACLR_L2OK && ACLR_R2OK && ACLR_L2OK && FREQERROK && EVMOK;
-
+                    Log.Info("CH2 Chain No " + iteration + " Step verdict : " + stepPassFlag.ToString());
                 }
             }
             catch (Exception ex)
