@@ -326,7 +326,7 @@ End of MRU-EEPROM Read and Write Utility
 
         public override void Run()
         {
-            string RFBReadValue = MruObj.Dr49_ReadRFBSerialNumber((channelsSelection == Channels.Channel1 ? MruObj.GetDR49Ch1ComObj() : MruObj.GetDR49Ch2ComObj()), RFBReadScript);
+            RFBReadValue = MruObj.Dr49_ReadRFBSerialNumber((channelsSelection == Channels.Channel1 ? MruObj.GetDR49Ch1ComObj() : MruObj.GetDR49Ch2ComObj()), RFBReadScript);
 
             Log.Info($"RFB Serial number for 49Dr Channel {ChannelsSelection} is " + RFBReadValue);
 
