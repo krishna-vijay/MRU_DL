@@ -20,19 +20,20 @@ namespace RjioMRU.TestSteps.MESSteps
     {
         #region Settings
         ClsMES mesResource = null;
-        string serialNumber = "JITSAF1LIMRU00006";
+        Input<string> serialNumber;//= "JITSAF1LIMRU00006";
         // ToDo: Add property here for each parameter the end user should be able to change
         #endregion
 
         public SingleSerialFlowCheck()
         {
+            SerialNumber = new Input<string>(); 
             // ToDo: Set default values for properties / settings.
         }
 
         public ClsMES MesResource { get => mesResource; set => mesResource = value; }
-        [Output]
+        
         [Display("Serial Number", Order: 1)]
-        public string SerialNumber { get => serialNumber; set => serialNumber = value; }
+        public Input<string> SerialNumber { get => serialNumber; set => serialNumber = value; }
         [Output]
         [Display("Server URL", Order: 2)]
         public string ServerURL { get; set; } = "http://42qconduituat2.42-q.com:18003/conduit";
@@ -43,22 +44,9 @@ namespace RjioMRU.TestSteps.MESSteps
 
 
         public override void Run()
-        {
-            InputBox inputBox = new InputBox("Barcore Reader", "Please SCAN the QR/ Barcode");
-            if (inputBox.ShowDialog() == DialogResult.OK)
-            {
-                string inputValue = inputBox.InputValue;
-                SerialNumber = inputValue;
-            }
-            else
-            {
-                this.PlanRun.MainThread.Abort();
-                Log.Info("User has cancelled the Barcode SCAN's operation");
-            }
+        {           
 
-
-
-            var value1 =  MesResource.SingleSerialFlowCheck(ServerURL, MesResource.ClientID, MesResource.Employee, SerialNumber, MesResource.Station);
+            var value1 =  MesResource.SingleSerialFlowCheck(ServerURL, MesResource.ClientID, MesResource.Employee, SerialNumber.Value, MesResource.Station);
             Log.Info("Single Serial Flow Check:  " + value1.Result.ToString());
             // ToDo: Add test case code.
             if(value1.Result)
