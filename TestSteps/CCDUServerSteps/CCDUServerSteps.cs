@@ -16,7 +16,7 @@ using System.Threading;
 
 namespace RjioMRU
 {
-    [Display("CCDU Basic Verification", Group: "RjioMRU", Description: "Insert a description here")]
+    [Display("CCDU File Copy to 21DR", Group: "RjioMRU", Description: "Insert a description here")]
     public class FileCopyfromCCDU_21DR : TestStep
     {
         /* 
