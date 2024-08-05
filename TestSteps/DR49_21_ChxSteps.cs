@@ -716,6 +716,7 @@ End of MRU-EEPROM Read and Write Utility
         private string interfaceName = "ens1f1";
         private string ipAddress = "192.168.1.30";
         private int noOfPingsRequested = 2;
+        private int noOfContinuesPingRequried = 1;
 
         MRU_Rjio mruObj;
 
@@ -729,6 +730,9 @@ End of MRU-EEPROM Read and Write Utility
         [Display("No of Ping Request", Order: 10, Description: "Number of pings requested")]
         public int NoOfPingsRequested { get => noOfPingsRequested; set => noOfPingsRequested = value; }
 
+        [Display("Number of continuous Ping requried to Pass", Order: 12, Description: "Enter number of continuous required to pass, Take care of number ping requeseted ")]
+        public int NoOfContinuesPingRequried { get => noOfContinuesPingRequried; set => noOfContinuesPingRequried = value; }
+
 
 
         // ToDo: Add property here for each parameter the end user should be able to change
@@ -741,15 +745,35 @@ End of MRU-EEPROM Read and Write Utility
 
         public override void Run()
         {
-            var PingTestStatus = MruObj.Dr21PingTest(NoOfPingsRequested, IpAddress, ", 0% packet loss");
-            if (!PingTestStatus)
+            bool PingStatus = false;
+            int PingCount = 0;
+            for (int iteration = 0; iteration < NoOfPingsRequested; iteration++)
             {
-                PingTestStatus = MruObj.Dr21PingTest(NoOfPingsRequested, IpAddress, ", 0% packet loss");
+                bool singlePingTestStatus = MruObj.Dr21PingTest(1, IpAddress, ", 0% packet loss");
+                //if (!PingTestStatus)
+                //{
+                //    PingTestStatus = MruObj.Dr21PingTest(NoOfPingsRequested, IpAddress, ", 0% packet loss");
+                //}
+                if (singlePingTestStatus)
+                {
+                    PingCount++;
+                    if (PingCount == NoOfContinuesPingRequried)
+                    {
+                        PingStatus = true;
+                        break;
+                    }
+                }
+                else
+                {
+                    PingCount = 0;
+                    PingStatus = false;
+                }
             }
+
             // ToDo: Add test case code.
             RunChildSteps(); //If the step supports child steps.
 
-            if (PingTestStatus)
+            if (PingStatus)
             {
                 UpgradeVerdict(Verdict.Pass);
             }
@@ -757,7 +781,7 @@ End of MRU-EEPROM Read and Write Utility
             {
                 UpgradeVerdict(Verdict.Fail);
             }
-            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, Verdict.ToString(), PingTestStatus ? "0% packet loss" : "", Verdict.ToString(), "PingTestStatus", "EQ", "TRUE", " ");
+            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, Verdict.ToString(), PingStatus ? "0% packet loss" : "", Verdict.ToString(), "PingTestStatus", "EQ", "TRUE", " ");
 
             // If no verdict is used, the verdict will default to NotSet.
             // You can change the verdict using UpgradeVerdict() as shown below.
@@ -1540,9 +1564,9 @@ End of MRU-EEPROM Read and Write Utility
             UpgradeVerdict(Verdict.Pass);
             // ToDo: Add test case code.
             RunChildSteps(); //If the step supports child steps.
-            // If no verdict is used, the verdict will default to NotSet.
-            // You can change the verdict using UpgradeVerdict() as shown below.
-            // UpgradeVerdict(Verdict.Pass);
+                             // If no verdict is used, the verdict will default to NotSet.
+                             // You can change the verdict using UpgradeVerdict() as shown below.
+                             // UpgradeVerdict(Verdict.Pass);
         }
     }
     [Display("Check slot Version", Group: "RjioMRU", Description: "Insert a description here")]
@@ -1601,9 +1625,9 @@ End of MRU-EEPROM Read and Write Utility
 
             // ToDo: Add test case code.
             RunChildSteps(); //If the step supports child steps.
-            // If no verdict is used, the verdict will default to NotSet.
-            // You can change the verdict using UpgradeVerdict() as shown below.
-            // UpgradeVerdict(Verdict.Pass);
+                             // If no verdict is used, the verdict will default to NotSet.
+                             // You can change the verdict using UpgradeVerdict() as shown below.
+                             // UpgradeVerdict(Verdict.Pass);
         }
     }
 
@@ -1642,9 +1666,9 @@ End of MRU-EEPROM Read and Write Utility
 
             // ToDo: Add test case code.
             RunChildSteps(); //If the step supports child steps.
-            // If no verdict is used, the verdict will default to NotSet.
-            // You can change the verdict using UpgradeVerdict() as shown below.
-            // UpgradeVerdict(Verdict.Pass);
+                             // If no verdict is used, the verdict will default to NotSet.
+                             // You can change the verdict using UpgradeVerdict() as shown below.
+                             // UpgradeVerdict(Verdict.Pass);
         }
     }
 
@@ -1676,9 +1700,9 @@ End of MRU-EEPROM Read and Write Utility
             UpgradeVerdict(Verdict.Pass);
             // ToDo: Add test case code.
             RunChildSteps(); //If the step supports child steps.
-            // If no verdict is used, the verdict will default to NotSet.
-            // You can change the verdict using UpgradeVerdict() as shown below.
-            // UpgradeVerdict(Verdict.Pass);
+                             // If no verdict is used, the verdict will default to NotSet.
+                             // You can change the verdict using UpgradeVerdict() as shown below.
+                             // UpgradeVerdict(Verdict.Pass);
         }
     }
 
@@ -1709,9 +1733,9 @@ End of MRU-EEPROM Read and Write Utility
             UpgradeVerdict(Verdict.Pass);
             // ToDo: Add test case code.
             RunChildSteps(); //If the step supports child steps.
-            // If no verdict is used, the verdict will default to NotSet.
-            // You can change the verdict using UpgradeVerdict() as shown below.
-            // UpgradeVerdict(Verdict.Pass);
+                             // If no verdict is used, the verdict will default to NotSet.
+                             // You can change the verdict using UpgradeVerdict() as shown below.
+                             // UpgradeVerdict(Verdict.Pass);
         }
     }
 
@@ -1774,9 +1798,9 @@ End of MRU-EEPROM Read and Write Utility
             UpgradeVerdict(Verdict.Pass);
             // ToDo: Add test case code.
             RunChildSteps(); //If the step supports child steps.
-            // If no verdict is used, the verdict will default to NotSet.
-            // You can change the verdict using UpgradeVerdict() as shown below.
-            // UpgradeVerdict(Verdict.Pass);
+                             // If no verdict is used, the verdict will default to NotSet.
+                             // You can change the verdict using UpgradeVerdict() as shown below.
+                             // UpgradeVerdict(Verdict.Pass);
         }
     }
 
@@ -1806,9 +1830,9 @@ End of MRU-EEPROM Read and Write Utility
             UpgradeVerdict(Verdict.Pass);
             // ToDo: Add test case code.
             RunChildSteps(); //If the step supports child steps.
-            // If no verdict is used, the verdict will default to NotSet.
-            // You can change the verdict using UpgradeVerdict() as shown below.
-            // UpgradeVerdict(Verdict.Pass);
+                             // If no verdict is used, the verdict will default to NotSet.
+                             // You can change the verdict using UpgradeVerdict() as shown below.
+                             // UpgradeVerdict(Verdict.Pass);
         }
     }
 

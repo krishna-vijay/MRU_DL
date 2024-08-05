@@ -1832,7 +1832,7 @@ namespace RjioMRU
             sw.Restart();
             string returnValue;
             DR21ComObj.WriteLine("ping -c " + NoofPingsRequested + " " + ipaddress);
-
+            Thread.Sleep(500);
             do
             {
                 //returnValue = DR21ComObj.ReadExisting();
@@ -2394,7 +2394,7 @@ namespace RjioMRU
         {
             dR49ChComObj.ReadExisting();
             dR49ChComObj.WriteLine(tempScript);
-            Thread.Sleep(200);
+            Thread.Sleep(2000);
             //  Log.Info(command4EEPROM_PowerFactor);
             var RFBValues = dR49ChComObj.ReadExisting();
             string[] tempArray = RFBValues.Split(new string[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries);

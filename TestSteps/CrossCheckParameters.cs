@@ -77,7 +77,7 @@ namespace RjioMRU.TestSteps
 
         public override void Run()
         {
-            if (SerialNumber.Value==Product_SerialnumberMES.Value&&PCBSerialNumber.Value==PCBSerialNumber_HSTB_MES.Value&&ProductID.Value==ProductID_MES.Value&&MacID.Value==MacID_MES.Value&& RFBSerialNumber_MES.Value == RFB_SeriaNumber49DRCh1.Value&& RFBSerialNumber_MES.Value == RFB_SeriaNumber49DRCh2.Value)
+            if (SerialNumber.Value.Trim()==Product_SerialnumberMES.Value.Trim()&&PCBSerialNumber.Value.Trim()==PCBSerialNumber_HSTB_MES.Value.Trim() &&ProductID.Value.Trim() ==ProductID_MES.Value.Trim()&&MacID.Value.Trim().ToUpper() ==MacID_MES.Value.Trim().ToUpper()&& RFBSerialNumber_MES.Value.Trim() == RFB_SeriaNumber49DRCh1.Value.Trim()&& RFBSerialNumber_MES.Value.Trim() == RFB_SeriaNumber49DRCh2.Value.Trim())
             {
                 UpgradeVerdict(Verdict.Pass);
             }

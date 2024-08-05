@@ -1,22 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <TestPlan type="OpenTap.TestPlan">
   <Steps>
+    <TestStep type="RjioMRU.TestSteps.SerialNumberInput" Id="c4dea42e-c985-41ba-9d92-7400dd77a0d4">
+      <SerialNumber>JITSAF1FKMRU00013</SerialNumber>
+      <Name Metadata="Step Name">Serial Number Input</Name>
+    </TestStep>
     <TestStep type="RjioMRU.TestSteps.MESSteps.SingleSerialFlowCheck" Id="7b3170eb-30e4-4ffb-9140-7e086a6b8720">
       <MesResource Source="OpenTap.InstrumentSettings">MES</MesResource>
-      <SerialNumber>JITSAF1LIMRU00015</SerialNumber>
-      <ServerURL>http://42qconduituat2.42-q.com:18003/conduit</ServerURL>
+      <SerialNumber>
+        <PropertyName>RjioMRU.TestSteps.SerialNumberInput|SerialNumber</PropertyName>
+        <Step>c4dea42e-c985-41ba-9d92-7400dd77a0d4</Step>
+      </SerialNumber>
+      <ServerURL>http://corpconduit3.sanmina.com:18003/conduit</ServerURL>
+      <Enabled>false</Enabled>
       <Name Metadata="Step Name">SingleSerialFlowCheck</Name>
     </TestStep>
     <TestStep type="RjioMRU.MesCheckToStart" Id="9e4126a1-8927-4f5f-b7ae-d819a111549f" OpenTap.Visibility="Visible">
       <MesResource Source="OpenTap.InstrumentSettings">MES</MesResource>
       <Serialnumber>
-        <PropertyName>RjioMRU.TestSteps.MESSteps.SingleSerialFlowCheck|SerialNumber</PropertyName>
-        <Step>7b3170eb-30e4-4ffb-9140-7e086a6b8720</Step>
+        <PropertyName>RjioMRU.TestSteps.SerialNumberInput|SerialNumber</PropertyName>
+        <Step>c4dea42e-c985-41ba-9d92-7400dd77a0d4</Step>
       </Serialnumber>
-      <MacID>A0:73:FC:04:00:07</MacID>
+      <MacID>A0:73:FC:04:00:04</MacID>
       <ProductID>JITSAF1MRU01</ProductID>
-      <PCBSerialNumber_HSTB></PCBSerialNumber_HSTB>
-      <RFBSerialNumber></RFBSerialNumber>
+      <PCBSerialNumber_HSTB>JITSAMRUFKHSB00005</PCBSerialNumber_HSTB>
+      <RFBSerialNumber>JITSAMRUFKMRB00023</RFBSerialNumber>
       <Name Metadata="Step Name">MES Check To Start</Name>
     </TestStep>
     <TestStep type="RjioMRU.TestSteps.PowerSupplySteps" Id="8b1396ef-16df-459b-b23e-47cdb90f5f88">
@@ -142,12 +150,57 @@
       </CommandScripts>
       <Name Metadata="Step Name">Change Directory</Name>
     </TestStep>
+    <TestStep type="RjioMRU.TestSteps.ExecuteExtractScript" Id="be09f579-741b-45d3-849c-69ca00608889" OpenTap.Visibility="Visible">
+      <MruObj Source="OpenTap.DutSettings">RjioMRU</MruObj>
+      <CommandScripts>ifconfig eth2 192.168.1.2 up</CommandScripts>
+      <Name Metadata="Step Name">MRU ETH2 port up</Name>
+    </TestStep>
+    <TestStep type="OpenTap.Plugins.BasicSteps.DelayStep" Id="0a69ddb4-f49a-42c3-973c-628844094e62">
+      <DelaySecs>5</DelaySecs>
+      <Name Metadata="Step Name">Delay 5s</Name>
+    </TestStep>
+    <TestStep type="RjioMRU.TestSteps.ExecuteExtractScript" Id="850486be-fe0e-4eb8-8465-a6c1e63960a5" OpenTap.Visibility="Visible">
+      <MruObj Source="OpenTap.DutSettings">RjioMRU</MruObj>
+      <CommandScripts>ifconfig eth2 192.168.1.2 down</CommandScripts>
+      <Name Metadata="Step Name">MRU ETH2 port Down</Name>
+    </TestStep>
+    <TestStep type="OpenTap.Plugins.BasicSteps.DelayStep" Id="eb2a7bf8-62ca-4359-9a12-5fae74bb4e78">
+      <DelaySecs>5</DelaySecs>
+      <Name Metadata="Step Name">Delay 5s</Name>
+    </TestStep>
+    <TestStep type="RjioMRU.TestSteps.ExecuteExtractScript" Id="71c42a16-e985-4332-a7c9-e994a2abcad9" OpenTap.Visibility="Visible">
+      <MruObj Source="OpenTap.DutSettings">RjioMRU</MruObj>
+      <CommandScripts>ifconfig eth2 192.168.1.2 up</CommandScripts>
+      <Name Metadata="Step Name">MRU ETH2 port up Again</Name>
+    </TestStep>
+    <TestStep type="RjioMRU.TestSteps.DR21MRUIpChange" Id="3a718842-fbb4-476a-abf5-9c0b31d90523" OpenTap.Visibility="Visible">
+      <MruObj Source="OpenTap.DutSettings">RjioMRU</MruObj>
+      <InterfaceName>eth2</InterfaceName>
+      <IpAddress>192.168.1.2</IpAddress>
+      <Name Metadata="Step Name">DR21 MRU Ipchange</Name>
+    </TestStep>
+    <TestStep type="RjioMRU.FileCopyfromCCDU_21DR" Id="e80ceb4e-8593-4e9e-b913-02fd40f0317e">
+      <CCDUServerobj Source="OpenTap.InstrumentSettings">AB#Server</CCDUServerobj>
+      <CommandforCCDU>scp /root/MRUV2_21_37/SKU1-MRU-FW-PKG-2.21.37-FACT-1.3-Sanmina/binaries.tar.gz root@192.168.1.2:/home/root/</CommandforCCDU>
+      <Name Metadata="Step Name">CCDU File Copy to 21DR</Name>
+    </TestStep>
     <TestStep type="RjioMRU.TestSteps.ExecuteExtractScript" Id="e9403beb-86a0-4d25-ad3a-c7b39680554b" OpenTap.Visibility="Visible">
       <MruObj Source="OpenTap.DutSettings">RjioMRU</MruObj>
       <CommandScripts>
         <Base64>dGFyIC14dmYgL2hvbWUvcm9vdC9iaW5hcmllcy50YXIuZ3oNCmNk</Base64>
       </CommandScripts>
       <Name Metadata="Step Name">Dr21 Execute Extract Binaries</Name>
+    </TestStep>
+    <TestStep type="OpenTap.Plugins.BasicSteps.DelayStep" Id="3714c8ac-4348-4ee0-ab78-e0c07f01c1fb">
+      <DelaySecs>5</DelaySecs>
+      <Name Metadata="Step Name">Delay 5s (1)</Name>
+    </TestStep>
+    <TestStep type="RjioMRU.TestSteps.ExecuteExtractScript" Id="a4f33d23-53fc-422d-9283-2de5b8dddb66" OpenTap.Visibility="Visible">
+      <MruObj Source="OpenTap.DutSettings">RjioMRU</MruObj>
+      <CommandScripts>
+        <Base64>Y3AgL2hvbWUvcm9vdC9iaW5hcmllcy9yeC1jaGFpbiAvaG9tZS9yb290Lw0KY2Q=</Base64>
+      </CommandScripts>
+      <Name Metadata="Step Name">CP RX-CHAIN</Name>
     </TestStep>
     <TestStep type="OpenTap.Plugins.BasicSteps.DelayStep" Id="19021fc6-5d9e-46e7-9d72-8de1de1478ea">
       <DelaySecs>5</DelaySecs>
@@ -197,7 +250,7 @@
       <MruObj Source="OpenTap.DutSettings">RjioMRU</MruObj>
       <InterfaceName>eth2</InterfaceName>
       <IpAddress>192.168.1.2</IpAddress>
-      <Name Metadata="Step Name">DR21 MRU Ipchange</Name>
+      <Name Metadata="Step Name">DR21 MRU Ipchange_1</Name>
     </TestStep>
     <TestStep type="OpenTap.Plugins.BasicSteps.DelayStep" Id="9ea25a36-2f8e-4882-b46a-3d0c89734ba1">
       <DelaySecs>5</DelaySecs>
@@ -208,6 +261,8 @@
       <InterfaceName>ens7f1</InterfaceName>
       <IpAddress>192.168.1.1</IpAddress>
       <NoOfPingsRequested>8</NoOfPingsRequested>
+      <NoOfContinuesPingRequried>3</NoOfContinuesPingRequried>
+      <Enabled>false</Enabled>
       <Name Metadata="Step Name">
         <Base64>Q0NEVSBQaW5nIFRlc3Qg</Base64>
       </Name>
@@ -221,15 +276,15 @@
       <KeepTrace1>true</KeepTrace1>
       <Name Metadata="Step Name">PTP Tab ptp4l Command</Name>
     </TestStep>
-    <TestStep type="OpenTap.Plugins.BasicSteps.DelayStep" Id="f1e9543e-f9b1-4374-b313-b4ffecaf3896">
+    <TestStep type="OpenTap.Plugins.BasicSteps.DelayStep" Id="f1e9543e-f9b1-4374-b313-b4ffecaf3896" OpenTap.Visibility="Visible">
       <DelaySecs>2</DelaySecs>
       <Name Metadata="Step Name">Delay 2sec</Name>
     </TestStep>
-    <TestStep type="RjioMRU.PHC_Tabphc2sysCommand" Id="60d7cb89-c247-4a5f-8fc3-a71da917422e" OpenTap.Visibility="Visible">
+    <TestStep type="RjioMRU.PHC_Tabphc2sysCommand" Id="60d7cb89-c247-4a5f-8fc3-a71da917422e">
       <CCDUServerobj Source="OpenTap.InstrumentSettings">AB#Server</CCDUServerobj>
       <KeepTracing1>false</KeepTracing1>
       <Command1>cd /custom-sw/thirdparty/usr/sbin/</Command1>
-      <Command2phc>./phc2sys -s  ens7f1 -O -37 -m</Command2phc>
+      <Command2phc>./phc2sys -s ens7f1 -O -37 -m</Command2phc>
       <Name Metadata="Step Name">PHc Tab phc2sys Command</Name>
     </TestStep>
     <TestStep type="RjioMRU.TestSteps.DR21PTYSynEstablishedCheck" Id="96121caf-8002-4eea-8ec6-dcfc68dbb0f1" OpenTap.Visibility="Visible">
@@ -239,11 +294,11 @@
       <Name Metadata="Step Name">DR21 PTP Sync Established Check</Name>
       <BreakConditions>BreakOnError, BreakOnFail</BreakConditions>
     </TestStep>
-    <TestStep type="OpenTap.Plugins.BasicSteps.DelayStep" Id="3ee24c60-8e7a-4efd-90d7-83a5a474c4b8">
+    <TestStep type="OpenTap.Plugins.BasicSteps.DelayStep" Id="3ee24c60-8e7a-4efd-90d7-83a5a474c4b8" OpenTap.Visibility="Visible">
       <DelaySecs>2</DelaySecs>
       <Name Metadata="Step Name">Delay (6) (3) (1)</Name>
     </TestStep>
-    <TestStep type="RjioMRU.TestSteps.CheckSlotNumber" Id="652b4619-0139-4e6c-a828-80ff378f2877" OpenTap.Visibility="Visible">
+    <TestStep type="RjioMRU.TestSteps.CheckSlotNumber" Id="652b4619-0139-4e6c-a828-80ff378f2877">
       <MruObj Source="OpenTap.DutSettings">RjioMRU</MruObj>
       <Name Metadata="Step Name">Check slot Version</Name>
     </TestStep>
@@ -283,15 +338,15 @@
         </TestStep>
       </ChildTestSteps>
     </TestStep>
-    <TestStep type="OpenTap.Plugins.BasicSteps.DelayStep" Id="5cd6d4a0-ec95-4f5c-85e3-7d756aba2253">
+    <TestStep type="OpenTap.Plugins.BasicSteps.DelayStep" Id="5cd6d4a0-ec95-4f5c-85e3-7d756aba2253" OpenTap.Visibility="Visible">
       <DelaySecs>5</DelaySecs>
       <Name Metadata="Step Name">Delay (5)</Name>
     </TestStep>
-    <TestStep type="OpenTap.Plugins.BasicSteps.DelayStep" Id="3ef47c4b-b776-4875-ae8a-d6c83fb0b3da" OpenTap.Visibility="Visible">
+    <TestStep type="OpenTap.Plugins.BasicSteps.DelayStep" Id="3ef47c4b-b776-4875-ae8a-d6c83fb0b3da">
       <DelaySecs>5</DelaySecs>
       <Name Metadata="Step Name">Delay (6) (8)</Name>
     </TestStep>
-    <TestStep type="OpenTap.Plugins.BasicSteps.RepeatStep" Id="b61b4fea-c44d-4868-94c6-b849c6978091">
+    <TestStep type="OpenTap.Plugins.BasicSteps.RepeatStep" Id="b61b4fea-c44d-4868-94c6-b849c6978091" OpenTap.Visibility="Visible">
       <Action>Fixed_Count</Action>
       <TargetStep />
       <TargetVerdict>Fail</TargetVerdict>
@@ -331,9 +386,18 @@
       <Enabled>false</Enabled>
       <Name Metadata="Step Name">21Dr rm -rf /root/.ssh/known_hosts</Name>
     </TestStep>
-    <TestStep type="RjioMRU.RunCAKnownHostCommand" Id="d25e86dc-229b-45e9-a6f5-82fc0727bef3" OpenTap.Visibility="Visible">
+    <TestStep type="RjioMRU.RunCAKnownHostCommand" Id="d25e86dc-229b-45e9-a6f5-82fc0727bef3">
       <CCDUServerobj Source="OpenTap.InstrumentSettings">AB#Server</CCDUServerobj>
       <Name Metadata="Step Name">rm -rf /root/.ssh/known_hosts  (1)</Name>
+    </TestStep>
+    <TestStep type="RjioMRU.TestSteps.ExecuteExtractScript" Id="2bbd858e-86c2-4b72-84a9-faafb7dc242e" OpenTap.Visibility="Visible">
+      <MruObj Source="OpenTap.DutSettings">RjioMRU</MruObj>
+      <CommandScripts>ifconfig eth2 192.168.1.2 up</CommandScripts>
+      <Name Metadata="Step Name">ip change 21DR</Name>
+    </TestStep>
+    <TestStep type="OpenTap.Plugins.BasicSteps.DelayStep" Id="df4edcc0-08e9-436b-8d1b-705d6960e638" OpenTap.Visibility="Visible">
+      <DelaySecs>5</DelaySecs>
+      <Name Metadata="Step Name">Delay (6) (8) (2)</Name>
     </TestStep>
     <TestStep type="RjioMRU.RunCAFunctions" Id="5844513a-215a-4469-a747-7e7cac6bf5df" OpenTap.Visibility="Visible">
       <CCDUServerobj Source="OpenTap.InstrumentSettings">AB#Server</CCDUServerobj>
@@ -348,7 +412,7 @@
       <Command6>rm -rf /root/.ssh/known_hosts</Command6>
       <Name Metadata="Step Name">Carrier Activation Function</Name>
     </TestStep>
-    <TestStep type="OpenTap.Plugins.BasicSteps.IfStep" Id="9e128ff4-3ada-4dfd-81a6-0bf9b4eedb77">
+    <TestStep type="OpenTap.Plugins.BasicSteps.IfStep" Id="9e128ff4-3ada-4dfd-81a6-0bf9b4eedb77" OpenTap.Visibility="Visible">
       <InputVerdict>
         <PropertyName>OpenTap.TestStep|Verdict</PropertyName>
         <Step>5844513a-215a-4469-a747-7e7cac6bf5df</Step>
@@ -357,7 +421,7 @@
       <Action>RunChildren</Action>
       <Name Metadata="Step Name">If Failed: Turn OFF Power Supply</Name>
       <ChildTestSteps>
-        <TestStep type="RjioMRU.TestSteps.PowerSupplySteps" Id="f75b364c-0833-42c4-9320-505c5d26606a" OpenTap.Visibility="Visible">
+        <TestStep type="RjioMRU.TestSteps.PowerSupplySteps" Id="f75b364c-0833-42c4-9320-505c5d26606a">
           <Agilent_N5767A_powerSupply Source="OpenTap.InstrumentSettings">KeithleyPS</Agilent_N5767A_powerSupply>
           <PowerOn1>false</PowerOn1>
           <Name Metadata="Step Name">Power supply OFF</Name>
@@ -380,11 +444,11 @@
           <MruObj Source="OpenTap.DutSettings">RjioMRU</MruObj>
           <Name Metadata="Step Name">DR49 Ch1 Modem Init Check</Name>
         </TestStep>
-        <TestStep type="RjioMRU.TestSteps.DR49Ch2ORANInitCheck" Id="cadda3d9-a528-4f4e-a2b6-9e15336631d7">
+        <TestStep type="RjioMRU.TestSteps.DR49Ch2ORANInitCheck" Id="cadda3d9-a528-4f4e-a2b6-9e15336631d7" OpenTap.Visibility="Visible">
           <MruObj Source="OpenTap.DutSettings">RjioMRU</MruObj>
           <Name Metadata="Step Name">DR49 Ch2 Modem Init Check</Name>
         </TestStep>
-        <TestStep type="OpenTap.Plugins.BasicSteps.DelayStep" Id="7a2c9e00-99bd-4fa7-ae24-e2bdab57e170" OpenTap.Visibility="Visible">
+        <TestStep type="OpenTap.Plugins.BasicSteps.DelayStep" Id="7a2c9e00-99bd-4fa7-ae24-e2bdab57e170">
           <DelaySecs>20</DelaySecs>
           <Enabled>false</Enabled>
           <Name Metadata="Step Name">Delay (6) (9)</Name>
@@ -480,7 +544,7 @@
       <ChannelPowerLimit>0.2</ChannelPowerLimit>
       <MRU_DUT Source="OpenTap.DutSettings">RjioMRU</MRU_DUT>
       <CalStartPort>0</CalStartPort>
-      <CalEndPort>1</CalEndPort>
+      <CalEndPort>15</CalEndPort>
       <PostDpdDelay>5000</PostDpdDelay>
       <EVMLimit>3</EVMLimit>
       <ACLR_L1_Limit>-45</ACLR_L1_Limit>
@@ -493,6 +557,7 @@
       <DSAlowerLimit>5</DSAlowerLimit>
       <TemperatureHighLimit>0</TemperatureHighLimit>
       <TemperatureLowLimit>0</TemperatureLowLimit>
+      <Enabled>false</Enabled>
       <Name Metadata="Step Name">CalibrationStep Ch1</Name>
     </TestStep>
     <TestStep type="RjioMRU.TestSteps.DR49_Ch1DSAScript" Id="4f524807-6f73-49f0-969c-aa1b304b1adc" OpenTap.Visibility="Visible">
@@ -523,7 +588,7 @@
       <ChannelPowerLimit>0.2</ChannelPowerLimit>
       <MRU_DUT Source="OpenTap.DutSettings">RjioMRU</MRU_DUT>
       <CalStartPort>0</CalStartPort>
-      <CalEndPort>1</CalEndPort>
+      <CalEndPort>15</CalEndPort>
       <PostDPDDelay>5000</PostDPDDelay>
       <EVMLimit>3</EVMLimit>
       <ACLR_L1_Limit>-45</ACLR_L1_Limit>
@@ -536,6 +601,7 @@
       <DSAlowerLimit>5</DSAlowerLimit>
       <TemperatureHighLimit>0</TemperatureHighLimit>
       <TemperatureLowLimit>0</TemperatureLowLimit>
+      <Enabled>false</Enabled>
       <Name Metadata="Step Name">CalibrationStep Ch2</Name>
     </TestStep>
     <TestStep type="RjioMRU.TestSteps.DR49_Ch2DSAScript" Id="56b0dc71-afd9-4488-ac12-2a0bd77fb536" OpenTap.Visibility="Visible">
@@ -561,34 +627,33 @@
           </InputVerdict>
           <TargetVerdict>Pass</TargetVerdict>
           <Action>RunChildren</Action>
-          <Enabled>false</Enabled>
           <Name Metadata="Step Name">If Verdict (2)</Name>
           <ChildTestSteps>
-            <TestStep type="RjioMRU.TestSteps.DR49_Ch1_DSA_Write" Id="70719e01-cfa3-490b-aa24-68f4ee92a0d0">
+            <TestStep type="RjioMRU.TestSteps.DR49_Ch1_DSA_Write" Id="70719e01-cfa3-490b-aa24-68f4ee92a0d0" OpenTap.Visibility="Visible">
               <MruObj Source="OpenTap.DutSettings">RjioMRU</MruObj>
               <AutomaticDSAWriting>true</AutomaticDSAWriting>
               <Name Metadata="Step Name">DR49 Ch1 Write DSA</Name>
             </TestStep>
-            <TestStep type="OpenTap.Plugins.BasicSteps.DelayStep" Id="16ef4b64-ed1e-44a1-9742-94af0397f513" OpenTap.Visibility="Visible">
+            <TestStep type="OpenTap.Plugins.BasicSteps.DelayStep" Id="16ef4b64-ed1e-44a1-9742-94af0397f513">
               <DelaySecs>1</DelaySecs>
               <Name Metadata="Step Name">Delay</Name>
             </TestStep>
-            <TestStep type="RjioMRU.TestSteps.DR49_Ch2_DSA_Write" Id="9a5c49af-25e4-4973-acef-a9f8c836f37b">
+            <TestStep type="RjioMRU.TestSteps.DR49_Ch2_DSA_Write" Id="9a5c49af-25e4-4973-acef-a9f8c836f37b" OpenTap.Visibility="Visible">
               <MruObj Source="OpenTap.DutSettings">RjioMRU</MruObj>
               <AutomaticDSAWriting>true</AutomaticDSAWriting>
               <Name Metadata="Step Name">DR49 Ch2 Write DSA</Name>
             </TestStep>
-            <TestStep type="OpenTap.Plugins.BasicSteps.DelayStep" Id="130f5ed8-22fe-4c39-aa79-cc0ff9bb8e1e" OpenTap.Visibility="Visible">
+            <TestStep type="OpenTap.Plugins.BasicSteps.DelayStep" Id="130f5ed8-22fe-4c39-aa79-cc0ff9bb8e1e">
               <DelaySecs>5</DelaySecs>
               <Name Metadata="Step Name">Delay (5s)</Name>
             </TestStep>
-            <TestStep type="RjioMRU.TestSteps.DR49_Write_PowerFactor" Id="09361708-5f02-4a7c-b448-69a1259130b4">
+            <TestStep type="RjioMRU.TestSteps.DR49_Write_PowerFactor" Id="09361708-5f02-4a7c-b448-69a1259130b4" OpenTap.Visibility="Visible">
               <MruObj Source="OpenTap.DutSettings">RjioMRU</MruObj>
               <AutomaticDSAWriting>true</AutomaticDSAWriting>
               <ChannelsSelection>Channel1</ChannelsSelection>
               <Name Metadata="Step Name">DR49 Ch1  Write PowerFactor</Name>
             </TestStep>
-            <TestStep type="OpenTap.Plugins.BasicSteps.DelayStep" Id="d6c414f7-d99e-4f70-967a-8168dd25356e" OpenTap.Visibility="Visible">
+            <TestStep type="OpenTap.Plugins.BasicSteps.DelayStep" Id="d6c414f7-d99e-4f70-967a-8168dd25356e">
               <DelaySecs>1</DelaySecs>
               <Name Metadata="Step Name">Delay</Name>
             </TestStep>
@@ -609,8 +674,8 @@
     <TestStep type="RjioMRU.TestSteps.Dr21_MACProvisioning" Id="cb94e02e-4f76-4d96-ac84-85226d7f4602" OpenTap.Visibility="Visible">
       <MruObj Source="OpenTap.DutSettings">RjioMRU</MruObj>
       <SerialNumber>
-        <PropertyName>RjioMRU.MesCheckToStart|Serialnumber</PropertyName>
-        <Step>9e4126a1-8927-4f5f-b7ae-d819a111549f</Step>
+        <PropertyName>RjioMRU.TestSteps.SerialNumberInput|SerialNumber</PropertyName>
+        <Step>c4dea42e-c985-41ba-9d92-7400dd77a0d4</Step>
       </SerialNumber>
       <ProductID>
         <PropertyName>RjioMRU.MesCheckToStart|ProductID</PropertyName>
@@ -621,12 +686,12 @@
         <Step>9e4126a1-8927-4f5f-b7ae-d819a111549f</Step>
       </MacID>
       <IhstbID>
-        <PropertyName>RjioMRU.MesCheckToStart|HstbID</PropertyName>
+        <PropertyName>RjioMRU.MesCheckToStart|PCBSerialNumber_HSTB</PropertyName>
         <Step>9e4126a1-8927-4f5f-b7ae-d819a111549f</Step>
       </IhstbID>
       <RffeID>
-        <PropertyName>RjioMRU.MesCheckToStart|RffeID</PropertyName>
-        <Step>9e4126a1-8927-4f5f-b7ae-d819a111549f</Step>
+        <PropertyName>RjioMRU.TestSteps.DR49_Read_RFB_SER_NUM|RFBReadValue</PropertyName>
+        <Step>2cd437ca-fcda-4bca-9dbe-68b460e6b81a</Step>
       </RffeID>
       <Name Metadata="Step Name">
         <Base64>TUFDIFByb3Zpc2lvbmluZyA=</Base64>
@@ -641,53 +706,47 @@
       <CommandScripts>hstb-m-eeprom -read_info</CommandScripts>
       <Name Metadata="Step Name">Get HSTB PCBA information</Name>
     </TestStep>
-    <TestStep type="OpenTap.Plugins.BasicSteps.DelayStep" Id="6b00e1db-30b7-4a31-8db3-103e8c0ef376" OpenTap.Visibility="Visible">
-      <DelaySecs>1</DelaySecs>
-      <Name Metadata="Step Name">Delay</Name>
-    </TestStep>
-    <TestStep type="RjioMRU.TestSteps.DR49_Ch1DSAScript" Id="117aa5f1-5a0f-4d89-94c6-fc3097f9d277" OpenTap.Visibility="Visible">
-      <DsaScript>rj-rfeeprom-updater -rd_rfb_info</DsaScript>
-      <DsaValidataionScriptCh1>End of MRU-EEPROM Read and Write Utility</DsaValidataionScriptCh1>
-      <MruObj Source="OpenTap.DutSettings">RjioMRU</MruObj>
-      <Name Metadata="Step Name">GET DR49 Ch1 RFFE information</Name>
-    </TestStep>
-    <TestStep type="OpenTap.Plugins.BasicSteps.DelayStep" Id="9a3dc1d4-c3fa-4bdb-8282-3a65184f1283" OpenTap.Visibility="Visible">
-      <DelaySecs>2</DelaySecs>
-      <Name Metadata="Step Name">Delay</Name>
-    </TestStep>
-    <TestStep type="RjioMRU.TestSteps.DR49_Ch2DSAScript" Id="5b1451dd-e94c-4e4f-bd8b-806eb23b01a8" OpenTap.Visibility="Visible">
-      <DsaScript>rj-rfeeprom-updater -rd_rfb_info</DsaScript>
-      <DsaValidataionScriptCh2>End of MRU-EEPROM Read and Write Utility</DsaValidataionScriptCh2>
-      <MruObj Source="OpenTap.DutSettings">RjioMRU</MruObj>
-      <Name Metadata="Step Name">GET DR49 Ch2 RFFE information</Name>
-    </TestStep>
     <TestStep type="OpenTap.Plugins.BasicSteps.DelayStep" Id="d4e51127-4477-44a4-a370-f90562b46bc3" OpenTap.Visibility="Visible">
       <DelaySecs>5</DelaySecs>
       <Name Metadata="Step Name">Delay (5s)</Name>
     </TestStep>
-    <TestStep type="RjioMRU.TestSteps.DR49_Read_RFB_SER_NUM" Id="2cd437ca-fcda-4bca-9dbe-68b460e6b81a">
+    <TestStep type="RjioMRU.TestSteps.DR49_Read_RFB_SER_NUM" Id="2cd437ca-fcda-4bca-9dbe-68b460e6b81a" OpenTap.Visibility="Visible">
       <MruObj Source="OpenTap.DutSettings">RjioMRU</MruObj>
       <ChannelsSelection>Channel1</ChannelsSelection>
       <RFBReadScript>rj-rfeeprom-updater -rd_rfb_info</RFBReadScript>
-      <RFBReadValue />
+      <RFBReadValue>JITSAMRUFKMRB00023</RFBReadValue>
       <Name Metadata="Step Name">DR49 Read RFB_SER_NUM from {Select Channel}</Name>
     </TestStep>
     <TestStep type="RjioMRU.TestSteps.DR49_Read_RFB_SER_NUM" Id="9422bf9f-4f06-4d18-8424-4e40b4b2d267">
       <MruObj Source="OpenTap.DutSettings">RjioMRU</MruObj>
       <ChannelsSelection>Channel2</ChannelsSelection>
       <RFBReadScript>rj-rfeeprom-updater -rd_rfb_info</RFBReadScript>
-      <RFBReadValue />
+      <RFBReadValue>JITSAMRUFKMRB00023</RFBReadValue>
       <Name Metadata="Step Name">DR49 Read RFB_SER_NUM from {Select Channel}</Name>
     </TestStep>
     <TestStep type="RjioMRU.TestSteps.DR21_ReadInfo" Id="e72dca14-096f-4762-9838-56e5bcac1f78">
       <MruObj Source="OpenTap.DutSettings">RjioMRU</MruObj>
-      <MAC2></MAC2>
-      <MAC1></MAC1>
-      <MAC3></MAC3>
-      <MAC4></MAC4>
-      <ProductSerialNumber></ProductSerialNumber>
-      <PCBserialNumber></PCBserialNumber>
-      <ProdID></ProdID>
+      <MAC2>
+        <Base64>YTA6NzM6ZmM6MDQ6MDA6MDQNCg==</Base64>
+      </MAC2>
+      <MAC1>
+        <Base64>Y3JjIG1pc21hdGNoKGNhbGN1bGF0ZWQ6MHg5OWNmLCBzdG9yZWQ6MHhmZmZmKQ0K</Base64>
+      </MAC1>
+      <MAC3>
+        <Base64>Y3JjIG1pc21hdGNoKGNhbGN1bGF0ZWQ6MHg5OWNmLCBzdG9yZWQ6MHhmZmZmKQ0K</Base64>
+      </MAC3>
+      <MAC4>
+        <Base64>Y3JjIG1pc21hdGNoKGNhbGN1bGF0ZWQ6MHg5OWNmLCBzdG9yZWQ6MHhmZmZmKQ0K</Base64>
+      </MAC4>
+      <ProductSerialNumber>
+        <Base64>SklUU0FGMUZLTVJVMDAwMTMNCg==</Base64>
+      </ProductSerialNumber>
+      <PCBserialNumber>
+        <Base64>SklUU0FNUlVGS0hTQjAwMDA1DQo=</Base64>
+      </PCBserialNumber>
+      <ProdID>
+        <Base64>IEpJVFNBRjFNUlUwMQ0=</Base64>
+      </ProdID>
       <Name Metadata="Step Name">DR21 Read info</Name>
     </TestStep>
     <TestStep type="RjioMRU.TestSteps.CrossCheckParameters" Id="c6b89d0f-42b5-4d09-adb7-baf0a5b47044">
@@ -716,8 +775,8 @@
         <Step>9422bf9f-4f06-4d18-8424-4e40b4b2d267</Step>
       </RFB_SeriaNumber49DRCh2>
       <Product_SerialnumberMES>
-        <PropertyName>RjioMRU.TestSteps.MESSteps.SingleSerialFlowCheck|SerialNumber</PropertyName>
-        <Step>7b3170eb-30e4-4ffb-9140-7e086a6b8720</Step>
+        <PropertyName>RjioMRU.TestSteps.SerialNumberInput|SerialNumber</PropertyName>
+        <Step>c4dea42e-c985-41ba-9d92-7400dd77a0d4</Step>
       </Product_SerialnumberMES>
       <MacID_MES>
         <PropertyName>RjioMRU.MesCheckToStart|MacID</PropertyName>
@@ -740,7 +799,7 @@
     <TestStep type="RjioMRU.CloseAllPlugins" Id="eb89d8f1-26e2-4deb-84b4-434516059b8b" OpenTap.Visibility="Visible">
       <Name Metadata="Step Name">Close all Plugins</Name>
     </TestStep>
-    <TestStep type="RjioMRU.TestSteps.PowerSupplySteps" Id="1a8d62bf-58c3-422b-92bd-d55d81b469b3">
+    <TestStep type="RjioMRU.TestSteps.PowerSupplySteps" Id="1a8d62bf-58c3-422b-92bd-d55d81b469b3" OpenTap.Visibility="Visible">
       <Agilent_N5767A_powerSupply Source="OpenTap.InstrumentSettings">KeithleyPS</Agilent_N5767A_powerSupply>
       <PowerOn1>false</PowerOn1>
       <Name Metadata="Step Name">Power supply OFF</Name>
@@ -752,9 +811,10 @@
         <Step>7b3170eb-30e4-4ffb-9140-7e086a6b8720</Step>
       </ServerURL>
       <SerialNumber>
-        <PropertyName>RjioMRU.TestSteps.MESSteps.SingleSerialFlowCheck|SerialNumber</PropertyName>
-        <Step>7b3170eb-30e4-4ffb-9140-7e086a6b8720</Step>
+        <PropertyName>RjioMRU.TestSteps.SerialNumberInput|SerialNumber</PropertyName>
+        <Step>c4dea42e-c985-41ba-9d92-7400dd77a0d4</Step>
       </SerialNumber>
+      <Enabled>false</Enabled>
       <Name Metadata="Step Name">Test Status To MES</Name>
     </TestStep>
   </Steps>
