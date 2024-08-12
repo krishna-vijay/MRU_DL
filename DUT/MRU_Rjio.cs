@@ -2381,6 +2381,7 @@ namespace RjioMRU
             Thread.Sleep(200);
             //  Log.Info(command4EEPROM_PowerFactor);
             var temperatureValues = dR49ChComObj.ReadExisting();
+            Log.Info($"Temperature Value for chain number {chainNumber}  is : {temperatureValues.ToString()}");    
             string[] tempArray = temperatureValues.Split(new string[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
             var a1 = Array.FindAll(tempArray, s => s.Contains("Channel " + chainNumber % 2 + ""));
             var temperature = a1[0].Split(new string[] { "Temp:" }, StringSplitOptions.RemoveEmptyEntries)[1];
@@ -2395,8 +2396,8 @@ namespace RjioMRU
             dR49ChComObj.ReadExisting();
             dR49ChComObj.WriteLine(tempScript);
             Thread.Sleep(2000);
-            //  Log.Info(command4EEPROM_PowerFactor);
             var RFBValues = dR49ChComObj.ReadExisting();
+            Log.Info("RFB Serial Number :"+RFBValues.ToString());
             string[] tempArray = RFBValues.Split(new string[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
             var a1 = Array.FindAll(tempArray, s => s.Contains("RFB_SER_NUM:"));
             var RFBSerialNumber = a1[0].Split(new string[] { "RFB_SER_NUM:" }, StringSplitOptions.RemoveEmptyEntries);
