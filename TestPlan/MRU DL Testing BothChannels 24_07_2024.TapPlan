@@ -2,7 +2,7 @@
 <TestPlan type="OpenTap.TestPlan">
   <Steps>
     <TestStep type="RjioMRU.TestSteps.SerialNumberInput" Id="c4dea42e-c985-41ba-9d92-7400dd77a0d4">
-      <SerialNumber>JITSAF1FKMRU00021</SerialNumber>
+      <SerialNumber>JITSAF1LIMRU00015</SerialNumber>
       <Name Metadata="Step Name">Serial Number Input</Name>
     </TestStep>
     <TestStep type="RjioMRU.TestSteps.MESSteps.SingleSerialFlowCheck" Id="7b3170eb-30e4-4ffb-9140-7e086a6b8720">
@@ -21,10 +21,10 @@
         <PropertyName>RjioMRU.TestSteps.SerialNumberInput|SerialNumber</PropertyName>
         <Step>c4dea42e-c985-41ba-9d92-7400dd77a0d4</Step>
       </Serialnumber>
-      <MacID>A0:73:FC:04:00:0F</MacID>
+      <MacID>A0:73:FC:00:BF:8D</MacID>
       <ProductID>JITSAF1MRU01</ProductID>
-      <PCBSerialNumber_HSTB>JITSAMRUFKHSB00012</PCBSerialNumber_HSTB>
-      <RFBSerialNumber>JITSAMRUFKMRB00015</RFBSerialNumber>
+      <PCBSerialNumber_HSTB>JITSAMRUIIHSB00006</PCBSerialNumber_HSTB>
+      <RFBSerialNumber>JITSAMRUHIMRB00008</RFBSerialNumber>
       <Name Metadata="Step Name">MES Check To Start</Name>
     </TestStep>
     <TestStep type="RjioMRU.TestSteps.PowerSupplySteps" Id="8b1396ef-16df-459b-b23e-47cdb90f5f88">
@@ -206,7 +206,7 @@
       <Name Metadata="Step Name">DR49 Ch1 Write permision</Name>
     </TestStep>
     <TestStep type="RjioMRU.TestSteps.DR49_Ch1DSADisableScript" Id="1b3b4c9a-bc10-4b86-9509-2561cd39b512" OpenTap.Visibility="Visible">
-      <DsaScript>rj-rfeeprom-updater -upd_dsa_tx 0x7F,0x7F,0x7F,0x7F,0x7F,0x7F,0x7F,0x7F,0x7F,0x7F,0x7F,0x7F,0x7F,0x7F,0x7F,0x7F -upd_dsa_fb 0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f -upd_dac0 0x47E -upd_dac1 0x64B -upd_fw_ver 1.0 -upd_hw_ver B -upd_prv_valid</DsaScript>
+      <DsaScript>rj-rfeeprom-updater -upd_dsa_tx 0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff -upd_dsa_fb 0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f -upd_dac0 0x47E -upd_dac1 0x64B -upd_fw_ver 1.0 -upd_hw_ver B -upd_prv_valid</DsaScript>
       <DsaValidataionScriptCh1>End of MRU-EEPROM Read and Write Utility</DsaValidataionScriptCh1>
       <MruObj Source="OpenTap.DutSettings">RjioMRU</MruObj>
       <Name Metadata="Step Name">DR49 Ch1 Write default DSA value</Name>
@@ -222,10 +222,10 @@
       <Name Metadata="Step Name">DR49 Ch2 Write permision</Name>
     </TestStep>
     <TestStep type="RjioMRU.TestSteps.DR49_Ch2DSAScript" Id="324c280d-5272-4c50-93e1-cdf54e16faa1" OpenTap.Visibility="Visible">
-      <DsaScript>rj-rfeeprom-updater -upd_dsa_tx 0x7F,0x7F,0x7F,0x7F,0x7F,0x7F,0x7F,0x7F,0x7F,0x7F,0x7F,0x7F,0x7F,0x7F,0x7F,0x7F -upd_dsa_fb 0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f -upd_dac0 0x47E -upd_dac1 0x64B -upd_fw_ver 1.0 -upd_hw_ver B -upd_prv_valid</DsaScript>
+      <DsaScript>rj-rfeeprom-updater -upd_dsa_tx 0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff -upd_dsa_fb 0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f -upd_dac0 0x47E -upd_dac1 0x64B -upd_fw_ver 1.0 -upd_hw_ver B -upd_prv_valid</DsaScript>
       <DsaValidataionScriptCh2>End of MRU-EEPROM Read and Write Utility</DsaValidataionScriptCh2>
       <MruObj Source="OpenTap.DutSettings">RjioMRU</MruObj>
-      <Name Metadata="Step Name">DR49 Ch1 Write default DSA value</Name>
+      <Name Metadata="Step Name">DR49 Ch2 Write default DSA value</Name>
     </TestStep>
     <TestStep type="RjioMRU.TestSteps.ExecuteExtractScript" Id="0c162084-6820-4e23-ac9c-c56ae035c0cb" OpenTap.Visibility="Visible">
       <MruObj Source="OpenTap.DutSettings">RjioMRU</MruObj>
@@ -322,7 +322,7 @@
       <CCDUServerobj Source="OpenTap.InstrumentSettings">AB#Server</CCDUServerobj>
       <KeepTracing1>false</KeepTracing1>
       <Command1>cd /custom-sw/thirdparty/usr/sbin/</Command1>
-      <Command2phc>./phc2sys -s ens7f1 -O -37 -m</Command2phc>
+      <Command2phc>./phc2sys -s  ens7f1 -O -37 -m</Command2phc>
       <Name Metadata="Step Name">PHc Tab phc2sys Command</Name>
     </TestStep>
     <TestStep type="RjioMRU.TestSteps.DR21MRUIpChange" Id="4181e23c-dd90-46bf-a6e6-802ab6867371">
@@ -512,7 +512,7 @@
         </TestStep>
       </ChildTestSteps>
     </TestStep>
-    <TestStep type="OpenTap.Plugins.BasicSteps.ParallelStep" Id="6d902390-3eab-4a92-818b-0294a75757ad">
+    <TestStep type="OpenTap.Plugins.BasicSteps.ParallelStep" Id="6d902390-3eab-4a92-818b-0294a75757ad" OpenTap.Visibility="Visible">
       <Name Metadata="Step Name">Parallel to avoid excess current in units with DSA value</Name>
       <ChildTestSteps>
         <TestStep type="RjioMRU.TestSteps.DR49_Ch2DSAScript" Id="0054d10c-3854-408b-954e-022327e8678f" OpenTap.Visibility="Visible">
@@ -617,6 +617,7 @@
       <DPDPowerFactorLowerLimit>-22</DPDPowerFactorLowerLimit>
       <DPDPowerFactorHigherLimit>-15</DPDPowerFactorHigherLimit>
       <DpdIterationNumber>2</DpdIterationNumber>
+      <Enabled>false</Enabled>
       <Name Metadata="Step Name">CalibrationStep Ch1</Name>
     </TestStep>
     <TestStep type="RjioMRU.TestSteps.DR49_Ch1DSAScript" Id="4f524807-6f73-49f0-969c-aa1b304b1adc" OpenTap.Visibility="Visible">
@@ -637,7 +638,9 @@
       <ShowPicture>false</ShowPicture>
       <PictureSource />
       <PictureDescription />
+      <Enabled>false</Enabled>
       <Name Metadata="Step Name">Dialog (1)</Name>
+      <BreakConditions>BreakOnError, BreakOnFail</BreakConditions>
     </TestStep>
     <TestStep type="RjioMRU.TestSteps.CalibrationStep_CH2" Id="74bcd8a6-bbe8-4fc2-ad3a-13c1672ea2da" OpenTap.Visibility="Visible">
       <E6680InsturmentTrx3 Source="OpenTap.InstrumentSettings">EXMTRX1</E6680InsturmentTrx3>
@@ -658,7 +661,7 @@
       <DSACalCycles1>15</DSACalCycles1>
       <DSAHigherLimit>63</DSAHigherLimit>
       <DSAlowerLimit>5</DSAlowerLimit>
-      <TemperatureHighLimit>45</TemperatureHighLimit>
+      <TemperatureHighLimit>42</TemperatureHighLimit>
       <TemperatureLowLimit>15</TemperatureLowLimit>
       <DPDPowerFactorLowerLimit>-22</DPDPowerFactorLowerLimit>
       <DPDPowerFactorHigherLimit>-15</DPDPowerFactorHigherLimit>
@@ -667,13 +670,13 @@
     </TestStep>
     <TestStep type="OpenTap.Plugins.BasicSteps.DelayStep" Id="289a723d-7cfd-4fca-9e35-584984dbd156" OpenTap.Visibility="Visible">
       <DelaySecs>1</DelaySecs>
-      <Name Metadata="Step Name">Delay (6) (1)</Name>
+      <Name Metadata="Step Name">Delay</Name>
     </TestStep>
     <TestStep type="RjioMRU.TestSteps.DR49_Ch2DSAScript" Id="94ee8271-7074-4acd-831c-5b2d4e8c5f58" OpenTap.Visibility="Visible">
       <DsaScript>rj-dsa-init 16 0x7F 0x7F 0x7F 0x7F 0x7F 0x7F 0x7F 0x7F 0x7F 0x7F 0x7F 0x7F 0x7F 0x7F 0x7F 0x7F 16 0x0f 0x0f 0x0f 0x0f 0x0f 0x0f 0x0f 0x0f 0x0f 0x0f 0x0f 0x0f 0x0f 0x0f 0x0f 0x0f 2 1150 1611</DsaScript>
       <DsaValidataionScriptCh2>rjInitialConfiguration Completed</DsaValidataionScriptCh2>
       <MruObj Source="OpenTap.DutSettings">RjioMRU</MruObj>
-      <Name Metadata="Step Name">DR49 Ch2 DSA Script (1)</Name>
+      <Name Metadata="Step Name">DR49 Ch2 DSA Script</Name>
     </TestStep>
     <TestStep type="OpenTap.Plugins.BasicSteps.DelayStep" Id="7fd431a3-546c-4af9-b197-a2585a2c13f0" OpenTap.Visibility="Visible">
       <DelaySecs>1</DelaySecs>
@@ -785,35 +788,35 @@
       <MruObj Source="OpenTap.DutSettings">RjioMRU</MruObj>
       <ChannelsSelection>Channel1</ChannelsSelection>
       <RFBReadScript>rj-rfeeprom-updater -rd_rfb_info</RFBReadScript>
-      <RFBReadValue>JITSAMRUFKMRB00010</RFBReadValue>
+      <RFBReadValue>JITSAMRUHIMRB00008</RFBReadValue>
       <Name Metadata="Step Name">DR49 Read RFB_SER_NUM from {Select Channel}</Name>
     </TestStep>
     <TestStep type="RjioMRU.TestSteps.DR49_Read_RFB_SER_NUM" Id="9422bf9f-4f06-4d18-8424-4e40b4b2d267" OpenTap.Visibility="Visible">
       <MruObj Source="OpenTap.DutSettings">RjioMRU</MruObj>
       <ChannelsSelection>Channel2</ChannelsSelection>
       <RFBReadScript>rj-rfeeprom-updater -rd_rfb_info</RFBReadScript>
-      <RFBReadValue>JITSAMRUFKMRB00010</RFBReadValue>
+      <RFBReadValue>JITSAMRUHIMRB00008</RFBReadValue>
       <Name Metadata="Step Name">DR49 Read RFB_SER_NUM from {Select Channel}</Name>
     </TestStep>
     <TestStep type="RjioMRU.TestSteps.DR21_ReadInfo" Id="e72dca14-096f-4762-9838-56e5bcac1f78">
       <MruObj Source="OpenTap.DutSettings">RjioMRU</MruObj>
       <MAC2>
-        <Base64>YTA6NzM6ZmM6MDQ6MDA6MGQNCg==</Base64>
+        <Base64>YTA6NzM6ZmM6MDA6YmY6OGQNCg==</Base64>
       </MAC2>
       <MAC1>
-        <Base64>Y3JjIG1pc21hdGNoKGNhbGN1bGF0ZWQ6MHg5OWNmLCBzdG9yZWQ6MHhmZmZmKQ0K</Base64>
+        <Base64>Y3JjIG1pc21hdGNoKGNhbGN1bGF0ZWQ6MHhmMDRlLCBzdG9yZWQ6MHg0ZDRkKQ0K</Base64>
       </MAC1>
       <MAC3>
-        <Base64>Y3JjIG1pc21hdGNoKGNhbGN1bGF0ZWQ6MHg5OWNmLCBzdG9yZWQ6MHhmZmZmKQ0K</Base64>
+        <Base64>Y3JjIG1pc21hdGNoKGNhbGN1bGF0ZWQ6MHhmMDRlLCBzdG9yZWQ6MHg0ZDRkKQ0K</Base64>
       </MAC3>
       <MAC4>
-        <Base64>Y3JjIG1pc21hdGNoKGNhbGN1bGF0ZWQ6MHg5OWNmLCBzdG9yZWQ6MHhmZmZmKQ0K</Base64>
+        <Base64>Y3JjIG1pc21hdGNoKGNhbGN1bGF0ZWQ6MHhmMDRlLCBzdG9yZWQ6MHg0ZDRkKQ0K</Base64>
       </MAC4>
       <ProductSerialNumber>
-        <Base64>SklUU0FGMUZLTVJVMDAwMTkNCg==</Base64>
+        <Base64>SklUU0FGMUxJTVJVMDAwMTUNCg==</Base64>
       </ProductSerialNumber>
       <PCBserialNumber>
-        <Base64>SklUU0FNUlVGS0hTQjAwMDE0DQo=</Base64>
+        <Base64>SklUU0FNUlVJSUhTQjAwMDA2DQo=</Base64>
       </PCBserialNumber>
       <ProdID>
         <Base64>IEpJVFNBRjFNUlUwMQ0=</Base64>

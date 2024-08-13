@@ -1020,9 +1020,14 @@ namespace RjioMRU.TestSteps
                                     }
                                     else
                                     {
-                                        if (dpdIteration == DpdIterationNumber - 1)
+                                        if (dpditerationConstant == 0)
                                         {
-                                           MRU_DUT.DR49CH2Jjio_DPD_InitRun(iteration);
+                                            if (dpdIteration == DpdIterationNumber - 1)
+                                            {
+                                                MRU_DUT.DR49CH2Jjio_DPD_InitRun(iteration);
+                                                Thread.Sleep(3000);
+                                                MRU_DUT.DR49CH2executeCALDSAScripts(DSACommand, "rjInitialConfiguration Completed");
+                                            }
                                         }
                                     }
 
