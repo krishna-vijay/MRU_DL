@@ -25,7 +25,7 @@ namespace RjioMRU.TestSteps
     [Display("CalibrationStep Ch1", Group: "RjioMRU.Calibration", Description: "Insert a description here")]
     public class CalibrationStep_CH1 : TestStep
     {
-        GeneralFunctions genericFunctions= new GeneralFunctions();
+        GeneralFunctions genericFunctions = new GeneralFunctions();
         //tempevary variables.
         double measuredPowerValueBeforeDPD = double.NaN;
         bool ChannelPowerOk = false, EVMOK = false, ACLR_L1OK = false, ACLR_L2OK = false, ACLR_R1OK = false, ACLR_R2OK = false, FREQERROK = false;
@@ -49,8 +49,8 @@ namespace RjioMRU.TestSteps
         //EXM_E6680A e6680InsturmentTrx4;
         string[] strHexValues = new string[16];
         public int[] HexValues = new int[16];
-        public static int[] HexValues4DSAWriging = new int[16]  { 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F };
-        public static string[] powerFactorValues = new string[16] { "0x1F",  "0x1F",  "0x1F",  "0x1F",  "0x1F",  "0x1F",  "0x1F",  "0x1F",  "0x1F",  "0x1F",  "0x1F",  "0x1F",  "0x1F",  "0x1F",  "0x1F",  "0x1F" };
+        public static int[] HexValues4DSAWriging = new int[16] { 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F };
+        public static string[] powerFactorValues = new string[16] { "0x1F", "0x1F", "0x1F", "0x1F", "0x1F", "0x1F", "0x1F", "0x1F", "0x1F", "0x1F", "0x1F", "0x1F", "0x1F", "0x1F", "0x1F", "0x1F" };
 
         double[] CableLosses = new double[16];
         private string dSA_CableLossFile = "DSA_CABLELOSS_Ch1.csv";
@@ -167,7 +167,7 @@ namespace RjioMRU.TestSteps
             readDSA_CableLossFile(DSA_CableLossFile, out strHexValues, out CableLosses);
             double[] ACPValues = new double[4];
 
-            
+
 
             for (int iteration = 0; iteration < 16; iteration++)
             {
@@ -181,7 +181,7 @@ namespace RjioMRU.TestSteps
                 {
                     //genericFunctions.SetupSequencerForMeasurement(CableLosses[iteration],ChannelPower, E6680InsturmentTrx1);
                     //genericFunctions.SetupSequencerForMeasurement(CableLosses[iteration],ChannelPower, E6680InsturmentTrx2);
-                    
+
 
                     DSATrailsCount = 0;
                     EVMOK = false;
@@ -333,17 +333,23 @@ namespace RjioMRU.TestSteps
                                     TapThread.Sleep(1000);
 
                                     MRU_DUT.Dr49_DPD_Measurement(iteration, out txvalue, out rxvalue, MRU_DUT.GetDR49Ch1ComObj());
-        
-                                    if (dpdFBpowerVerdict = genericFunctions.CheckPowerFactorLimit(rxvalue, DPDPowerFactorHigherLimit, DPDPowerFactorLowerLimit))   
+
+                                    if (dpdFBpowerVerdict = genericFunctions.CheckPowerFactorLimit(rxvalue, DPDPowerFactorHigherLimit, DPDPowerFactorLowerLimit))
                                     {
                                         dpdMeasDone = true;
                                         break;
                                     }
                                     else
                                     {
-                                        if (dpdIteration == DpdIterationNumber - 1)
+                                        if (dpditerationConstant == 0)
                                         {
-                                            MRU_DUT.DR49CH1Jjio_DPD_InitRun(iteration);
+                                            if (dpdIteration == DpdIterationNumber - 1)
+                                            {
+                                                MRU_DUT.DR49CH1Jjio_DPD_InitRun(iteration);
+                                                Thread.Sleep(3000);
+                                                MRU_DUT.DR49CH1executeCALDSAScripts(DSACommand, "rjInitialConfiguration Completed");
+
+                                            }
                                         }
                                     }
 
@@ -482,7 +488,7 @@ namespace RjioMRU.TestSteps
 
                                 break;
                             }
-                            
+
 
                             #endregion existing
 
@@ -491,7 +497,7 @@ namespace RjioMRU.TestSteps
                         {
                             Log.Error("DSA Value exceeds limits DSA Value :" + HexValues[iteration] + " DSA Higher Limits :" + DSAHigherLimit + " DSA Lower Limit :" + DSAlowerLimit + " Chanin Number : " + iteration);
                             MessageBox.Show("DSA Limit exceeds, Breaking loop");
-                            stepPassFlag = false;   
+                            stepPassFlag = false;
                             Log.Error("Step Failed at Chain number" + iteration.ToString());
                             break;
 
@@ -562,7 +568,7 @@ namespace RjioMRU.TestSteps
                     var totalCh1CalTime = stopwathCh1.Elapsed;
                     Log.Info("Total Ch1 Cal Time : " + (totalCh1CalTime.TotalMilliseconds / 1000).ToString());
                     stepPassFlag &= ChannelPowerOk && ACLR_R1OK && ACLR_L2OK && ACLR_R2OK && ACLR_L2OK && FREQERROK && EVMOK;
-                    Log.Info($"Step Pass Flag Condition at iteration {iteration}: " + stepPassFlag);   
+                    Log.Info($"Step Pass Flag Condition at iteration {iteration}: " + stepPassFlag);
                 }
             }
             catch (Exception ex)
@@ -602,7 +608,7 @@ namespace RjioMRU.TestSteps
                 MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName + " Chain " + iteration + " ACLR R2", ACLR_R2OK ? "PASS" : "FAIL", " ", ACPValues[3].ToString(), ACLR_R2_Limit.ToString(), "LE", " ", "dBc");
                 MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName + " Chain " + iteration + " Feedback Power", " ", " ", rxvalue.ToString(), " ".ToString(), " ", " ", " ");
 
-                MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName + " Chain " + iteration + " Power Factor",dpdFBpowerVerdict.ToString(),DPDPowerFactorLowerLimit.ToString(), powerFactorValues[iteration].ToString(), DPDPowerFactorHigherLimit.ToString(), "GELE", " ", " ");
+                MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName + " Chain " + iteration + " Power Factor", dpdFBpowerVerdict.ToString(), DPDPowerFactorLowerLimit.ToString(), powerFactorValues[iteration].ToString(), DPDPowerFactorHigherLimit.ToString(), "GELE", " ", " ");
                 MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName + " Chain " + iteration + " Temperature ", temperatureVerdict.ToString(), TemperatureLowLimit.ToString(), Temperature, TemperatureHighLimit.ToString(), "GELE", " ", "Deg C");
 
                 HexValues4DSAWriging[iteration] = HexValues[iteration];
@@ -666,7 +672,7 @@ namespace RjioMRU.TestSteps
         public override void PrePlanRun()
         {
             MES_CSV.MRU_MES_List.Clear();
-            MES_CSV.GroupName=101;
+            MES_CSV.GroupName = 101;
             RjioReportCls.reportGenerated = false;
         }
         public override void PostPlanRun()
@@ -701,7 +707,7 @@ namespace RjioMRU.TestSteps
                 }
                 Results.Publish<RjioReportCls>(MRURjioReportCls.ProductSerialNumber, MRURjioReportCls);
                 Log.Info("Measurements : " + MRURjioReportCls.Measurements);
-                MES_CSV.UpdateHeader(MES_CSV.MRU_Serial_number, MES_CSV.PART_Number,MES_CSV.Equipment_ID, MES_CSV.Slot, MES_CSV.Credentials, this.PlanRun.Verdict.ToString(), MES_CSV.Operation_Mode, this.PlanRun.StartTime.ToString("dd/MM/yyyy HH:mm:ss,"), DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss,"), MES_CSV.SequenceID, MES_CSV.Overall_Defect_Code);
+                MES_CSV.UpdateHeader(MES_CSV.MRU_Serial_number, MES_CSV.PART_Number, MES_CSV.Equipment_ID, MES_CSV.Slot, MES_CSV.Credentials, this.PlanRun.Verdict.ToString(), MES_CSV.Operation_Mode, this.PlanRun.StartTime.ToString("dd/MM/yyyy HH:mm:ss,"), DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss,"), MES_CSV.SequenceID, MES_CSV.Overall_Defect_Code);
                 MES_CSV.WrteMESCSVFile();
 
                 // MES_CSV.UpdateHeader(MES_CSV.MRU_Serial_number,MES_CSV.pa)
@@ -737,7 +743,7 @@ namespace RjioMRU.TestSteps
         string[] strHexValues = new string[16];
         public int[] HexValues = new int[16];
         public static int[] HexValues4DSAWriging = new int[16] { 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F };
-        public static string[] powerFactorValues = new string[16] {  "0x1F",  "0x1F",  "0x1F",  "0x1F",  "0x1F",  "0x1F",  "0x1F",  "0x1F",  "0x1F",  "0x1F",  "0x1F",  "0x1F",  "0x1F",  "0x1F",  "0x1F",  "0x1F" };
+        public static string[] powerFactorValues = new string[16] { "0x1F", "0x1F", "0x1F", "0x1F", "0x1F", "0x1F", "0x1F", "0x1F", "0x1F", "0x1F", "0x1F", "0x1F", "0x1F", "0x1F", "0x1F", "0x1F" };
 
         double[] CableLosses = new double[16];
         private string dSA_CableLossFile = "DSA_CABLELOSS_Ch2.csv";
@@ -822,10 +828,10 @@ namespace RjioMRU.TestSteps
         bool temperatureVerdict = true;
         bool dpdFBpowerVerdict = true;
 
-        [Display("DPD Feedback Power Lower Limit",Order:140,Description:"DPD Power Lower Limit")]
+        [Display("DPD Feedback Power Lower Limit", Order: 140, Description: "DPD Power Lower Limit")]
         public double DPDPowerFactorLowerLimit { set; get; }
 
-        [Display("DPD Feedback Power Higher Limit",Order:150,Description:"DPD Power Higher Limit")]
+        [Display("DPD Feedback Power Higher Limit", Order: 150, Description: "DPD Power Higher Limit")]
         public double DPDPowerFactorHigherLimit { set; get; }
 
         [Display("DPD Feedback Power attempts", Order: 160, Description: "DPD Power Factor Attempts")]
@@ -884,7 +890,7 @@ namespace RjioMRU.TestSteps
                     else
                         E6680InsturmentTrx4.SetRFInputPort((iteration % 8) + 1);
 
-                    DSACommand =genericFunctions.GenerateCommand(iteration, HexValues[iteration]);
+                    DSACommand = genericFunctions.GenerateCommand(iteration, HexValues[iteration]);
                     Log.Info("Initialization Command for Ch" + iteration + " " + DSACommand);
                     MRU_DUT.DR49CH2executeCALDSAScripts(DSACommand, "rjInitialConfiguration Completed");
                     TapThread.Sleep(2000);
@@ -922,7 +928,7 @@ namespace RjioMRU.TestSteps
                     {
                         StrChannelMeasurementsCh2[iteration] = iteration + "," + $" 0x{HexValues[iteration]:X}" + "," + "-999" + "," + "-999" + "," + "-999" + "," + "-999" + "," + "-999" + "," + "" + "," + "";
                         stepPassFlag = false;
-                        Log.Error("Step Failed at Chain number " + iteration.ToString());   
+                        Log.Error("Step Failed at Chain number " + iteration.ToString());
                         continue;
                     }
 
@@ -1032,7 +1038,7 @@ namespace RjioMRU.TestSteps
                                     }
 
                                 }
-                                if(dpdMeasDone == true)
+                                if (dpdMeasDone == true)
                                 {
                                     break;
                                 }
@@ -1142,7 +1148,7 @@ namespace RjioMRU.TestSteps
                             AttemptNumber++;
                             /////////////////////////////////////////////////////////////
                             // MRURjioReportCls.Measurements += StrChannelMeasurements[iteration] + "," + resultStrings[1] + "," + resultStrings[3] + ";";
-                            if ( WriteCSVData(resultStrings, ACPValues, iteration, MeasuredPowerValue, rxvalue, Temperature))
+                            if (WriteCSVData(resultStrings, ACPValues, iteration, MeasuredPowerValue, rxvalue, Temperature))
                             {
                                 continue;
                             }
@@ -1156,7 +1162,7 @@ namespace RjioMRU.TestSteps
                         {
                             Log.Error("DSA Value exceeds limits DSA Value :" + HexValues[iteration] + " DSA Higher Limits :" + DSAHigherLimit + " DSA Lower Limit :" + DSAlowerLimit + " Chanin Number : " + iteration);
                             MessageBox.Show("DSA Limit exceeds, Breaking loop");
-                            stepPassFlag = false;  
+                            stepPassFlag = false;
                             Log.Error("Step Failed at Chain number " + iteration.ToString());
                             break;
 
@@ -1201,7 +1207,7 @@ namespace RjioMRU.TestSteps
                         {
                             StrChannelMeasurementsCh2[iteration] = iteration + "," + $" 0x{HexValues[iteration]:X}" + "," + "-999" + "," + "-999" + "," + "-999" + "," + "-999" + "," + "-999" + "," + "" + "," + "";
                             stepPassFlag = false;
-                            Log.Error("Step Failed at Chain number " + iteration.ToString());   
+                            Log.Error("Step Failed at Chain number " + iteration.ToString());
                             continue;
                         }
                         else
@@ -1247,7 +1253,7 @@ namespace RjioMRU.TestSteps
 
         private bool WriteCSVData(string[] resultStrings, double[] ACPValues, int iteration, double MeasuredPowerValue, double rxvalue, string Temperature)
         {
-            if ((ChannelPowerOk && ACLR_R1OK && ACLR_L2OK && ACLR_L1OK && ACLR_R2OK && FREQERROK && EVMOK) || AttemptNumber > 2)
+            if (((ChannelPowerOk && ACLR_L1OK && ACLR_L2OK && ACLR_R1OK && ACLR_R2OK && FREQERROK && EVMOK) || AttemptNumber > 2)|| !temperatureVerdict)
             {
                 MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName + " Chain " + iteration + " Channel Power", ChannelPowerOk ? "PASS" : "FAIL", (ChannelPower - ChannelPowerLimit).ToString(), MeasuredPowerValue.ToString(), (ChannelPower + ChannelPowerLimit).ToString(), "GELE", ChannelPower.ToString(), "dBm");
 
@@ -1262,7 +1268,7 @@ namespace RjioMRU.TestSteps
                 MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName + " Chain " + iteration + " ACLR R1", ACLR_R1OK ? "PASS" : "FAIL", " ", ACPValues[2].ToString(), ACLR_R1_Limit.ToString(), "LE", " ", "dBc");
 
                 MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName + " Chain " + iteration + " ACLR R2", ACLR_R2OK ? "PASS" : "FAIL", " ", ACPValues[3].ToString(), ACLR_R2_Limit.ToString(), "LE", " ", "dBc");
-                MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName + " Chain " + iteration + " Feedback Power", dpdFBpowerVerdict.ToString(),DPDPowerFactorLowerLimit.ToString(), rxvalue.ToString(),DPDPowerFactorHigherLimit.ToString(), "GELE", " ", " ");
+                MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName + " Chain " + iteration + " Feedback Power", dpdFBpowerVerdict.ToString(), DPDPowerFactorLowerLimit.ToString(), rxvalue.ToString(), DPDPowerFactorHigherLimit.ToString(), "GELE", " ", " ");
                 MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName + " Chain " + iteration + " Power Factor", " ", " ", powerFactorValues[iteration].ToString(), " ".ToString(), " ", " ", " ");
 
                 MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName + " Chain " + iteration + " Temperature ", temperatureVerdict.ToString(), TemperatureLowLimit.ToString(), Temperature, TemperatureHighLimit.ToString(), "GELE", " ", "Deg C");
@@ -1341,7 +1347,7 @@ namespace RjioMRU.TestSteps
                 MRURjioReportCls.MACID4 = DR21_ReadInfo.MAC4_;
                 MRURjioReportCls.PcbSerialNumber = DR21_ReadInfo.PCBserialNumber_;
                 MRURjioReportCls.ProductSerialNumber = MES_CSV.MRU_Serial_number;
-              
+
 
                 foreach (var item in RjioMRU.TestSteps.CalibrationStep_CH1.StrChannelMeasurementsCh1)
                 {
@@ -1354,7 +1360,7 @@ namespace RjioMRU.TestSteps
                 }
                 Results.Publish<RjioReportCls>(MRURjioReportCls.ProductSerialNumber, MRURjioReportCls);
                 Log.Info("Measurements : " + MRURjioReportCls.Measurements);
-                MES_CSV.UpdateHeader(MES_CSV.MRU_Serial_number, MES_CSV.PART_Number, MES_CSV.Equipment_ID, MES_CSV.Slot, MES_CSV.Credentials, this.PlanRun.Verdict.ToString(), MES_CSV.Operation_Mode, this.PlanRun.StartTime.ToString("dd/MM/yyyy HH:mm:ss,"), DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss,"), MES_CSV.SequenceID, MES_CSV.Overall_Defect_Code);                
+                MES_CSV.UpdateHeader(MES_CSV.MRU_Serial_number, MES_CSV.PART_Number, MES_CSV.Equipment_ID, MES_CSV.Slot, MES_CSV.Credentials, this.PlanRun.Verdict.ToString(), MES_CSV.Operation_Mode, this.PlanRun.StartTime.ToString("dd/MM/yyyy HH:mm:ss,"), DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss,"), MES_CSV.SequenceID, MES_CSV.Overall_Defect_Code);
                 MES_CSV.WrteMESCSVFile();
             }
         }
@@ -1365,7 +1371,7 @@ namespace RjioMRU.TestSteps
 
 
     }
-    
+
     public class GeneralFunctions
     {
         public void SetupSequencerForMeasurement(double CableLoss, double channelPower, EXM_E6680A e6680InsturmentTrx1)
@@ -1373,8 +1379,8 @@ namespace RjioMRU.TestSteps
             string currentScreen = e6680InsturmentTrx1.getInstrumentSCreen();
             e6680InsturmentTrx1.SelectInstScreen("SEQ");
             e6680InsturmentTrx1.SequenceExpectedPower(channelPower - CableLoss);
-            e6680InsturmentTrx1.SequencePeakPower((channelPower + CableLoss)+3);
-            e6680InsturmentTrx1.TriggerLevel((channelPower - CableLoss)-4);
+            e6680InsturmentTrx1.SequencePeakPower((channelPower + CableLoss) + 3);
+            e6680InsturmentTrx1.TriggerLevel((channelPower - CableLoss) - 4);
 
             e6680InsturmentTrx1.SelectInstScreen(currentScreen);
 
@@ -1408,13 +1414,14 @@ namespace RjioMRU.TestSteps
         {
             return v <= temperatureHighLimit && v >= temperatureLowLimit;
         }
-        
+
         internal bool CheckPowerFactorLimit(double v, double PowerFactorHighLimit, double PowerFactorLowLimit)
         {
-            return v <=PowerFactorHighLimit&& v >= PowerFactorLowLimit;
+            return v <= PowerFactorHighLimit && v >= PowerFactorLowLimit;
         }
 
 
     }
+
 
 }
