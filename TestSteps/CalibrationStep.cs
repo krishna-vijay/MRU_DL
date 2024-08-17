@@ -206,7 +206,7 @@ namespace RjioMRU.TestSteps
                     double MeasuredPowerValue = double.NaN;
                     if (iteration == 1)
                     {
-                        Thread.Sleep(1000);
+                        Thread.Sleep(3000);
                     }
                     for (int l = 0; l < 5; l++)
                     {
@@ -334,7 +334,7 @@ namespace RjioMRU.TestSteps
 
                                     MRU_DUT.Dr49_DPD_Measurement(iteration, out txvalue, out rxvalue, MRU_DUT.GetDR49Ch1ComObj());
 
-                                    if (dpdFBpowerVerdict = genericFunctions.CheckPowerFactorLimit(rxvalue, DPDFeedbackPowerHigherLimit, DPDFeedBackPowerLowerLimit))
+                                    if (dpdFBpowerVerdict = genericFunctions.CheckFeedBackPowerLimit(rxvalue, DPDFeedbackPowerHigherLimit, DPDFeedBackPowerLowerLimit))
                                     {
                                         dpdMeasDone = true;
                                         break;
@@ -409,7 +409,7 @@ namespace RjioMRU.TestSteps
                             }
                             if (resultStrings.Length < 5)
                             {
-                                MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, "FALSE", " ", "FAIL", "FAIL", "EQ", "TRUE", " ");
+                                MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, "FALSE", "FAIL", "FAIL", "FAIL", "EQ", "TRUE", "NA");
 
                                 continue;
                             }
@@ -606,10 +606,11 @@ namespace RjioMRU.TestSteps
                 MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName + " Chain " + iteration + " ACLR R1", ACLR_R1OK ? "PASS" : "FAIL", " ", ACPValues[2].ToString(), ACLR_R1_Limit.ToString(), "LE", " ", "dBc");
 
                 MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName + " Chain " + iteration + " ACLR R2", ACLR_R2OK ? "PASS" : "FAIL", " ", ACPValues[3].ToString(), ACLR_R2_Limit.ToString(), "LE", " ", "dBc");
-                MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName + " Chain " + iteration + " Feedback Power", " ", " ", rxvalue.ToString(), " ".ToString(), " ", " ", " ");
+                MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName + " Chain " + iteration + " Feedback Power",  dpdFBpowerVerdict.ToString(), DPDFeedBackPowerLowerLimit.ToString(), rxvalue.ToString(),  DPDFeedbackPowerHigherLimit.ToString(),"GELE", " ".ToString(), "HEX");
 
-                MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName + " Chain " + iteration + " Power Factor", dpdFBpowerVerdict.ToString(), DPDFeedBackPowerLowerLimit.ToString(), powerFactorValues[iteration].ToString(), DPDFeedbackPowerHigherLimit.ToString(), "GELE", " ", " ");
+                MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName + " Chain " + iteration + " Power Factor","PASS",1450.ToString(),  powerFactorValues[iteration].ToString(), 1770.ToString(),"GELE", "", "Hex");
                 MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName + " Chain " + iteration + " Temperature ", temperatureVerdict.ToString(), TemperatureLowLimit.ToString(), Temperature, TemperatureHighLimit.ToString(), "GELE", " ", "Deg C");
+                MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName + " Chain " + iteration + " DSA ","-", DSAlowerLimit.ToString(), HexValues[iteration].ToString(),DSAHigherLimit.ToString(),"GELE", "-", "HEX");
 
                 HexValues4DSAWriging[iteration] = HexValues[iteration];
                 return false;// break;
@@ -707,7 +708,7 @@ namespace RjioMRU.TestSteps
                 }
                 Results.Publish<RjioReportCls>(MRURjioReportCls.ProductSerialNumber, MRURjioReportCls);
                 Log.Info("Measurements : " + MRURjioReportCls.Measurements);
-                MES_CSV.UpdateHeader(MES_CSV.MRU_Serial_number, MES_CSV.PART_Number, MES_CSV.Equipment_ID, MES_CSV.Slot, MES_CSV.Credentials, this.PlanRun.Verdict.ToString(), MES_CSV.Operation_Mode, this.PlanRun.StartTime.ToString("dd/MM/yyyy HH:mm:ss,"), DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss,"), MES_CSV.SequenceID, MES_CSV.Overall_Defect_Code);
+                MES_CSV.UpdateHeader(MES_CSV.MRU_Serial_number, MES_CSV.PART_Number, MES_CSV.Equipment_ID, MES_CSV.Slot, MES_CSV.Equipment_ID, this.PlanRun.Verdict.ToString(), MES_CSV.Operation_Mode, this.PlanRun.StartTime.ToString("dd/MM/yyyy HH:mm:ss"), DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss"), MES_CSV.SequenceID, this.PlanRun.Verdict.ToString() == "FAIL" ? "FAIL" : ""); //MES_CSV.Overall_Defect_Code);
                 MES_CSV.WrteMESCSVFile();
 
                 // MES_CSV.UpdateHeader(MES_CSV.MRU_Serial_number,MES_CSV.pa)
@@ -826,13 +827,13 @@ namespace RjioMRU.TestSteps
         public double TemperatureLowLimit { get => temperatureLowLimit; set => temperatureLowLimit = value; }
 
         bool temperatureVerdict = true;
-        bool dpdFBpowerFactorVerdict = true;
+        bool dpdFBpowerVerdict = true;
 
         [Display("DPD Feedback Power Lower Limit", Order: 140, Description: "DPD Power Lower Limit")]
-        public double DPDPowerFactorLowerLimit { set; get; }
+        public double DPDFeedBackPowerLowerLimit { set; get; }
 
         [Display("DPD Feedback Power Higher Limit", Order: 150, Description: "DPD Power Higher Limit")]
-        public double DPDPowerFactorHigherLimit { set; get; }
+        public double DPDFeedBackPowerHigherLimit { set; get; }
 
         [Display("DPD Feedback Power attempts", Order: 160, Description: "DPD Power Factor Attempts")]
         public int DpdIterationNumber { get; set; } = 2;
@@ -1019,7 +1020,7 @@ namespace RjioMRU.TestSteps
                                     TapThread.Sleep(1000);
 
                                     MRU_DUT.Dr49_DPD_Measurement(iteration, out txvalue, out rxvalue, MRU_DUT.GetDR49Ch2ComObj());
-                                    if (dpdFBpowerFactorVerdict = genericFunctions.CheckPowerFactorLimit(rxvalue, DPDPowerFactorHigherLimit, DPDPowerFactorLowerLimit))
+                                    if (dpdFBpowerVerdict = genericFunctions.CheckFeedBackPowerLimit(rxvalue, DPDFeedBackPowerHigherLimit, DPDFeedBackPowerLowerLimit))
                                     {
                                         dpdMeasDone = true;
                                         break;
@@ -1268,11 +1269,14 @@ namespace RjioMRU.TestSteps
                 MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName + " Chain " + iteration + " ACLR R1", ACLR_R1OK ? "PASS" : "FAIL", " ", ACPValues[2].ToString(), ACLR_R1_Limit.ToString(), "LE", " ", "dBc");
 
                 MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName + " Chain " + iteration + " ACLR R2", ACLR_R2OK ? "PASS" : "FAIL", " ", ACPValues[3].ToString(), ACLR_R2_Limit.ToString(), "LE", " ", "dBc");
-                MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName + " Chain " + iteration + " Feedback Power","".ToString(), "".ToString(), rxvalue.ToString(), "".ToString(), "GELE", " ", " ");
-                MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName + " Chain " + iteration + " Power Factor", dpdFBpowerFactorVerdict.ToString(), DPDPowerFactorLowerLimit.ToString(), powerFactorValues[iteration].ToString(), DPDPowerFactorHigherLimit.ToString(), " ", " ", " ");
+
+                MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName + " Chain " + iteration + " Feedback Power", dpdFBpowerVerdict.ToString(), DPDFeedBackPowerLowerLimit.ToString(), rxvalue.ToString(), DPDFeedBackPowerHigherLimit.ToString(), "GELE", " ".ToString(), "HEX");
+
+                MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName + " Chain " + iteration + " Power Factor", "PASS", 1450.ToString(), powerFactorValues[iteration].ToString(), 1770.ToString(), "GELE", "", "Hex");
 
                 MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName + " Chain " + iteration + " Temperature ", temperatureVerdict.ToString(), TemperatureLowLimit.ToString(), Temperature, TemperatureHighLimit.ToString(), "GELE", " ", "Deg C");
 
+                MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName + " Chain " + iteration + " DSA ", "-", DSAlowerLimit.ToString(), HexValues[iteration].ToString(), DSAHigherLimit.ToString(), "GELE", "-", "HEX");
 
                 HexValues4DSAWriging[iteration] = HexValues[iteration];
                 return false; // break;
@@ -1360,7 +1364,7 @@ namespace RjioMRU.TestSteps
                 }
                 Results.Publish<RjioReportCls>(MRURjioReportCls.ProductSerialNumber, MRURjioReportCls);
                 Log.Info("Measurements : " + MRURjioReportCls.Measurements);
-                MES_CSV.UpdateHeader(MES_CSV.MRU_Serial_number, MES_CSV.PART_Number, MES_CSV.Equipment_ID, MES_CSV.Slot, MES_CSV.Credentials, this.PlanRun.Verdict.ToString(), MES_CSV.Operation_Mode, this.PlanRun.StartTime.ToString("dd/MM/yyyy HH:mm:ss,"), DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss,"), MES_CSV.SequenceID, MES_CSV.Overall_Defect_Code);
+                MES_CSV.UpdateHeader(MES_CSV.MRU_Serial_number, MES_CSV.PART_Number, MES_CSV.Equipment_ID, MES_CSV.Slot, MES_CSV.Equipment_ID, this.PlanRun.Verdict.ToString(), MES_CSV.Operation_Mode, this.PlanRun.StartTime.ToString("dd/MM/yyyy HH:mm:ss"), DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss"), MES_CSV.SequenceID, this.PlanRun.Verdict.ToString()=="FAIL"?"FAIL":"");
                 MES_CSV.WrteMESCSVFile();
             }
         }
@@ -1415,7 +1419,7 @@ namespace RjioMRU.TestSteps
             return v <= temperatureHighLimit && v >= temperatureLowLimit;
         }
 
-        internal bool CheckPowerFactorLimit(double v, double PowerFactorHighLimit, double PowerFactorLowLimit)
+        internal bool CheckFeedBackPowerLimit(double v, double PowerFactorHighLimit, double PowerFactorLowLimit)
         {
             return v <= PowerFactorHighLimit && v >= PowerFactorLowLimit;
         }

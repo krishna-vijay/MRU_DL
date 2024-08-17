@@ -520,7 +520,7 @@ End of MRU-EEPROM Read and Write Utility
             {
                 UpgradeVerdict(Verdict.Fail);
             }
-            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, Verdict.ToString(), " ", Verdict.ToString(), "TRUE", "EQ", "TRUE", " ");
+            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, Verdict.ToString(), " ", Verdict.ToString(),"",  "EQ", "TRUE", "Bool");
             // ToDo: Add test case code.
             RunChildSteps(); //If the step supports child steps.
 
@@ -558,7 +558,7 @@ End of MRU-EEPROM Read and Write Utility
             {
                 UpgradeVerdict(Verdict.Fail);
             }
-            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, Verdict.ToString(), " ", Verdict.ToString(), "TRUE", "EQ", "TRUE", " ");
+            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, Verdict.ToString(), " ", Verdict.ToString(), "", "EQ", "TRUE", "Bool");
 
             // ToDo: Add test case code.
             RunChildSteps(); //If the step supports child steps.
@@ -603,7 +603,7 @@ End of MRU-EEPROM Read and Write Utility
             {
                 UpgradeVerdict(Verdict.Fail);
             }
-            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, Verdict.ToString(), " ", Verdict.ToString(), "TRUE", "EQ", "TRUE", " ");
+            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, Verdict.ToString(), " ", Verdict.ToString(),"", "EQ", "TRUE", "Bool");
 
             // ToDo: Add test case code.
             RunChildSteps(); //If the step supports child steps.
@@ -701,7 +701,7 @@ End of MRU-EEPROM Read and Write Utility
             {
                 UpgradeVerdict(Verdict.Fail);
             }
-            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, Verdict.ToString(), " ", Verdict.ToString(), "TRUE", "EQ", "TRUE", " ");
+            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, Verdict.ToString(), " ", Verdict.ToString(), "", "EQ", "TRUE", "Bool");
 
             // If no verdict is used, the verdict will default to NotSet.
             // You can change the verdict using UpgradeVerdict() as shown below.
@@ -781,7 +781,7 @@ End of MRU-EEPROM Read and Write Utility
             {
                 UpgradeVerdict(Verdict.Fail);
             }
-            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, Verdict.ToString(), PingStatus ? "0% packet loss" : "", Verdict.ToString(), "PingTestStatus", "EQ", "TRUE", " ");
+            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, Verdict.ToString(), PingStatus ? "TRUE" : "FALSE", Verdict.ToString(), "", "EQ", "TRUE", "Bool");
 
             // If no verdict is used, the verdict will default to NotSet.
             // You can change the verdict using UpgradeVerdict() as shown below.
@@ -873,7 +873,7 @@ End of MRU-EEPROM Read and Write Utility
             {
                 UpgradeVerdict(Verdict.Fail);
             }
-            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, Verdict.ToString(), " ", "Modem started", "Modem started", "EQ", "Modem started", " ");
+            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, Verdict.ToString(), " ",this.Verdict.ToString(),"", "EQ", "TRUE", "Bool");
 
             // If no verdict is used, the verdict will default to NotSet.
             // You can change the verdict using UpgradeVerdict() as shown below.
@@ -923,7 +923,7 @@ End of MRU-EEPROM Read and Write Utility
             {
                 UpgradeVerdict(Verdict.Fail);
             }
-            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, Verdict.ToString(), " ", PingTestStatus ? "PTP synchronization detected established!" : "", "TRUE", "EQ", "TRUE", " ");
+            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, Verdict.ToString(), " ",this.StepRun.Verdict.ToString(),"",  "EQ", "TRUE", "Bool");
 
             // If no verdict is used, the verdict will default to NotSet.
             // You can change the verdict using UpgradeVerdict() as shown below.
@@ -968,7 +968,7 @@ End of MRU-EEPROM Read and Write Utility
             {
                 UpgradeVerdict(Verdict.Fail);
             }
-            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, Verdict.ToString(), " ", PingTestStatus ? "Modem initialization is in process" : "", "TRUE", "EQ", "TRUE", " ");
+            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, Verdict.ToString(), " ", this.Verdict.ToString(), "", "EQ", "TRUE", "Bool");
 
             // If no verdict is used, the verdict will default to NotSet.
             // You can change the verdict using UpgradeVerdict() as shown below.
@@ -1011,7 +1011,8 @@ End of MRU-EEPROM Read and Write Utility
             {
                 UpgradeVerdict(Verdict.Fail);
             }
-            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, Verdict.ToString(), " ", PingTestStatus.ToString(), "TRUE", "EQ", "TRUE", " ");
+           // MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, Verdict.ToString(), " ", PingTestStatus.ToString(), "TRUE", "EQ", "TRUE", " ");
+            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, Verdict.ToString(), " ", this.Verdict.ToString(), "", "EQ", "TRUE", "Bool");
 
             // If no verdict is used, the verdict will default to NotSet.
             // You can change the verdict using UpgradeVerdict() as shown below.
@@ -1055,7 +1056,7 @@ End of MRU-EEPROM Read and Write Utility
             {
                 UpgradeVerdict(Verdict.Fail);
             }
-            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, Verdict.ToString(), " ", Verdict.ToString(), "TRUE", "EQ", "TRUE", " ");
+            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, Verdict.ToString(), " ", Verdict.ToString(), "", "EQ", "TRUE", "Bool");
 
             // ToDo: Add test case code.
             RunChildSteps(); //If the step supports child steps.
@@ -1148,7 +1149,7 @@ End of MRU-EEPROM Read and Write Utility
             {
                 UpgradeVerdict(Verdict.Fail);
             }
-            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, Verdict.ToString(), " ", Verdict.ToString(), "TRUE", "EQ", "TRUE", " ");
+            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, Verdict.ToString(), " ", Verdict.ToString(), "", "EQ", "TRUE", "Bool");
 
             // ToDo: Add test case code.
             RunChildSteps(); //If the step supports child steps.
@@ -1235,7 +1236,7 @@ End of MRU-EEPROM Read and Write Utility
                 UpgradeVerdict(Verdict.Fail);
             }
 
-            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, Verdict.ToString(), " ", Verdict.ToString(), "TRUE", "EQ", "TRUE", " ");
+            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, Verdict.ToString(), " ", Verdict.ToString(),"",  "EQ", "TRUE", "Bool");
 
             // ToDo: Add test case code.
             RunChildSteps(); //If the step supports child steps.
@@ -1606,7 +1607,6 @@ End of MRU-EEPROM Read and Write Utility
 
             int StringOk = string.Compare(slot21dr, slot49DrCh1);
             int string2OK = string.Compare(slot21dr, slot49DrCh2);
-            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, Verdict.ToString(), " ", slot21dr.ToString() + ":" + slot49DrCh1.ToString(), Verdict.ToString(), "EQ", slot21dr.ToString() + "=" + slot49DrCh1.ToString(), " ");
 
             if (StringOk != 0)
             {
@@ -1621,7 +1621,9 @@ End of MRU-EEPROM Read and Write Utility
                     return;
                 }
             }
+            var stepStatus = StringOk != 0 & string2OK != 0;
             UpgradeVerdict(Verdict.Pass);
+            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, Verdict.ToString(), " ", stepStatus?"MATCHING":"NOT MATCHING","","EQ","MATCHING" ,"Bool");
 
             // ToDo: Add test case code.
             RunChildSteps(); //If the step supports child steps.
@@ -1662,7 +1664,7 @@ End of MRU-EEPROM Read and Write Utility
             }
 
             UpgradeVerdict(Verdict.Pass);
-            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, Verdict.ToString(), " ", Verdict.ToString(), "TRUE", "EQ", "TRUE", " ");
+            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, Verdict.ToString(), " ", Verdict.ToString(), "", "EQ", "TRUE", "Bool");
 
             // ToDo: Add test case code.
             RunChildSteps(); //If the step supports child steps.
@@ -1793,9 +1795,11 @@ End of MRU-EEPROM Read and Write Utility
             //{
             //    Log.Info("MRU object is null");
             //}
-
-
             UpgradeVerdict(Verdict.Pass);
+
+            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, Verdict.ToString(), " ", Verdict.ToString(), "", "EQ", "TRUE", "Bool");
+
+
             // ToDo: Add test case code.
             RunChildSteps(); //If the step supports child steps.
                              // If no verdict is used, the verdict will default to NotSet.

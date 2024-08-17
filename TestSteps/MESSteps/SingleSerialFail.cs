@@ -72,7 +72,7 @@ namespace RjioMRU.TestSteps.MESSteps
             {
                 UpgradeVerdict(Verdict.Fail);
             }
-            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, Verdict.ToString(), " ", Verdict.ToString(), "TRUE", "EQ", "TRUE", " ");
+            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, Verdict.ToString(), " ", Verdict.ToString(), "", "EQ", "TRUE", "Bool");
 
             RunChildSteps(); //If the step supports child steps.
 

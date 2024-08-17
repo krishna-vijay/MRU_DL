@@ -127,7 +127,7 @@ root@192.168.1.2's password:
             {
                 UpgradeVerdict(Verdict.Fail);
             }
-            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, this.Verdict.ToString(), " ", "25000Mb/s", " ", " ", " ", " ");
+            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, this.Verdict.ToString(), " ", this.Verdict.ToString(),  " ", "EQ", "TRUE", "Bool");
             // If no verdict is used, the verdict will default to NotSet.
             // You can change the verdict using UpgradeVerdict() as shown below.
             // UpgradeVerdict(Verdict.Pass);
@@ -179,7 +179,7 @@ root@192.168.1.2's password:
             {
                 UpgradeVerdict(Verdict.Fail);
             }
-            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, this.Verdict.ToString(), " ", ipChangeStatus.ToString(), "TRUE", "EQ", "TRUE", " ");
+            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, this.Verdict.ToString(), " ", ipChangeStatus.ToString(),"", "EQ", "TRUE", "Bool");
             // If no verdict is used, the verdict will default to NotSet.
             // You can change the verdict using UpgradeVerdict() as shown below.
             // UpgradeVerdict(Verdict.Pass);
@@ -275,7 +275,8 @@ root@192.168.1.2's password:
             RunChildSteps(); //If the step supports child steps.
 
             UpgradeVerdict(Verdict.Pass);
-            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, this.Verdict.ToString(), " ", " ", " ", " ", " ", " ");
+            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, this.Verdict.ToString(), " ", this.Verdict.ToString(), " ","EQ", "TRUE", "Bool");
+
         }
     }
 
@@ -331,7 +332,7 @@ root@192.168.1.2's password:
             //if (PingTestStatus)
             //{
             UpgradeVerdict(Verdict.Pass);
-            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, Verdict.ToString(), " ", Verdict.ToString(), Verdict.ToString(), "EQ", "TRUE", " ");
+            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, Verdict.ToString(), " ", Verdict.ToString(),"", "EQ", "TRUE", "Bool");
 
 
             //}
@@ -455,7 +456,7 @@ root@192.168.1.2's password:
             //{
             // UpgradeVerdict(Verdict.Fail);
             // }
-            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, this.Verdict.ToString(), " ", resultStatus.ToString(), "TRUE", "EQ", "TRUE", " ");
+            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, this.Verdict.ToString(), " ", resultStatus.ToString(), "", "EQ", "TRUE", "Bool");
 
         }
 
@@ -502,7 +503,7 @@ root@192.168.1.2's password:
             RunChildSteps(); //If the step supports child steps
 
             UpgradeVerdict(Verdict.Pass);
-            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, this.Verdict.ToString(), " ", " ", " ", " ", " ", " ");
+            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, this.Verdict.ToString(), " ", this.Verdict.ToString(), " ", "EQ", "TRUE", "Bool");
         }
 
     }
@@ -606,7 +607,7 @@ root@192.168.1.2's password:
             // If no verdict is used, the verdict will default to NotSet.
             // You can change the verdict using UpgradeVerdict() as shown below.
             UpgradeVerdict(Verdict.Pass);
-            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, this.Verdict.ToString(), " ", returnValue.ToString(), "EQ", "TRUE", " ", " ");
+            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, this.Verdict.ToString(), " ", returnValue.ToString(), "","EQ", "TRUE", "Bool");
         }
     }
 
@@ -706,7 +707,7 @@ root@192.168.1.2's password:
             {
                 UpgradeVerdict(Verdict.Fail);
             }
-            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, this.Verdict.ToString(), CAResult.ToString(), " ", "TRUE", "EQ", "TRUE", " ");
+            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, this.Verdict.ToString(),"", CAResult.ToString(),"", "EQ", "TRUE", "Bool");
 
             //UpgradeVerdict(Verdict.Pass);
         }
