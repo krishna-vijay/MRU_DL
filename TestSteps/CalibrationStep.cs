@@ -134,10 +134,10 @@ namespace RjioMRU.TestSteps
         bool temperatureVerdict = true;
         bool dpdFBpowerVerdict = true;
         [Display("DPD Feedback Power Lower Limit", Order: 140, Description: "DPD Power Lower Limit")]
-        public double DPDPowerFactorLowerLimit { set; get; }
+        public double DPDFeedBackPowerLowerLimit { set; get; }
 
         [Display("DPD Feedback Power Higher Limit", Order: 150, Description: "DPD Power Higher Limit")]
-        public double DPDPowerFactorHigherLimit { set; get; }
+        public double DPDFeedbackPowerHigherLimit { set; get; }
 
         [Display("DPD Feedback Power attempts", Order: 160, Description: "DPD Power Factor Attempts")]
         public int DpdIterationNumber { get; set; } = 2;
@@ -334,7 +334,7 @@ namespace RjioMRU.TestSteps
 
                                     MRU_DUT.Dr49_DPD_Measurement(iteration, out txvalue, out rxvalue, MRU_DUT.GetDR49Ch1ComObj());
 
-                                    if (dpdFBpowerVerdict = genericFunctions.CheckPowerFactorLimit(rxvalue, DPDPowerFactorHigherLimit, DPDPowerFactorLowerLimit))
+                                    if (dpdFBpowerVerdict = genericFunctions.CheckPowerFactorLimit(rxvalue, DPDFeedbackPowerHigherLimit, DPDFeedBackPowerLowerLimit))
                                     {
                                         dpdMeasDone = true;
                                         break;
@@ -608,7 +608,7 @@ namespace RjioMRU.TestSteps
                 MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName + " Chain " + iteration + " ACLR R2", ACLR_R2OK ? "PASS" : "FAIL", " ", ACPValues[3].ToString(), ACLR_R2_Limit.ToString(), "LE", " ", "dBc");
                 MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName + " Chain " + iteration + " Feedback Power", " ", " ", rxvalue.ToString(), " ".ToString(), " ", " ", " ");
 
-                MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName + " Chain " + iteration + " Power Factor", dpdFBpowerVerdict.ToString(), DPDPowerFactorLowerLimit.ToString(), powerFactorValues[iteration].ToString(), DPDPowerFactorHigherLimit.ToString(), "GELE", " ", " ");
+                MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName + " Chain " + iteration + " Power Factor", dpdFBpowerVerdict.ToString(), DPDFeedBackPowerLowerLimit.ToString(), powerFactorValues[iteration].ToString(), DPDFeedbackPowerHigherLimit.ToString(), "GELE", " ", " ");
                 MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName + " Chain " + iteration + " Temperature ", temperatureVerdict.ToString(), TemperatureLowLimit.ToString(), Temperature, TemperatureHighLimit.ToString(), "GELE", " ", "Deg C");
 
                 HexValues4DSAWriging[iteration] = HexValues[iteration];
@@ -826,7 +826,7 @@ namespace RjioMRU.TestSteps
         public double TemperatureLowLimit { get => temperatureLowLimit; set => temperatureLowLimit = value; }
 
         bool temperatureVerdict = true;
-        bool dpdFBpowerVerdict = true;
+        bool dpdFBpowerFactorVerdict = true;
 
         [Display("DPD Feedback Power Lower Limit", Order: 140, Description: "DPD Power Lower Limit")]
         public double DPDPowerFactorLowerLimit { set; get; }
@@ -1019,7 +1019,7 @@ namespace RjioMRU.TestSteps
                                     TapThread.Sleep(1000);
 
                                     MRU_DUT.Dr49_DPD_Measurement(iteration, out txvalue, out rxvalue, MRU_DUT.GetDR49Ch2ComObj());
-                                    if (dpdFBpowerVerdict = genericFunctions.CheckPowerFactorLimit(rxvalue, DPDPowerFactorHigherLimit, DPDPowerFactorLowerLimit))
+                                    if (dpdFBpowerFactorVerdict = genericFunctions.CheckPowerFactorLimit(rxvalue, DPDPowerFactorHigherLimit, DPDPowerFactorLowerLimit))
                                     {
                                         dpdMeasDone = true;
                                         break;
@@ -1268,8 +1268,8 @@ namespace RjioMRU.TestSteps
                 MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName + " Chain " + iteration + " ACLR R1", ACLR_R1OK ? "PASS" : "FAIL", " ", ACPValues[2].ToString(), ACLR_R1_Limit.ToString(), "LE", " ", "dBc");
 
                 MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName + " Chain " + iteration + " ACLR R2", ACLR_R2OK ? "PASS" : "FAIL", " ", ACPValues[3].ToString(), ACLR_R2_Limit.ToString(), "LE", " ", "dBc");
-                MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName + " Chain " + iteration + " Feedback Power", dpdFBpowerVerdict.ToString(), DPDPowerFactorLowerLimit.ToString(), rxvalue.ToString(), DPDPowerFactorHigherLimit.ToString(), "GELE", " ", " ");
-                MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName + " Chain " + iteration + " Power Factor", " ", " ", powerFactorValues[iteration].ToString(), " ".ToString(), " ", " ", " ");
+                MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName + " Chain " + iteration + " Feedback Power","".ToString(), "".ToString(), rxvalue.ToString(), "".ToString(), "GELE", " ", " ");
+                MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName + " Chain " + iteration + " Power Factor", dpdFBpowerFactorVerdict.ToString(), DPDPowerFactorLowerLimit.ToString(), powerFactorValues[iteration].ToString(), DPDPowerFactorHigherLimit.ToString(), " ", " ", " ");
 
                 MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName + " Chain " + iteration + " Temperature ", temperatureVerdict.ToString(), TemperatureLowLimit.ToString(), Temperature, TemperatureHighLimit.ToString(), "GELE", " ", "Deg C");
 
