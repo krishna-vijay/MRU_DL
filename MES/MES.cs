@@ -922,7 +922,7 @@ namespace RjioMRU
         {
 
             //MES_CSV.GroupName = GroupName;
-            MES_CSV.Equipment_Number = EquipmentNumber;
+            MES_CSV.Employee_IDNumber = Employee;
             MES_CSV.Slot = Slot;
             MES_CSV.Credentials = Credentials;
             MES_CSV.Operation_Mode = Enum.GetName(typeof(OperationCodes), OperationMode);

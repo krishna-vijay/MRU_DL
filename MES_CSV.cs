@@ -22,7 +22,7 @@ namespace RjioMRU
 
 
         public static int GroupName { get; set; } = 0;
-        public static string Equipment_Number { get; set; } = "";
+        public static string Employee_IDNumber { get; set; } = "";
         public static string Equipment_ID {  get; set; } = "";
         public static string Slot { get; set; } = "";
         public static string Credentials { get; set; } = "";
@@ -79,7 +79,7 @@ namespace RjioMRU
         public static void WrteMESCSVFile()
         {
             string csv = string.Join(Environment.NewLine, MRU_MES_List);
-            File.WriteAllText(System.IO.Path.Combine( MES_CSV_FilePath,MES_CSV.MRU_Serial_number+"_"+MES_CSV.Equipment_Number+"_"+DateTime.Now.ToString("yyyyMMddHHmmss"))+".CSV", csv);
+            File.WriteAllText(System.IO.Path.Combine( MES_CSV_FilePath,MES_CSV.MRU_Serial_number+"_"+MES_CSV.Employee_IDNumber+"_"+DateTime.Now.ToString("yyyyMMddHHmmss"))+".CSV", csv);
         }
     }
 }
