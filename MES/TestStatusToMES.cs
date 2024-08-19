@@ -61,6 +61,8 @@ namespace RjioMRU.MES
                 var value1 = MesResource.SingleSerialFail(ServerURL.Value, MesResource.ClientID,MesResource.Employee, SerialNumber.Value,MesResource.Station);
                 Log.Info("Single Serial Fail:  " + value1.Result.ToString());
             }
+            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, Verdict.ToString(), " ", this.Verdict == Verdict.Pass ? "TRUE" : "FALSE", "", "EQ", "TRUE", "Bool");
+
         }
     }
 }

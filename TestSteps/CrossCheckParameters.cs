@@ -84,7 +84,9 @@ namespace RjioMRU.TestSteps
             else
             {
                 UpgradeVerdict(Verdict.Fail);
-            }   
+            }
+            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, Verdict.ToString(), " ", this.Verdict == Verdict.Pass ? "TRUE" : "FALSE", "", "EQ", "TRUE", "Bool");
+
             // ToDo: Add test case code.
             RunChildSteps(); //If the step supports child steps.
 

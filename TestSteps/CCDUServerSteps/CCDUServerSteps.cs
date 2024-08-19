@@ -530,6 +530,8 @@ root@192.168.1.2's password:
             RunChildSteps(); //If the step supports child steps.
 
             UpgradeVerdict(Verdict.Pass);
+            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, Verdict.ToString(), " ", this.Verdict == Verdict.Pass ? "TRUE" : "FALSE", "", "EQ", "TRUE", "Bool");
+
             // If no verdict is used, the verdict will default to NotSet.
             // You can change the verdict using UpgradeVerdict() as shown below.
             // UpgradeVerdict(Verdict.Pass);

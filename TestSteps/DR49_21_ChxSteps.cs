@@ -331,6 +331,7 @@ End of MRU-EEPROM Read and Write Utility
             Log.Info($"RFB Serial number for 49Dr Channel {ChannelsSelection} is " + RFBReadValue);
 
 
+            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, Verdict.ToString(), " ", this.Verdict == Verdict.Pass ? "TRUE" : "FALSE", "", "EQ", "TRUE", "Bool");
 
             // ToDo: Add test case code.
             RunChildSteps(); //If the step supports child steps.
@@ -1414,6 +1415,7 @@ End of MRU-EEPROM Read and Write Utility
                 UpgradeVerdict(Verdict.Fail);
             }
 
+            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, Verdict.ToString(), " ", this.Verdict == Verdict.Pass ? "TRUE" : "FALSE", "", "EQ", "TRUE", "Bool");
 
             // ToDo: Add test case code.
             RunChildSteps(); //If the step supports child steps.
