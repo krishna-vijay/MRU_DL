@@ -830,7 +830,7 @@ End of MRU-EEPROM Read and Write Utility
             {
                 UpgradeVerdict(Verdict.Fail);
             }
-            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, Verdict.ToString(), PingTestStatus ? "TRUE" : "", Verdict.ToString(), PingTestStatus.ToString(), "EQ", "TRUE", " ");
+            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, this.Verdict== Verdict.Pass?"PASS":"FAIL", "", Verdict== Verdict.Pass?"TRUE":"FALSE","","EQ", "TRUE", "Bool");
 
             // If no verdict is used, the verdict will default to NotSet.
             // You can change the verdict using UpgradeVerdict() as shown below.
@@ -1624,7 +1624,7 @@ End of MRU-EEPROM Read and Write Utility
                     return;
                 }
             }
-            var stepStatus = StringOk != 0 & string2OK != 0;
+            var stepStatus = StringOk == 0 & string2OK == 0;
             UpgradeVerdict(Verdict.Pass);
             MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, Verdict.ToString(), " ", stepStatus?"TRUE":"FALSE","","EQ","TRUE" ,"Bool");
 
