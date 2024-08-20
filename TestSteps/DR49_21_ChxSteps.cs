@@ -645,7 +645,7 @@ End of MRU-EEPROM Read and Write Utility
         }
     }
 
-    [Display("DR21 ap calib fundtion", Group: "RjioMRU", Description: "ap_calib --set-rx and tx -cal-en 0 0")]
+    [Display("DR21 ap calib function", Group: "RjioMRU", Description: "ap_calib --set-rx and tx -cal-en 0 0")]
     public class DR21_AP_CALIB_Functions : TestStep
     {
         MRU_Rjio mruObj;
@@ -658,7 +658,8 @@ End of MRU-EEPROM Read and Write Utility
         public override void Run()
         {
             MruObj.Dr21_ap_calib_Rx_Tx_Functions();
-            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, Verdict.ToString(), " ", this.Verdict == Verdict.Pass ? "TRUE" : "FALSE", "TRUE", "EQ", "TRUE", " ");
+           UpgradeVerdict(Verdict.Pass);    
+            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, Verdict.ToString(), "", this.Verdict == Verdict.Pass ? "TRUE" : "FALSE", "", "EQ", "TRUE", "Bool");
 
 
 
@@ -1198,7 +1199,7 @@ End of MRU-EEPROM Read and Write Utility
             {
                 UpgradeVerdict(Verdict.Fail);
             }
-            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, Verdict.ToString(), " ", this.Verdict == Verdict.Pass ? "TRUE" : "FALSE", "TRUE", "EQ", "TRUE", " ");
+            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, Verdict.ToString(), " ", this.Verdict == Verdict.Pass ? "TRUE" : "FALSE", "", "EQ", "TRUE", "Bool");
 
             // ToDo: Add test case code.
             RunChildSteps(); //If the step supports child steps.
@@ -1625,7 +1626,7 @@ End of MRU-EEPROM Read and Write Utility
             }
             var stepStatus = StringOk != 0 & string2OK != 0;
             UpgradeVerdict(Verdict.Pass);
-            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, Verdict.ToString(), " ", stepStatus?"MATCHING":"NOT MATCHING","","EQ","MATCHING" ,"Bool");
+            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, Verdict.ToString(), " ", stepStatus?"TRUE":"FALSE","","EQ","TRUE" ,"Bool");
 
             // ToDo: Add test case code.
             RunChildSteps(); //If the step supports child steps.

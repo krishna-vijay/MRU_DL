@@ -97,8 +97,8 @@ namespace RjioMRU
             MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, Verdict.ToString(), " ", serialNumber.Value, " ", "EQ", serialNumber.Value, "Bool");
             MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, Verdict.ToString(), " ", MacID, " ", "EQ", MacID, "Bool");
             MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, Verdict.ToString(), " ", ProductID, " ", "EQ", ProductID, "Bool");
-            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, Verdict.ToString(), " ", pcbSerialNumber_HSTB, " ", "EQ", pcbSerialNumber_HSTB, " ");
-            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, Verdict.ToString(), " ", RFBSerialNumber, " ", "EQ", RFBSerialNumber, " ");
+            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, Verdict.ToString(), " ", pcbSerialNumber_HSTB, " ", "EQ", pcbSerialNumber_HSTB, "Bool");
+            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, Verdict.ToString(), " ", RFBSerialNumber, " ", "EQ", RFBSerialNumber, "Bool");
             RunChildSteps(); //If the step supports child steps.
         }
     }
