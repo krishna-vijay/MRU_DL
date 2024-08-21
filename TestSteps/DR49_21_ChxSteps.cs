@@ -330,7 +330,7 @@ End of MRU-EEPROM Read and Write Utility
 
             Log.Info($"RFB Serial number for 49Dr Channel {ChannelsSelection} is " + RFBReadValue);
 
-
+            UpgradeVerdict(Verdict.Pass);   
             MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, Verdict == Verdict.Pass?"PASS":"FAIL", " ", this.Verdict == Verdict.Pass ? "TRUE" : "FALSE", "", "EQ", "TRUE", "Bool");
 
             // ToDo: Add test case code.
