@@ -70,13 +70,37 @@ namespace RjioMRU
                     componentArray[i] = componentDataObj.Result.data[i];
                 }
 
-                MacID = componentArray[(int)mesSelectoin.MacEnum].component_id.ToString();
-                ProductID = componentArray[(int)mesSelectoin.productIDEnum].component_id.ToString();
-                pcbSerialNumber_HSTB = componentArray[(int)mesSelectoin.PCBSerialNumber_hstbEnum].component_id.ToString();
-                RFBSerialNumber = componentArray[(int)mesSelectoin.rffeEnum].component_id.ToString();
+                foreach (var componinetitem in componentArray)
+                {
+                    if (componinetitem.ref_designator== "MAC1")
+                    {
+                        MacID = componinetitem.component_id.ToString();
+                    }
 
+                    if (componinetitem.ref_designator == "PRODUCT CODE")
+                    {
+                        ProductID = componinetitem.component_id.ToString();
+                    }
+                    
+                    if (componinetitem.ref_designator == "SACN 70341")
+                    {
+                        pcbSerialNumber_HSTB = componinetitem.component_id.ToString();
+                    }
+                    
+                    if (componinetitem.ref_designator == "SCAN MRURF PCBA")
+                    {
+                        RFBSerialNumber = componinetitem.component_id.ToString();
+                    }
 
-                if (componentDataObj.Result.success)
+                }
+                Log.Info("MAC ID: " + MacID + " Product ID: " + ProductID + " PCB Serial Number(HSTB): " + PCBSerialNumber_HSTB + " RFB Serial Number: " + RFBSerialNumber);
+                //MacID = componentArray[(int)mesSelectoin.MacEnum].component_id.ToString();
+                //ProductID = componentArray[(int)mesSelectoin.productIDEnum].component_id.ToString();
+                //pcbSerialNumber_HSTB = componentArray[(int)mesSelectoin.PCBSerialNumber_hstbEnum].component_id.ToString();
+                //RFBSerialNumber = componentArray[(int)mesSelectoin.rffeEnum].component_id.ToString();
+                var Status = string.IsNullOrEmpty(MacID.Trim()) && string.IsNullOrEmpty(ProductID.Trim()) && string.IsNullOrEmpty(pcbSerialNumber_HSTB.Trim()) && string.IsNullOrEmpty(RFBSerialNumber.Trim());
+
+                if (Status)
                 {
                     UpgradeVerdict(Verdict.Pass);
                 }

@@ -976,7 +976,7 @@ namespace RjioMRU
         public List<Component> data { get; set; }
     }
 
-    public class Component
+ /*   public class Component  ///////////////////////Previous one 
     {
 
         public int serial_key { get; set; }
@@ -991,7 +991,30 @@ namespace RjioMRU
         public int level { get; set; }
         public string path { get; set; }
         public bool cycle { get; set; }
+      
+    }*/
+    
+    public class Component
+    {
+
+        public int serial_key { get; set; }
+        public string serial_number { get; set; }
+        public int part_key { get; set; }
+        public string parent_part_number { get; set; }
+        public string component_id { get; set; }
+        public int component_part_key { get; set; }
+        public string ref_designator { get; set; }
+        public int removed { get; set; }
+        public int level { get; set; }
+        public string path { get; set; }
+        public bool cycle { get; set; }
+        public string component_part_number { get; set; }
+
     }
+
+   
+
+
     public enum OperationCodes
     {
         PRODUCTION, ENGINEERING, CALIBRATION, SKIPPING, TESTING
