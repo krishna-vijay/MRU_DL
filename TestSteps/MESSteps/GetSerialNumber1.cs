@@ -63,7 +63,7 @@ namespace RjioMRU
             try
             {
                 var componentDataObj = MesResource.GetMesInformationResponse(Serialnumber.Value);
-                Component[] componentArray = new Component[5];
+                Component[] componentArray = new Component[9];
 
                 for (int i = 0; i < componentDataObj.Result.data.Count; i++)
                 {
@@ -98,7 +98,7 @@ namespace RjioMRU
                 //ProductID = componentArray[(int)mesSelectoin.productIDEnum].component_id.ToString();
                 //pcbSerialNumber_HSTB = componentArray[(int)mesSelectoin.PCBSerialNumber_hstbEnum].component_id.ToString();
                 //RFBSerialNumber = componentArray[(int)mesSelectoin.rffeEnum].component_id.ToString();
-                var Status = string.IsNullOrEmpty(MacID.Trim()) && string.IsNullOrEmpty(ProductID.Trim()) && string.IsNullOrEmpty(pcbSerialNumber_HSTB.Trim()) && string.IsNullOrEmpty(RFBSerialNumber.Trim());
+                var Status = (!string.IsNullOrEmpty(MacID.Trim())) && (!string.IsNullOrEmpty(ProductID.Trim())) && (!string.IsNullOrEmpty(pcbSerialNumber_HSTB.Trim())) &&(! string.IsNullOrEmpty(RFBSerialNumber.Trim()));
 
                 if (Status)
                 {
