@@ -59,11 +59,17 @@ namespace RjioMRU
         [Display("CSV Storage Folder", Description: "Enter the CSV Storage Folder", Group: "CSV Informations", Order: 4)]
         [DirectoryPath()]
         public string CsvStorageFolder { get => csvStorageFolder; set => csvStorageFolder = value; }
+        
+        
+        [Display("CSV Storage Folder 2", Description: "Enter the CSV Storage Folder", Group: "CSV Informations", Order: 4)]
+        [DirectoryPath()]
+        public string CsvStorageFolder2 { get => csvStorageFolder2; set => csvStorageFolder2 = value; }
 
         string equipmentNumber = string.Empty;
         [Display("Equipment Number", Description: "Enter the Equipment Number", Group: "CSV Informations", Order: 5)]
         public string EquipmentNumber { get => equipmentNumber; set => equipmentNumber = value; }
         string csvStorageFolder = string.Empty;
+        string csvStorageFolder2 = string.Empty;
 
         //string groupName = string.Empty;
         //[Display("Group Name", Description: "Enter the Group Name", Group: "CSV Informations", Order: 6)]
@@ -930,6 +936,7 @@ namespace RjioMRU
             MES_CSV.Overall_Defect_Code = OverallDefectCode;
 
             MES_CSV.MES_CSV_FilePath = CsvStorageFolder;
+            MES_CSV.MES_CSV_FilePath1 = CsvStorageFolder2;
             MES_CSV.PART_Number = PartNumber;
             MES_CSV.Equipment_ID = Equipment_ID;
             //authenticationEncoded = System.Convert.ToBase64String(Encoding.GetEncoding("ISO-8859-1").GetBytes(Username + ":" + Password));

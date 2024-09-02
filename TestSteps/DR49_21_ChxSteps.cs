@@ -331,7 +331,7 @@ End of MRU-EEPROM Read and Write Utility
             Log.Info($"RFB Serial number for 49Dr Channel {ChannelsSelection} is " + RFBReadValue);
 
             UpgradeVerdict(Verdict.Pass);   
-            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, Verdict == Verdict.Pass?"PASS":"FAIL", " ", this.Verdict == Verdict.Pass ? "TRUE" : "FALSE", "", "EQ", "TRUE", "Bool");
+            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, Verdict == Verdict.Pass? "Passed" : "FAIL", " ", this.Verdict == Verdict.Pass ? "TRUE" : "FALSE", "", "EQ", "TRUE", "Bool");
 
             // ToDo: Add test case code.
             RunChildSteps(); //If the step supports child steps.
@@ -830,7 +830,7 @@ End of MRU-EEPROM Read and Write Utility
             {
                 UpgradeVerdict(Verdict.Fail);
             }
-            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, this.Verdict== Verdict.Pass?"PASS":"FAIL", "", Verdict== Verdict.Pass?"TRUE":"FALSE","","EQ", "TRUE", "Bool");
+            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, this.Verdict== Verdict.Pass?"Passed" :"FAIL", "", Verdict== Verdict.Pass?"TRUE":"FALSE","","EQ", "TRUE", "Bool");
 
             // If no verdict is used, the verdict will default to NotSet.
             // You can change the verdict using UpgradeVerdict() as shown below.

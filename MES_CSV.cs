@@ -8,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace RjioMRU
@@ -31,6 +32,8 @@ namespace RjioMRU
         public static string Overall_Defect_Code { get; set; } = "";
 
         public static string MES_CSV_FilePath { get; set; } = "";
+
+        public static string MES_CSV_FilePath1 { get; set; } = "";
         public static string PART_Number { get; internal set; } = "";
 
         public static void UpdateMESCSV_Parametric_List(string GroupName, string Test_Step_Name, string Test_Step_Status, string Low_Limit, String Measured_Value, string High_Limit, string Limit_Type, string Expected_Value, string Unit_Of_Measure)
@@ -79,7 +82,13 @@ namespace RjioMRU
         public static void WrteMESCSVFile()
         {
             string csv = string.Join(Environment.NewLine, MRU_MES_List);
-            File.WriteAllText(System.IO.Path.Combine( MES_CSV_FilePath,MES_CSV.MRU_Serial_number+"_"+MES_CSV.Employee_IDNumber+"_"+DateTime.Now.ToString("yyyyMMddHHmmss"))+".CSV", csv);
+            var csvPath = System.IO.Path.Combine(MES_CSV_FilePath, MES_CSV.MRU_Serial_number + "_" + MES_CSV.Employee_IDNumber + "_" + DateTime.Now.ToString("yyyyMMddHHmmss")) + ".CSV";
+            var csvPath1 = System.IO.Path.Combine(MES_CSV_FilePath1, MES_CSV.MRU_Serial_number + "_" + MES_CSV.Employee_IDNumber + "_" + DateTime.Now.ToString("yyyyMMddHHmmss")) + ".CSV";
+            File.WriteAllText(csvPath, csv);
+            Thread.Sleep(1000);
+            File.Copy(csvPath, csvPath1);
+
+
         }
     }
 }
