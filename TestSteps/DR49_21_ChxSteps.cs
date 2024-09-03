@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Runtime.Remoting.Channels;
 using System.Text;
 using System.Windows.Forms;
 //rj-dsa-init 16 0x7F 0x7F 0x7F 0x7F 0x7F 0x7F 0x7F 0x7F 0x7F 0x7F 0x7F 0x7F 0x7F 0x7F 0x7F 0x7F 16 0x0f 0x0f 0x0f 0x0f 0x0f 0x0f 0x0f 0x0f 0x0f 0x0f 0x0f 0x0f 0x0f 0x0f 0x0f 0x0f 2 1200 1611
@@ -198,7 +199,72 @@ namespace RjioMRU.TestSteps
             //}
 
             MruObj.Dr49_CH_WritePowerFactorToEEPROM(AutomaticDSAWriting ? (ChannelsSelection == Channels.Channel1 ? CalibrationStep_CH1.powerFactorValues : CalibrationStep_CH2.powerFactorValues) : (ChannelsSelection == Channels.Channel1 ? channelValues.PowerFactorHexValuesCh1 : channelValues.PowerFactorHexValuesCh2), ((channelsSelection == Channels.Channel1 ? MruObj.GetDR49Ch1ComObj() : MruObj.GetDR49Ch2ComObj())));
-            Log.Info("DSA Values has been update in EEPROM of Channel 1");
+            Log.Info("DSA Values has been update in EEPROM of Channel "+ChannelsSelection);
+            // ToDo: Add test case code.
+            RunChildSteps(); //If the step supports child steps.
+
+            // If no verdict is used, the verdict will default to NotSet.
+            // You can change the verdict using UpgradeVerdict() as shown below.
+            // UpgradeVerdict(Verdict.Pass);
+        }
+    }
+
+
+
+    [Display("DR49 Write Temperature to EEPROM", Group: "RjioMRU", Description: "Insert a description here")]
+    public class DR49_Write_Temperature: TestStep
+    {
+        #region Settings
+        //Input<int> dsaHigherLimit ;
+        //Input<int> dsaLowerLimit ;
+        public enum Channels
+        {
+            Channel1 = 1,
+            Channel2
+        };
+        Channels channelsSelection;
+        MRU_Rjio mruObj;
+        private string[] TemperaruerValues = new string[16] { "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "" };
+        bool automaticDSAWriting = false;
+        // ToDo: Add property here for each parameter the end user should be able to change
+        #endregion
+
+        public DR49_Write_Temperature()
+        {
+            //DsaHigherLimit = new Input<int>();
+            //DsaLowerLimit = new Input<int>();
+            // ToDo: Set default values for properties / settings.
+        }
+
+        public MRU_Rjio MruObj { get => mruObj; set => mruObj = value; }
+        //[Display("Select Automatic and Manual ", Order: 0, Description: "Enter Hex Values for DSA")]
+        //public bool AutomaticDSAWriting { get => automaticDSAWriting; set => automaticDSAWriting = value; }
+
+        [Display("Select Channel", Order: 0, Description: "Select Channel")]
+        public Channels ChannelsSelection { get => channelsSelection; set => channelsSelection = value; }
+
+        //[Display("DSA Lower Limit", Order: 0, Description: "Enter DSA Lower Limit")]
+        //public Input<int> DsaLowerLimit { get => dsaLowerLimit; set => dsaLowerLimit = value; }
+        //[Display("DSA Higher Limit", Order: 0, Description: "Enter DSA Higher Limit")]
+        //public Input<int> DsaHigherLimit { get => dsaHigherLimit; set => dsaHigherLimit = value; }
+
+        public override void Run()
+        {
+            DSACHexValues channelValues = new DSACHexValues();
+            //foreach (var item in (int)ChannelsSelection==1?CalibrationStep_CH1.HexValues4DSAWriging:CalibrationStep_CH2.HexValues4DSAWriging)
+            //{
+            //    //if (item>DsaHigherLimit.Value||item<DsaLowerLimit.Value)
+            //    //{
+            //    //   var messageDecision = MessageBox.Show("DSA Value is out of range :Lower Limit ="+DsaLowerLimit.Value +" DSA Higher Limit :" + DsaHigherLimit.Value +" Measured DSA :"+item +", Do you want to exit?","DSA Out of Range",MessageBoxButtons.YesNo);
+            //    //    if (messageDecision == DialogResult.Yes)
+            //    //    {
+            //    //        return;
+            //    //    }
+            //    //}
+            //}
+
+            MruObj.Dr49_CH_WriteTemperatureToEEPROM((ChannelsSelection == Channels.Channel1 ? CalibrationStep_CH1.ChainTemperatureValues : CalibrationStep_CH2.ChainTemperatureValues), ((channelsSelection == Channels.Channel1 ? MruObj.GetDR49Ch1ComObj() : MruObj.GetDR49Ch2ComObj())));
+            Log.Info("temperature Values has been update in EEPROM of Channel "+ChannelsSelection);
             // ToDo: Add test case code.
             RunChildSteps(); //If the step supports child steps.
 

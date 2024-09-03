@@ -50,6 +50,7 @@ namespace RjioMRU.TestSteps
         string[] strHexValues = new string[16];
         public int[] HexValues = new int[16];
         public static int[] HexValues4DSAWriging = new int[16] { 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F };
+        public static string[] ChainTemperatureValues = new string[16] { "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "" };
         public static string[] powerFactorValues = new string[16] { "0x1F", "0x1F", "0x1F", "0x1F", "0x1F", "0x1F", "0x1F", "0x1F", "0x1F", "0x1F", "0x1F", "0x1F", "0x1F", "0x1F", "0x1F", "0x1F" };
 
         double[] CableLosses = new double[16];
@@ -389,7 +390,8 @@ namespace RjioMRU.TestSteps
                             string CalculatedPowerFactor = MRU_DUT.calcualtePowerFactor(MeasuredPowerValue, rxvalue, txvalue, iteration, "CH1");
                             string Temperature = MRU_DUT.Dr49_CH_ReadTemperature(MRU_DUT.GetDR49Ch1ComObj(), iteration, "rj-dac-tmp -mru_dac_num");
                             temperatureVerdict = genericFunctions.CheckTemperature(Convert.ToDouble(Temperature), TemperatureHighLimit, TemperatureLowLimit);
-                            Log.Info("Temperature measured CH1:" + Temperature);
+                            ChainTemperatureValues[iteration] = Temperature;
+                            Log.Info("Temperature measured CH1 chain no :" + iteration + " Is "+ Temperature); ;
                             //string CalculatedPowerFactor = calcualtePowerFactor(MeasuredPowerValue,rxvalue, txvalue, iteration, powerFactorValues);
 
 
@@ -768,6 +770,8 @@ namespace RjioMRU.TestSteps
         public int[] HexValues = new int[16];
         public static int[] HexValues4DSAWriging = new int[16] { 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F };
         public static string[] powerFactorValues = new string[16] { "0x1F", "0x1F", "0x1F", "0x1F", "0x1F", "0x1F", "0x1F", "0x1F", "0x1F", "0x1F", "0x1F", "0x1F", "0x1F", "0x1F", "0x1F", "0x1F" };
+        public static string[] ChainTemperatureValues = new string[16] { "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "" };
+
 
         double[] CableLosses = new double[16];
         private string dSA_CableLossFile = "DSA_CABLELOSS_Ch2.csv";
@@ -1065,7 +1069,10 @@ namespace RjioMRU.TestSteps
 
                             string CalculatedPowerFactor = MRU_DUT.calcualtePowerFactor(MeasuredPowerValue, rxvalue, txvalue, iteration, "CH2");
                             string Temperature = MRU_DUT.Dr49_CH_ReadTemperature(MRU_DUT.GetDR49Ch2ComObj(), iteration, "rj-dac-tmp -mru_dac_num");
+                            ChainTemperatureValues[iteration] = Temperature;
+
                             temperatureVerdict = genericFunctions.CheckTemperature(Convert.ToDouble(Temperature), TemperatureHighLimit, TemperatureLowLimit);
+
 
                             Log.Info("Temperature measured CH2:" + Temperature);
                             Log.Info("CH2 DSA Command Used: " + DSACommand);

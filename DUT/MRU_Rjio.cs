@@ -2364,14 +2364,22 @@ namespace RjioMRU
 
 
 
-        internal void Dr49_CH_WritePowerFactorToEEPROM(string[] hexValues, SerialPort dR49Ch1ComObj)
+        internal void Dr49_CH_WritePowerFactorToEEPROM(string[] hexValues, SerialPort dR49ChComObj)
         {
-            dR49Ch1ComObj.ReadExisting();
+            dR49ChComObj.ReadExisting();
             string command4EEPROM_PowerFactor = "rj-rfeeprom-updater -upd_pwr_fact_tx " + hexValues[0] + "," + hexValues[1] + "," + hexValues[2] + "," + hexValues[3] + "," + hexValues[4] + "," + hexValues[5] + "," + hexValues[6] + "," + hexValues[7] + "," + hexValues[8] + "," + hexValues[9] + "," + hexValues[10] + "," + hexValues[11] + "," + hexValues[12] + "," + hexValues[13] + "," + hexValues[14] + "," + hexValues[15];
             Log.Info(command4EEPROM_PowerFactor);
-            dR49Ch1ComObj.WriteLine(command4EEPROM_PowerFactor);
+            dR49ChComObj.WriteLine(command4EEPROM_PowerFactor);
 
 
+        }
+        
+        internal void Dr49_CH_WriteTemperatureToEEPROM(string[] TemperatureValues, SerialPort dR49ChComObj)
+        {
+            dR49ChComObj.ReadExisting();
+            string command4EEPROM_Temperarure= "rj-rfeeprom-updater -upd_ref_temp " + TemperatureValues[0] + "," + TemperatureValues[1] + "," + TemperatureValues[2] + "," + TemperatureValues[3] + "," + TemperatureValues[4] + "," + TemperatureValues[5] + "," + TemperatureValues[6] + "," + TemperatureValues[7] + "," + TemperatureValues[8] + "," + TemperatureValues[9] + "," + TemperatureValues[10] + "," + TemperatureValues[11] + "," + TemperatureValues[12] + "," + TemperatureValues[13] + "," + TemperatureValues[14] + "," + TemperatureValues[15];
+            Log.Info(command4EEPROM_Temperarure);
+            dR49ChComObj.WriteLine(command4EEPROM_Temperarure);
         }
 
         internal string Dr49_CH_ReadTemperature(SerialPort dR49ChComObj, int chainNumber, string tempScript = "rj-dac-tmp -mru_dac_num")
