@@ -248,7 +248,7 @@ namespace RjioMRU.TestSteps
                         else
                         {
                             CalibrationDone = true;
-                          
+
 
                         }
 
@@ -377,7 +377,7 @@ namespace RjioMRU.TestSteps
                             }
                             if (resultStrings.Length < 5)
                             {
-                                MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, "FALSE", "FAIL", "FAIL", "FAIL", "EQ", "TRUE", "NA");
+                                MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, "FALSE", "Failed", "Failed", "Failed", "EQ", "TRUE", "NA");
 
                                 continue;
                             }
@@ -616,23 +616,23 @@ namespace RjioMRU.TestSteps
         {
             if (((ChannelPowerOk && ACLR_L1OK && ACLR_L2OK && ACLR_R1OK && ACLR_R2OK && FREQERROK && EVMOK) || AttemptNumber > 2) || !temperatureVerdict)
             {
-                MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName + " Chain " + iteration + " Channel Power", ChannelPowerOk ? "Passed" : "FAIL", (ChannelPower - ChannelPowerLimit).ToString(), MeasuredPowerValue.ToString(), (ChannelPower + ChannelPowerLimit).ToString(), "GELE", "", "dBm");
+                MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName + " Chain " + iteration + " Channel Power", ChannelPowerOk ? "Passed" : "Failed", (ChannelPower - ChannelPowerLimit).ToString(), MeasuredPowerValue.ToString(), (ChannelPower + ChannelPowerLimit).ToString(), "GELE", "", "dBm");
 
-                MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName + " Chain " + iteration + " EVM", EVMOK ? "Passed" : "FAIL", " ", Convert.ToDouble(resultStrings[1]).ToString(), EVMLimit.ToString(), "LE", " ", "%");
+                MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName + " Chain " + iteration + " EVM", EVMOK ? "Passed" : "Failed", " ", Convert.ToDouble(resultStrings[1]).ToString(), EVMLimit.ToString(), "LE", " ", "%");
 
-                MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName + " Chain " + iteration + " Frequency Error", FREQERROK ? "Passed" : "FAIL", (fREQErrorLimit * -1).ToString(), Convert.ToDouble(resultStrings[3]).ToString(), fREQErrorLimit.ToString(), "GELE", " ", "Hz");
+                MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName + " Chain " + iteration + " Frequency Error", FREQERROK ? "Passed" : "Failed", (fREQErrorLimit * -1).ToString(), Convert.ToDouble(resultStrings[3]).ToString(), fREQErrorLimit.ToString(), "GELE", " ", "Hz");
 
-                MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName + " Chain " + iteration + " ACLR L1", ACLR_L1OK ? "Passed" : "FAIL", " ", ACPValues[0].ToString(), ACLR_L1_Limit.ToString(), "LE", " ", "dBc");
+                MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName + " Chain " + iteration + " ACLR L1", ACLR_L1OK ? "Passed" : "Failed", " ", ACPValues[0].ToString(), ACLR_L1_Limit.ToString(), "LE", " ", "dBc");
 
-                MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName + " Chain " + iteration + " ACLR L2", ACLR_L2OK ? "Passed" : "FAIL", " ", ACPValues[1].ToString(), ACLR_L2_Limit.ToString(), "LE", " ", "dBc");
+                MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName + " Chain " + iteration + " ACLR L2", ACLR_L2OK ? "Passed" : "Failed", " ", ACPValues[1].ToString(), ACLR_L2_Limit.ToString(), "LE", " ", "dBc");
 
-                MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName + " Chain " + iteration + " ACLR R1", ACLR_R1OK ? "Passed" : "FAIL", " ", ACPValues[2].ToString(), ACLR_R1_Limit.ToString(), "LE", " ", "dBc");
+                MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName + " Chain " + iteration + " ACLR R1", ACLR_R1OK ? "Passed" : "Failed", " ", ACPValues[2].ToString(), ACLR_R1_Limit.ToString(), "LE", " ", "dBc");
 
-                MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName + " Chain " + iteration + " ACLR R2", ACLR_R2OK ? "Passed" : "FAIL", " ", ACPValues[3].ToString(), ACLR_R2_Limit.ToString(), "LE", " ", "dBc");
-                MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName + " Chain " + iteration + " Feedback Power", dpdFBpowerVerdict ? "Passed" : "FAIL", DPDFeedBackPowerLowerLimit.ToString(), rxvalue.ToString(), DPDFeedbackPowerHigherLimit.ToString(), "GELE", " ".ToString(), "dBm");
+                MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName + " Chain " + iteration + " ACLR R2", ACLR_R2OK ? "Passed" : "Failed", " ", ACPValues[3].ToString(), ACLR_R2_Limit.ToString(), "LE", " ", "dBc");
+                MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName + " Chain " + iteration + " Feedback Power", dpdFBpowerVerdict ? "Passed" : "Failed", DPDFeedBackPowerLowerLimit.ToString(), rxvalue.ToString(), DPDFeedbackPowerHigherLimit.ToString(), "GELE", " ".ToString(), "dBm");
 
                 MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName + " Chain " + iteration + " Power Factor", "Passed", 1450.ToString(), powerFactorValues[iteration].ToString(), 1770.ToString(), "GELE", "", "Hex");
-                MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName + " Chain " + iteration + " Temperature ", temperatureVerdict ? "Passed" : "FAIL", TemperatureLowLimit.ToString(), Temperature, TemperatureHighLimit.ToString(), "GELE", " ", "Deg C");
+                MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName + " Chain " + iteration + " Temperature ", temperatureVerdict ? "Passed" : "Failed", TemperatureLowLimit.ToString(), Temperature, TemperatureHighLimit.ToString(), "GELE", " ", "Deg C");
                 MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName + " Chain " + iteration + " DSA ", "Passed", DSAlowerLimit.ToString(), HexValues[iteration].ToString(), DSAHigherLimit.ToString(), "GELE", "-", "HEX");
 
                 HexValues4DSAWriging[iteration] = HexValues[iteration];
@@ -731,7 +731,7 @@ namespace RjioMRU.TestSteps
                 }
                 Results.Publish<RjioReportCls>(MRURjioReportCls.ProductSerialNumber, MRURjioReportCls);
                 Log.Info("Measurements : " + MRURjioReportCls.Measurements);
-                MES_CSV.UpdateHeader(MES_CSV.MRU_Serial_number, MES_CSV.PART_Number, MES_CSV.Equipment_ID, MES_CSV.Slot, MES_CSV.Employee_IDNumber, this.PlanRun.Verdict.ToString(), MES_CSV.Operation_Mode, this.PlanRun.StartTime.ToString("dd-MM-yyyy HH:mm:ss"), DateTime.Now.ToString("dd-MM-yyyy HH:mm:ss"), MES_CSV.SequenceID, this.PlanRun.Verdict.ToString() == "FAIL" ? "FAIL" : ""); //MES_CSV.Overall_Defect_Code);
+                MES_CSV.UpdateHeader(MES_CSV.MRU_Serial_number, MES_CSV.PART_Number, MES_CSV.Equipment_ID, MES_CSV.Slot, MES_CSV.Employee_IDNumber, this.PlanRun.Verdict.ToString().ToUpper() == "PASS" ? "Passed" : "Failed", MES_CSV.Operation_Mode, this.PlanRun.StartTime.ToString("dd-MM-yyyy HH:mm:ss"), DateTime.Now.ToString("dd-MM-yyyy HH:mm:ss"), MES_CSV.SequenceID, this.PlanRun.Verdict.ToString() == "FAIL" ? "FAIL" : ""); //MES_CSV.Overall_Defect_Code);
                 MES_CSV.WrteMESCSVFile();
 
                 // MES_CSV.UpdateHeader(MES_CSV.MRU_Serial_number,MES_CSV.pa)
@@ -1048,14 +1048,11 @@ namespace RjioMRU.TestSteps
                                 }
                                 else
                                 {
-
                                     if (j > 0)
                                     {
                                         break;
                                     }
-
                                 }
-
                             }
                             if (resultStrings.Length < 5)
                             {
@@ -1071,9 +1068,6 @@ namespace RjioMRU.TestSteps
                             temperatureVerdict = genericFunctions.CheckTemperature(Convert.ToDouble(Temperature), TemperatureHighLimit, TemperatureLowLimit);
 
                             Log.Info("Temperature measured CH2:" + Temperature);
-
-
-
                             Log.Info("CH2 DSA Command Used: " + DSACommand);
                             Log.Info("CH2 Chain NO:" + iteration + " Channel Power : " + MeasuredPowerValue + "dBm ACP1: " + ACPValues[0] + " ACP2 : " + ACPValues[1] + " ACP3 : " + ACPValues[2] + " ACP4 : " + ACPValues[3]);
                             //Log.Info("CH2 Chain NO:" + iteration + " DPD TxValue :" + txvalue + " RxValue :" + rxvalue);
@@ -1287,25 +1281,25 @@ namespace RjioMRU.TestSteps
         {
             if (((ChannelPowerOk && ACLR_L1OK && ACLR_L2OK && ACLR_R1OK && ACLR_R2OK && FREQERROK && EVMOK) || AttemptNumber > 2) || !temperatureVerdict)
             {
-                MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName + " Chain " + iteration + " Channel Power", ChannelPowerOk ? "Passed" : "FAIL", (ChannelPower - ChannelPowerLimit).ToString(), MeasuredPowerValue.ToString(), (ChannelPower + ChannelPowerLimit).ToString(), "GELE", "", "dBm");
+                MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName + " Chain " + iteration + " Channel Power", ChannelPowerOk ? "Passed" : "Failed", (ChannelPower - ChannelPowerLimit).ToString(), MeasuredPowerValue.ToString(), (ChannelPower + ChannelPowerLimit).ToString(), "GELE", "", "dBm");
 
-                MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName + " Chain " + iteration + " EVM", EVMOK ? "Passed" : "FAIL", " ", Convert.ToDouble(resultStrings[1]).ToString(), EVMLimit.ToString(), "LE", " ", "%");
+                MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName + " Chain " + iteration + " EVM", EVMOK ? "Passed" : "Failed", " ", Convert.ToDouble(resultStrings[1]).ToString(), EVMLimit.ToString(), "LE", " ", "%");
 
-                MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName + " Chain " + iteration + " Frequency Error", FREQERROK ? "Passed" : "FAIL", (fREQErrorLimit * -1).ToString(), Convert.ToDouble(resultStrings[3]).ToString(), fREQErrorLimit.ToString(), "GELE", " ", "Hz");
+                MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName + " Chain " + iteration + " Frequency Error", FREQERROK ? "Passed" : "Failed", (fREQErrorLimit * -1).ToString(), Convert.ToDouble(resultStrings[3]).ToString(), fREQErrorLimit.ToString(), "GELE", " ", "Hz");
 
-                MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName + " Chain " + iteration + " ACLR L1", ACLR_L1OK ? "Passed" : "FAIL", " ", ACPValues[0].ToString(), ACLR_L1_Limit.ToString(), "LE", " ", "dBc");
+                MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName + " Chain " + iteration + " ACLR L1", ACLR_L1OK ? "Passed" : "Failed", " ", ACPValues[0].ToString(), ACLR_L1_Limit.ToString(), "LE", " ", "dBc");
 
-                MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName + " Chain " + iteration + " ACLR L2", ACLR_L2OK ? "Passed" : "FAIL", " ", ACPValues[1].ToString(), ACLR_L2_Limit.ToString(), "LE", " ", "dBc");
+                MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName + " Chain " + iteration + " ACLR L2", ACLR_L2OK ? "Passed" : "Failed", " ", ACPValues[1].ToString(), ACLR_L2_Limit.ToString(), "LE", " ", "dBc");
 
-                MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName + " Chain " + iteration + " ACLR R1", ACLR_R1OK ? "Passed" : "FAIL", " ", ACPValues[2].ToString(), ACLR_R1_Limit.ToString(), "LE", " ", "dBc");
+                MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName + " Chain " + iteration + " ACLR R1", ACLR_R1OK ? "Passed" : "Failed", " ", ACPValues[2].ToString(), ACLR_R1_Limit.ToString(), "LE", " ", "dBc");
 
-                MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName + " Chain " + iteration + " ACLR R2", ACLR_R2OK ? "Passed" : "FAIL", " ", ACPValues[3].ToString(), ACLR_R2_Limit.ToString(), "LE", " ", "dBc");
+                MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName + " Chain " + iteration + " ACLR R2", ACLR_R2OK ? "Passed" : "Failed", " ", ACPValues[3].ToString(), ACLR_R2_Limit.ToString(), "LE", " ", "dBc");
 
-                MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName + " Chain " + iteration + " Feedback Power", dpdFBpowerVerdict ? "Passed" : "FAIL", DPDFeedBackPowerLowerLimit.ToString(), rxvalue.ToString(), DPDFeedBackPowerHigherLimit.ToString(), "GELE", " ".ToString(), "dBm");
+                MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName + " Chain " + iteration + " Feedback Power", dpdFBpowerVerdict ? "Passed" : "Failed", DPDFeedBackPowerLowerLimit.ToString(), rxvalue.ToString(), DPDFeedBackPowerHigherLimit.ToString(), "GELE", " ".ToString(), "dBm");
 
                 MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName + " Chain " + iteration + " Power Factor", "Passed", 1450.ToString(), powerFactorValues[iteration].ToString(), 1770.ToString(), "GELE", "", "Hex");
 
-                MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName + " Chain " + iteration + " Temperature ", temperatureVerdict ? "Passed" : "FAIL", TemperatureLowLimit.ToString(), Temperature, TemperatureHighLimit.ToString(), "GELE", " ", "Deg C");
+                MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName + " Chain " + iteration + " Temperature ", temperatureVerdict ? "Passed" : "Failed", TemperatureLowLimit.ToString(), Temperature, TemperatureHighLimit.ToString(), "GELE", " ", "Deg C");
 
                 MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName + " Chain " + iteration + " DSA ", "Passed", DSAlowerLimit.ToString(), HexValues[iteration].ToString(), DSAHigherLimit.ToString(), "GELE", "-", "HEX");
 
@@ -1317,8 +1311,6 @@ namespace RjioMRU.TestSteps
                 return true;// continue;
             }
         }
-
-
 
 
 
@@ -1395,7 +1387,7 @@ namespace RjioMRU.TestSteps
                 }
                 Results.Publish<RjioReportCls>(MRURjioReportCls.ProductSerialNumber, MRURjioReportCls);
                 Log.Info("Measurements : " + MRURjioReportCls.Measurements);
-                MES_CSV.UpdateHeader(MES_CSV.MRU_Serial_number, MES_CSV.PART_Number, MES_CSV.Equipment_ID, MES_CSV.Slot, MES_CSV.Employee_IDNumber, this.PlanRun.Verdict.ToString(), MES_CSV.Operation_Mode, this.PlanRun.StartTime.ToString("dd-MM-yyyy HH:mm:ss"), DateTime.Now.ToString("dd-MM-yyyy HH:mm:ss"), MES_CSV.SequenceID, this.PlanRun.Verdict.ToString() == "FAIL" ? "FAIL" : "");
+                MES_CSV.UpdateHeader(MES_CSV.MRU_Serial_number, MES_CSV.PART_Number, MES_CSV.Equipment_ID, MES_CSV.Slot, MES_CSV.Employee_IDNumber, this.PlanRun.Verdict.ToString().ToUpper() == "PASS" ? "Passed" : "Failed", MES_CSV.Operation_Mode, this.PlanRun.StartTime.ToString("dd-MM-yyyy HH:mm:ss"), DateTime.Now.ToString("dd-MM-yyyy HH:mm:ss"), MES_CSV.SequenceID, this.PlanRun.Verdict.ToString() == "FAIL" ? "FAIL" : "");
                 MES_CSV.WrteMESCSVFile();
             }
         }
