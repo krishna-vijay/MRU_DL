@@ -390,7 +390,7 @@ namespace RjioMRU.TestSteps
                             string CalculatedPowerFactor = MRU_DUT.calcualtePowerFactor(MeasuredPowerValue, rxvalue, txvalue, iteration, "CH1");
                             string Temperature = MRU_DUT.Dr49_CH_ReadTemperature(MRU_DUT.GetDR49Ch1ComObj(), iteration, "rj-dac-tmp -mru_dac_num");
                             temperatureVerdict = genericFunctions.CheckTemperature(Convert.ToDouble(Temperature), TemperatureHighLimit, TemperatureLowLimit);
-                            ChainTemperatureValues[iteration] = Temperature;
+                            ChainTemperatureValues[iteration] =Convert.ToInt32( Convert.ToDouble(Temperature)).ToString();
                             Log.Info("Temperature measured CH1 chain no :" + iteration + " Is "+ Temperature); ;
                             //string CalculatedPowerFactor = calcualtePowerFactor(MeasuredPowerValue,rxvalue, txvalue, iteration, powerFactorValues);
 
@@ -1081,7 +1081,7 @@ namespace RjioMRU.TestSteps
 
                             string CalculatedPowerFactor = MRU_DUT.calcualtePowerFactor(MeasuredPowerValue, rxvalue, txvalue, iteration, "CH2");
                             string Temperature = MRU_DUT.Dr49_CH_ReadTemperature(MRU_DUT.GetDR49Ch2ComObj(), iteration, "rj-dac-tmp -mru_dac_num");
-                            ChainTemperatureValues[iteration] = Temperature;
+                            ChainTemperatureValues[iteration] = ChainTemperatureValues[iteration] = Convert.ToInt32(Convert.ToDouble(Temperature)).ToString(); 
 
                             temperatureVerdict = genericFunctions.CheckTemperature(Convert.ToDouble(Temperature), TemperatureHighLimit, TemperatureLowLimit);
 
