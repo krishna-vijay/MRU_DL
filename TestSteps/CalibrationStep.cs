@@ -207,7 +207,7 @@ namespace RjioMRU.TestSteps
                     TapThread.Sleep(2000);
                     double MeasuredPowerValue = double.NaN;
                     double powerDifferance = 0;
-                    bool ContinueOrNot = initialPowerPickup(ref resultStrings, ref ACPValues, iteration, ref MeasuredPowerValue);
+                    bool ContinueOrNot = initialPowerPickup(ref resultStrings, ref ACPValues, iteration, ref MeasuredPowerValue, (iteration <= 7) ? E6680InsturmentTrx1 : E6680InsturmentTrx2);
                     if (ContinueOrNot == false)
                     {
                         continue;
@@ -564,7 +564,7 @@ namespace RjioMRU.TestSteps
             }
         }
 
-        private bool initialPowerPickup(ref string[] resultStrings, ref double[] ACPValues, int iteration, ref double MeasuredPowerValue)
+        private bool initialPowerPickup(ref string[] resultStrings, ref double[] ACPValues, int iteration, ref double MeasuredPowerValue,EXM_E6680A instrumentObject)
         {
             if (iteration == 1)
             {
@@ -574,7 +574,7 @@ namespace RjioMRU.TestSteps
             {
                 try
                 {
-                    resultStrings = (iteration <= 7) ? E6680InsturmentTrx1.ReadSequencerPower() : E6680InsturmentTrx2.ReadSequencerPower();
+                    resultStrings = instrumentObject.ReadSequencerPower();// (iteration <= 7) ? E6680InsturmentTrx1.ReadSequencerPower() : E6680InsturmentTrx2.ReadSequencerPower();
                 }
                 catch (Exception ex)
                 {
@@ -867,6 +867,7 @@ namespace RjioMRU.TestSteps
 
         public override void Run()
         {
+            bool CalibrationDone = false;
             EXM_E6680A E6680InsturmentComman = new EXM_E6680A(); ;
             int DSATrailsCount = 0;
             stopwathCh2.Restart();
@@ -924,7 +925,9 @@ namespace RjioMRU.TestSteps
                     TapThread.Sleep(2000);
                     double powerDifferance = 0;
                     double MeasuredPowerValue = double.NaN;
-                    initialPowerPickup(ref resultStrings, ref ACPValues, iteration, ref MeasuredPowerValue);
+
+
+                    initialPowerPickup(ref resultStrings, ref ACPValues, iteration, ref MeasuredPowerValue, (iteration <= 7) ? E6680InsturmentTrx3 : E6680InsturmentTrx4);
 
                     #endregion InitialMeasurement
 
@@ -962,6 +965,15 @@ namespace RjioMRU.TestSteps
                         }
                         else
                         {
+                            CalibrationDone = true;
+                        }
+
+
+                        if (CalibrationDone)
+                        {
+                            #region existing
+
+
                             string[] ACP5GValues;
                             if (iteration <= 7)
                             {
@@ -1140,8 +1152,9 @@ namespace RjioMRU.TestSteps
                             {
                                 break;
                             }
+                            #endregion existing
                         }
-
+                      
                         if (HexValues[iteration] < DSAlowerLimit || HexValues[iteration] > DSAHigherLimit)
                         {
                             Log.Error("DSA Value exceeds limits DSA Value :" + HexValues[iteration] + " DSA Higher Limits :" + DSAHigherLimit + " DSA Lower Limit :" + DSAlowerLimit + " Chanin Number : " + iteration);
@@ -1236,14 +1249,14 @@ namespace RjioMRU.TestSteps
 
         }
 
-        private bool initialPowerPickup(ref string[] resultStrings, ref double[] ACPValues, int iteration, ref double MeasuredPowerValue)
+        private bool initialPowerPickup(ref string[] resultStrings, ref double[] ACPValues, int iteration, ref double MeasuredPowerValue,EXM_E6680A instrumentObject)
         {
             for (int l = 0; l < 5; l++)
             {
                 Thread.Sleep(1000);
                 try
                 {
-                    resultStrings = (iteration <= 7) ? E6680InsturmentTrx3.ReadSequencerPower() : E6680InsturmentTrx4.ReadSequencerPower();
+                    resultStrings = instrumentObject.measureModulationRead();// (iteration <= 7) ? E6680InsturmentTrx3.ReadSequencerPower() : E6680InsturmentTrx4.ReadSequencerPower();
 
                 }
                 catch (Exception ex)
