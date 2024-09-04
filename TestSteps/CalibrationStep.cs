@@ -1256,7 +1256,7 @@ namespace RjioMRU.TestSteps
                 Thread.Sleep(1000);
                 try
                 {
-                    resultStrings = instrumentObject.measureModulationRead();// (iteration <= 7) ? E6680InsturmentTrx3.ReadSequencerPower() : E6680InsturmentTrx4.ReadSequencerPower();
+                    resultStrings = instrumentObject.ReadSequencerPower();// (iteration <= 7) ? E6680InsturmentTrx3.ReadSequencerPower() : E6680InsturmentTrx4.ReadSequencerPower();
 
                 }
                 catch (Exception ex)
