@@ -145,6 +145,7 @@ namespace RjioMRU.TestSteps
 
         public override void Run()
         {
+            bool[] PassChains = new bool[16] {true,true, true, true, true, true, true, true, true, true, true, true, true, true, true, true };
             bool CalibrationDone = false;
             EXM_E6680A E6680InsturmentComman = new EXM_E6680A(); ;
             int DSATrailsCount = 0;
@@ -169,8 +170,6 @@ namespace RjioMRU.TestSteps
             readDSA_CableLossFile(DSA_CableLossFile, out strHexValues, out CableLosses);
             double[] ACPValues = new double[4];
 
-
-
             for (int iteration = 0; iteration < 16; iteration++)
             {
                 HexValues[iteration] = int.Parse(strHexValues[iteration], System.Globalization.NumberStyles.HexNumber);
@@ -183,7 +182,6 @@ namespace RjioMRU.TestSteps
                 {
                     //genericFunctions.SetupSequencerForMeasurement(CableLosses[iteration],ChannelPower, E6680InsturmentTrx1);
                     //genericFunctions.SetupSequencerForMeasurement(CableLosses[iteration],ChannelPower, E6680InsturmentTrx2);
-
 
                     DSATrailsCount = 0;
                     EVMOK = false;
@@ -464,10 +462,6 @@ namespace RjioMRU.TestSteps
 
                         }
 
-
-
-
-
                         if (HexValues[iteration] < DSAlowerLimit || HexValues[iteration] > DSAHigherLimit)
                         {
                             Log.Error("DSA Value exceeds limits DSA Value :" + HexValues[iteration] + " DSA Higher Limits :" + DSAHigherLimit + " DSA Lower Limit :" + DSAlowerLimit + " Chanin Number : " + iteration);
@@ -542,8 +536,9 @@ namespace RjioMRU.TestSteps
                     // UpgradeVerdict(Verdict.Pass);
                     var totalCh1CalTime = stopwathCh1.Elapsed;
                     Log.Info("Total Ch1 Cal Time : " + (totalCh1CalTime.TotalMilliseconds / 1000).ToString());
-                    stepPassFlag &= ChannelPowerOk && ACLR_R1OK && ACLR_L2OK && ACLR_R2OK && ACLR_L2OK && FREQERROK && EVMOK;
-                    Log.Info($"Step Pass Flag Condition at iteration {iteration}: " + stepPassFlag);
+                    PassChains[iteration] = ChannelPowerOk && ACLR_R1OK && ACLR_L2OK && ACLR_R2OK && ACLR_L2OK && FREQERROK && EVMOK;
+                    Log.Info($"Step Pass Flag Condition at iteration {iteration}: " + PassChains[iteration].ToString());
+
                 }
             }
             catch (Exception ex)
@@ -551,17 +546,21 @@ namespace RjioMRU.TestSteps
                 CCDUServer.loopBreak = true;
                 Log.Info("Exception/ CH-1: {0}", ex);
             }
+            for (int i = 0; i < PassChains.Length; i++)
+            {
 
+                Log.Info("Chains status Chain {"+i+"}: " + PassChains[i].ToString());
+            }
             // MRU_DUT.stopReceiveEvent();
-            if (stepPassFlag)
+            if (Array.IndexOf(PassChains, false) == -1)
             {
                 UpgradeVerdict(Verdict.Pass);
-
             }
             else
             {
                 UpgradeVerdict(Verdict.Fail);
-            }
+            }   
+           
         }
 
         private bool initialPowerPickup(ref string[] resultStrings, ref double[] ACPValues, int iteration, ref double MeasuredPowerValue,EXM_E6680A instrumentObject)
@@ -868,6 +867,8 @@ namespace RjioMRU.TestSteps
         public override void Run()
         {
             bool CalibrationDone = false;
+            bool[] PassChains = new bool[16] { true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true };
+
             EXM_E6680A E6680InsturmentComman = new EXM_E6680A(); ;
             int DSATrailsCount = 0;
             stopwathCh2.Restart();
@@ -1224,8 +1225,8 @@ namespace RjioMRU.TestSteps
                     // If no verdict is used, the verdict will default to NotSet.
                     // You can change the verdict using UpgradeVerdict() as shown below.
                     // UpgradeVerdict(Verdict.Pass);
-                    stepPassFlag &= ChannelPowerOk && ACLR_R1OK && ACLR_L2OK && ACLR_R2OK && ACLR_L2OK && FREQERROK && EVMOK;
-                    Log.Info("CH2 Chain No " + iteration + " Step verdict : " + stepPassFlag.ToString());
+                    PassChains[iteration] &= ChannelPowerOk && ACLR_R1OK && ACLR_L2OK && ACLR_R2OK && ACLR_L2OK && FREQERROK && EVMOK;
+                    Log.Info("CH2 Chain No " + iteration + " Step verdict : " + PassChains[iteration].ToString());
 
                 }
             }
@@ -1236,9 +1237,13 @@ namespace RjioMRU.TestSteps
             }
 
             Log.Info("CH2 Total Cal time : " + stopwathCh2.ElapsedMilliseconds / 1000 + " Seconds.");
+            for (int i = 0; i < PassChains.Length; i++)
+            {
 
+                Log.Info("Chains status Chain {" + i + "}: " + PassChains[i].ToString());
+            }
             // MRU_DUT.stopReceiveEvent();
-            if (stepPassFlag)
+            if (Array.IndexOf(PassChains,false)<0)
             {
                 UpgradeVerdict(Verdict.Pass);
             }
