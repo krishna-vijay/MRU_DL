@@ -223,6 +223,105 @@ namespace RjioMRU
             return true;
         }
 
+        public bool DR49CHexecuteCALDSAScripts(string sendScript, string validateScript, SerialPort serialPortObj)
+        {
+            Log.Debug("49DR CH Functions");
+            Stopwatch sw = Stopwatch.StartNew();
+            string returnValue;
+            int attemptNumber = 1;
+
+            serialPortObj.ReadExisting();
+            serialPortObj.WriteLine(sendScript);
+            if (!string.IsNullOrEmpty(validateScript))
+            {
+                returnValue = string.Empty;
+                do
+                {
+#if NORMAL
+                    TapThread.Sleep(100);
+#else
+                    TapThread.Sleep(100);
+#endif
+                    returnValue = serialPortObj.ReadExisting();
+                    if (!string.IsNullOrEmpty(returnValue))
+                    {
+                        foreach (var item in returnValue.Split('\r'))
+                        {
+                            Log.Info("DR49 Ch Commands:" + item);
+
+                        }
+                        if (returnValue.Contains("configuration failed") || returnValue.Contains("Initialization Failed"))//17:20:46.791  RjioMRU      DR49 Ch1 Commands:                             for DAC connected with R Channel MUX CH0
+
+                        {
+                            serialPortObj.WriteLine(sendScript);
+                            sw.Restart();
+                        }
+                    }
+                    if (sw.ElapsedMilliseconds > 5000 && attemptNumber < 2)
+                    {
+                        attemptNumber++;
+                        serialPortObj.WriteLine(sendScript);
+                        sw.Restart();
+                    }
+                    else if (sw.ElapsedMilliseconds > 5000 && attemptNumber >= 2)
+                    {
+                        return false;
+                    }
+                } while (!returnValue.Replace("\n", string.Empty).Contains(validateScript));
+            }
+            return true;
+        }
+
+
+        //        public bool DR49CHexecuteCALDSAScripts(string sendScript, string validateScript,SerialPort serialPortObj)
+        //        {
+        //            Log.Debug("49DR CH1 Functions");
+        //            Stopwatch sw = Stopwatch.StartNew();
+        //            string returnValue;
+        //            int attemptNumber = 1;
+
+        //            serialPortObj.ReadExisting();
+        //            serialPortObj.WriteLine(sendScript);
+        //            if (!string.IsNullOrEmpty(validateScript))
+        //            {
+        //                returnValue = string.Empty;
+        //                do
+        //                {
+        //#if NORMAL
+        //                    TapThread.Sleep(100);
+        //#else
+        //                    TapThread.Sleep(100);
+        //#endif
+        //                    returnValue = serialPortObj.ReadExisting();
+        //                    if (!string.IsNullOrEmpty(returnValue))
+        //                    {
+        //                        foreach (var item in returnValue.Split('\r'))
+        //                        {
+        //                            Log.Info("DR49 Ch1 Commands:" + item);
+
+        //                        }
+        //                        if (returnValue.Contains("configuration failed") || returnValue.Contains("Initialization Failed"))//17:20:46.791  RjioMRU      DR49 Ch1 Commands:                             for DAC connected with R Channel MUX CH0
+
+        //                        {
+        //                            serialPortObj.WriteLine(sendScript);
+        //                            sw.Restart();
+        //                        }
+        //                    }
+        //                    if (sw.ElapsedMilliseconds > 5000 && attemptNumber < 2)
+        //                    {
+        //                        attemptNumber++;
+        //                        serialPortObj.WriteLine(sendScript);
+        //                        sw.Restart();
+        //                    }
+        //                    else if (sw.ElapsedMilliseconds > 5000 && attemptNumber >= 2)
+        //                    {
+        //                        return false;
+        //                    }
+        //                } while (!returnValue.Replace("\n", string.Empty).Contains(validateScript));
+        //            }
+        //            return true;
+        //        }
+
 
         internal void DR49CH1Jjio_DPD_InitRun(int chainNumber)
         {
@@ -261,10 +360,53 @@ namespace RjioMRU
             //startReceiveEvent();
         }
 
+
+        internal void DR49CHJjio_DPD_InitRun(int chainNumber, SerialPort SerialPortObj)
+        {
+            Log.Debug("49DR CH1 Functions");
+            //stopReceiveEvent();
+            int flag = 0;
+            string returnValue = string.Empty;
+            //DR49Ch1ComObj.WriteLine("rjio_dpd_init.sh");
+            SerialPortObj.WriteLine("cfr_dpd_init.sh 100");
+            do
+            {
+                returnValue = SerialPortObj.ReadExisting();
+                if (!string.IsNullOrEmpty(returnValue.Trim()))
+                {
+                    Log.Info("DPD INIT CH for Chain :" + chainNumber + " :" + returnValue);
+                }
+
+                TapThread.Sleep(100);
+                if (flag == 0 && (returnValue.Replace("\n", string.Empty).Contains("down") || returnValue.Replace("\n", string.Empty).Contains("environment") || returnValue.Replace("\n", string.Empty).Contains("~#")))
+
+                {
+                    flag = 1;
+
+                }
+                else if (flag == 1 && (returnValue.Replace("\n", string.Empty).Contains("down") || returnValue.Replace("\n", string.Empty).Contains("environment") || returnValue.Replace("\n", string.Empty).Contains("~#")))
+                {
+                    flag = 2;
+                }
+                if (returnValue.Contains("CFR/Rescalers/DPD init done"))
+                {
+                    break;
+                }
+
+
+            } while (flag != 2 || TapThread.Current.AbortToken.IsCancellationRequested);
+            //startReceiveEvent();
+        }
+
         public void Dr49_CH1_ControlC()
         {
             Log.Debug("49DR CH1 Functions");
             DR49Ch1ComObj.WriteLine("\x03");
+        }
+        public void Dr49_CH_ControlC(SerialPort dR49ChComObj)
+        {
+            Log.Debug("49DR CH Functions");
+            dR49ChComObj.WriteLine("\x03");
         }
         public void Dr21_ControlC()
         {
@@ -2175,54 +2317,54 @@ namespace RjioMRU
             try
             {
 
-            
-            MAC1 = string.Empty; MAC2 = string.Empty; MAC3 = string.Empty; MAC4 = string.Empty; ProductSerialNumber = string.Empty; PCBSerialNumber = string.Empty; ProdID = string.Empty;
-            DR21ComObj.WriteLine("hstb-m-eeprom -read_info");
-            TapThread.Sleep(100);
-            var returnValue = DR21ComObj.ReadExisting();
-            Log.Info("MAC and Other Details : " + returnValue);
-            if (returnValue.Contains("MAC1 :"))
-            {
-                MAC1 = returnValue.Substring(returnValue.IndexOf("MAC1 :") + "MAC1 :".Length + 1, returnValue.IndexOf("mac2 crc") - (returnValue.IndexOf("MAC1 :") + "MAC1 :".Length + 1));
-            }
-            if (returnValue.Contains("MAC2 :"))
-            {
-                MAC2 = returnValue.Substring(returnValue.IndexOf("MAC2 :") + "MAC2 :".Length + 1, returnValue.IndexOf("mac3 crc") - (returnValue.IndexOf("MAC2 :") + "MAC2 :".Length + 1));
-            }
 
-            if (returnValue.Contains("MAC3 :"))
-            {
-                MAC3 = returnValue.Substring(returnValue.IndexOf("MAC3 :") + "MAC3 :".Length + 1, returnValue.IndexOf("mac4 crc") - (returnValue.IndexOf("MAC3 :") + "MAC3 :".Length + 1));
-            }
-            if (returnValue.Contains("MAC4 :"))
-            {
-                MAC4 = returnValue.Substring(returnValue.IndexOf("MAC4 :") + "MAC4 :".Length + 1, returnValue.IndexOf("prod serial") - (returnValue.IndexOf("MAC4 :") + "MAC4 :".Length + 1));
-            }
-            if (returnValue.Contains("PROD_SERIAL_NUMBER :"))
-            {
-                ProductSerialNumber = returnValue.Substring(returnValue.IndexOf("PROD_SERIAL_NUMBER :") + "PROD_SERIAL_NUMBER :".Length + 1, returnValue.IndexOf("pcb serial no") - (returnValue.IndexOf("PROD_SERIAL_NUMBER :") + "PROD_SERIAL_NUMBER :".Length + 1));
-            }
-            if (returnValue.Contains("PCB_SERIAL_NUMBER :"))
-            {
-                PCBSerialNumber = returnValue.Substring(returnValue.IndexOf("PCB_SERIAL_NUMBER :") + "PCB_SERIAL_NUMBER :".Length + 1, returnValue.IndexOf("prod id") - (returnValue.IndexOf("PCB_SERIAL_NUMBER :") + "PCB_SERIAL_NUMBER :".Length + 1));
-            }
-            if (returnValue.Contains("PROD_ID :"))
-            {
-                foreach (var item in returnValue.Split('\n'))
+                MAC1 = string.Empty; MAC2 = string.Empty; MAC3 = string.Empty; MAC4 = string.Empty; ProductSerialNumber = string.Empty; PCBSerialNumber = string.Empty; ProdID = string.Empty;
+                DR21ComObj.WriteLine("hstb-m-eeprom -read_info");
+                TapThread.Sleep(100);
+                var returnValue = DR21ComObj.ReadExisting();
+                Log.Info("MAC and Other Details : " + returnValue);
+                if (returnValue.Contains("MAC1 :"))
                 {
-                    if (item.Contains("PROD_ID :"))
-                    {
-                        ProdID = item.Split(':')[1];
-                        break;
-                    }
+                    MAC1 = returnValue.Substring(returnValue.IndexOf("MAC1 :") + "MAC1 :".Length + 1, returnValue.IndexOf("mac2 crc") - (returnValue.IndexOf("MAC1 :") + "MAC1 :".Length + 1));
                 }
-                //ProdID = returnValue.Substring(returnValue.IndexOf("PROD_ID :") + "PROD_ID :".Length + 1, returnValue.IndexOf("app ver") - (returnValue.IndexOf("PROD_ID :") + "PROD_ID :".Length + 1));
-            }
+                if (returnValue.Contains("MAC2 :"))
+                {
+                    MAC2 = returnValue.Substring(returnValue.IndexOf("MAC2 :") + "MAC2 :".Length + 1, returnValue.IndexOf("mac3 crc") - (returnValue.IndexOf("MAC2 :") + "MAC2 :".Length + 1));
+                }
+
+                if (returnValue.Contains("MAC3 :"))
+                {
+                    MAC3 = returnValue.Substring(returnValue.IndexOf("MAC3 :") + "MAC3 :".Length + 1, returnValue.IndexOf("mac4 crc") - (returnValue.IndexOf("MAC3 :") + "MAC3 :".Length + 1));
+                }
+                if (returnValue.Contains("MAC4 :"))
+                {
+                    MAC4 = returnValue.Substring(returnValue.IndexOf("MAC4 :") + "MAC4 :".Length + 1, returnValue.IndexOf("prod serial") - (returnValue.IndexOf("MAC4 :") + "MAC4 :".Length + 1));
+                }
+                if (returnValue.Contains("PROD_SERIAL_NUMBER :"))
+                {
+                    ProductSerialNumber = returnValue.Substring(returnValue.IndexOf("PROD_SERIAL_NUMBER :") + "PROD_SERIAL_NUMBER :".Length + 1, returnValue.IndexOf("pcb serial no") - (returnValue.IndexOf("PROD_SERIAL_NUMBER :") + "PROD_SERIAL_NUMBER :".Length + 1));
+                }
+                if (returnValue.Contains("PCB_SERIAL_NUMBER :"))
+                {
+                    PCBSerialNumber = returnValue.Substring(returnValue.IndexOf("PCB_SERIAL_NUMBER :") + "PCB_SERIAL_NUMBER :".Length + 1, returnValue.IndexOf("prod id") - (returnValue.IndexOf("PCB_SERIAL_NUMBER :") + "PCB_SERIAL_NUMBER :".Length + 1));
+                }
+                if (returnValue.Contains("PROD_ID :"))
+                {
+                    foreach (var item in returnValue.Split('\n'))
+                    {
+                        if (item.Contains("PROD_ID :"))
+                        {
+                            ProdID = item.Split(':')[1];
+                            break;
+                        }
+                    }
+                    //ProdID = returnValue.Substring(returnValue.IndexOf("PROD_ID :") + "PROD_ID :".Length + 1, returnValue.IndexOf("app ver") - (returnValue.IndexOf("PROD_ID :") + "PROD_ID :".Length + 1));
+                }
             }
             catch (Exception)
             {
 
-                 return false;
+                return false;
             }
             return true;
         }
@@ -2373,11 +2515,11 @@ namespace RjioMRU
 
 
         }
-        
+
         internal void Dr49_CH_WriteTemperatureToEEPROM(string[] TemperatureValues, SerialPort dR49ChComObj)
         {
             dR49ChComObj.ReadExisting();
-            string command4EEPROM_Temperarure= "rj-rfeeprom-updater -upd_ref_temp " + TemperatureValues[0] + "," + TemperatureValues[1] + "," + TemperatureValues[2] + "," + TemperatureValues[3] + "," + TemperatureValues[4] + "," + TemperatureValues[5] + "," + TemperatureValues[6] + "," + TemperatureValues[7] + "," + TemperatureValues[8] + "," + TemperatureValues[9] + "," + TemperatureValues[10] + "," + TemperatureValues[11] + "," + TemperatureValues[12] + "," + TemperatureValues[13] + "," + TemperatureValues[14] + "," + TemperatureValues[15];
+            string command4EEPROM_Temperarure = "rj-rfeeprom-updater -upd_ref_temp " + TemperatureValues[0] + "," + TemperatureValues[1] + "," + TemperatureValues[2] + "," + TemperatureValues[3] + "," + TemperatureValues[4] + "," + TemperatureValues[5] + "," + TemperatureValues[6] + "," + TemperatureValues[7] + "," + TemperatureValues[8] + "," + TemperatureValues[9] + "," + TemperatureValues[10] + "," + TemperatureValues[11] + "," + TemperatureValues[12] + "," + TemperatureValues[13] + "," + TemperatureValues[14] + "," + TemperatureValues[15];
             Log.Info(command4EEPROM_Temperarure);
             dR49ChComObj.WriteLine(command4EEPROM_Temperarure);
         }
@@ -2389,7 +2531,7 @@ namespace RjioMRU
             Thread.Sleep(200);
             //  Log.Info(command4EEPROM_PowerFactor);
             var temperatureValues = dR49ChComObj.ReadExisting();
-            Log.Info($"Temperature Value for chain number {chainNumber}  is : {temperatureValues.ToString()}");    
+            Log.Info($"Temperature Value for chain number {chainNumber}  is : {temperatureValues.ToString()}");
             string[] tempArray = temperatureValues.Split(new string[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
             var a1 = Array.FindAll(tempArray, s => s.Contains("Channel " + chainNumber % 2 + ""));
             var temperature = a1[0].Split(new string[] { "Temp:" }, StringSplitOptions.RemoveEmptyEntries)[1];
@@ -2405,7 +2547,7 @@ namespace RjioMRU
             dR49ChComObj.WriteLine(tempScript);
             Thread.Sleep(2000);
             var RFBValues = dR49ChComObj.ReadExisting();
-            Log.Info("RFB Serial Number :"+RFBValues.ToString());
+            Log.Info("RFB Serial Number :" + RFBValues.ToString());
             string[] tempArray = RFBValues.Split(new string[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
             var a1 = Array.FindAll(tempArray, s => s.Contains("RFB_SER_NUM:"));
             var RFBSerialNumber = a1[0].Split(new string[] { "RFB_SER_NUM:" }, StringSplitOptions.RemoveEmptyEntries);
