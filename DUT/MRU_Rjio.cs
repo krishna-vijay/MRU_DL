@@ -2575,10 +2575,12 @@ namespace RjioMRU
             if (channel == "CH1")
             {
                 CalibrationStep_CH1.powerFactorValues[iteration] = "0x" + powerFactorHex;
+                GeneralFunctions.powerFactorValuesCh1[iteration] = "0x" + powerFactorHex;
             }
             else
             {
                 CalibrationStep_CH2.powerFactorValues[iteration] = "0x" + powerFactorHex;
+                GeneralFunctions.powerFactorValuesCh2[iteration] = "0x" + powerFactorHex;
             }
             return powerFactorHex;
             // Now powerFactorHex contains the hexadecimal representation of the power factor
