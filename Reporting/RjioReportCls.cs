@@ -57,6 +57,9 @@ namespace RjioMRU
         
         [Display("DUT Number")]
         public string DUTN { get; set; }
+        [Display("Test Result")]
+        public bool testResult { get; set; }
+
     }
     //[Display("Channel Cal Reports")]
     //public class CalEndMeasurements

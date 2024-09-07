@@ -247,6 +247,7 @@ namespace RjioMRU
 
         private void WriteToSpreadSheetLight(ResultTable result)
         {
+            bool testResult = true;
             try
             {
                 using (SLDocument sl = new SLDocument(TempletepathSUM, "Sheet1"))
@@ -255,6 +256,9 @@ namespace RjioMRU
                     {
                         switch (result.Columns[iteration].Name)
                         {
+                            case "Test Result":
+                                testResult = (bool)result.Columns[iteration].Data.GetValue(0);
+                                break;
                             case "Ch1Measurements":
                             case "Ch2Measurements":
                             case "Ch3Measurements":
@@ -296,8 +300,9 @@ namespace RjioMRU
                         }
                         RowNumber++;
                     }
-                    sl.SaveAs(Path.Combine(ReportPath, (string.IsNullOrEmpty(ReportName) ? "" : ReportName) + "_" + DateTime.Now.ToShortDateString().Replace('/', '_') + "-" + DateTime.Now.ToLongTimeString().Replace(':', '_') ) + ".xlsx");
-                    Log.Info("Report saved in :" + Path.Combine(ReportPath, (string.IsNullOrEmpty(ReportName) ? "" : ReportName) + "_" + DateTime.Now.ToShortDateString().Replace('/', '_') + "-" + DateTime.Now.ToLongTimeString().Replace(':', '_') + result.Name) + ".xlsx");
+                    string filePath = Path.Combine(ReportPath, (string.IsNullOrEmpty(ReportName) ? "" : ReportName) + "_" + DateTime.Now.ToShortDateString().Replace('/', '_') + "-" + DateTime.Now.ToLongTimeString().Replace(':', '_')) + (testResult ? "_PASS" : "_FAIL") + ".xlsx";
+                    sl.SaveAs(filePath);
+                    Log.Info("Report saved at :" +filePath);
                 }
 
             }
