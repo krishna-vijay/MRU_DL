@@ -9,6 +9,7 @@ using RjioMRU.MES;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO.Ports;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Runtime.Remoting.Channels;
@@ -32,7 +33,6 @@ namespace RjioMRU.TestSteps
     {
         #region Settings
 
-
         MRU_Rjio mruObj;
         private string[] hexValuesCh1 = new string[16] { "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F" };
         bool automaticDSAWriting = false;
@@ -41,14 +41,12 @@ namespace RjioMRU.TestSteps
 
         public DR49_Ch1_DSA_Write()
         {
-
             // ToDo: Set default values for properties / settings.
         }
 
         public MRU_Rjio MruObj { get => mruObj; set => mruObj = value; }
         [Display("Select Automatic and Manual ", Order: 0, Description: "Enter Hex Values for DSA")]
         public bool AutomaticDSAWriting { get => automaticDSAWriting; set => automaticDSAWriting = value; }
-
 
         public override void Run()
         {
@@ -77,6 +75,66 @@ namespace RjioMRU.TestSteps
 
             MruObj.Dr49_CH_WriteDSAToEEPROM(AutomaticDSAWriting ? hexValuesCh1 : channelValues.HexValuesCh1, MruObj.GetDR49Ch1ComObj());
             Log.Info("DSA Values has been update in EEPROM of Channel 1");
+            // ToDo: Add test case code.
+            RunChildSteps(); //If the step supports child steps.
+
+            // If no verdict is used, the verdict will default to NotSet.
+            // You can change the verdict using UpgradeVerdict() as shown below.
+            // UpgradeVerdict(Verdict.Pass);
+        }
+    }
+    
+    [Display("DR49 Write DSA Generic", Group: "RjioMRU", Description: "Insert a description here")]
+    public class DR49_DSA_Write_Generic : TestStep
+    {
+        public enum Channels
+        {
+            Channel1 = 1,
+            Channel2
+        };
+
+        #region Settings
+
+        MRU_Rjio mruObj;
+        private string[] hexValues = new string[16] { "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F" };
+        private Channels channelSelection;
+        // ToDo: Add property here for each parameter the end user should be able to change
+        #endregion
+
+        public DR49_DSA_Write_Generic()
+        {
+            // ToDo: Set default values for properties / settings.
+        }
+
+        public MRU_Rjio MruObj { get => mruObj; set => mruObj = value; }
+        [Display("Select Channel", Order: 0, Description: "Select Channel")]
+        public Channels ChannelSelection { get => channelSelection; set => channelSelection = value; }
+
+        public override void Run()
+        {
+            SerialPort serialportObj = ChannelSelection == Channels.Channel1 ? MruObj.GetDR49Ch1ComObj() : MruObj.GetDR49Ch2ComObj();   
+         
+          
+            if (ChannelSelection == Channels.Channel1)
+            {
+                for (int iteration = 0; iteration < GeneralFunctions.HexValues4DSAWrigingCh1.Length; iteration++)
+                {
+                    hexValues[iteration] = $"0x{GeneralFunctions.HexValues4DSAWrigingCh1[iteration]:X}";
+                    //hexValuesCh1
+                }
+            }
+            else
+            {
+                for (int iteration = 0; iteration < GeneralFunctions.HexValues4DSAWrigingCh2.Length; iteration++)
+                {
+                    hexValues[iteration] = $"0x{GeneralFunctions.HexValues4DSAWrigingCh2[iteration]:X}";
+                    //hexValuesCh1
+                }
+            }
+               
+            
+            MruObj.Dr49_CH_WriteDSAToEEPROM( hexValues , serialportObj);
+            Log.Info("DSA Values has been update in EEPROM of "+Enum.GetName(typeof(Channels),ChannelSelection));
             // ToDo: Add test case code.
             RunChildSteps(); //If the step supports child steps.
 
@@ -208,6 +266,70 @@ namespace RjioMRU.TestSteps
             // UpgradeVerdict(Verdict.Pass);
         }
     }
+    
+    
+    
+    
+    [Display("DR49 Write PowerFactor Generic", Group: "RjioMRU", Description: "Insert a description here")]
+    public class DR49_Write_PowerFactor_Generic : TestStep
+    {
+        #region Settings
+        //Input<int> dsaHigherLimit ;
+        //Input<int> dsaLowerLimit ;
+        public enum Channels
+        {
+            Channel1 = 1,
+            Channel2
+        };
+        Channels channelsSelection;
+        MRU_Rjio mruObj;
+        private string[] hexValuesCh1 = new string[16] { "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F", "0x7F" };
+        // ToDo: Add property here for each parameter the end user should be able to change
+        #endregion
+
+        public DR49_Write_PowerFactor_Generic()
+        {
+            //DsaHigherLimit = new Input<int>();
+            //DsaLowerLimit = new Input<int>();
+            // ToDo: Set default values for properties / settings.
+        }
+
+        public MRU_Rjio MruObj { get => mruObj; set => mruObj = value; }
+       
+        [Display("Select Channel", Order: 0, Description: "Select Channel")]
+        public Channels ChannelsSelection { get => channelsSelection; set => channelsSelection = value; }
+
+        //[Display("DSA Lower Limit", Order: 0, Description: "Enter DSA Lower Limit")]
+        //public Input<int> DsaLowerLimit { get => dsaLowerLimit; set => dsaLowerLimit = value; }
+        //[Display("DSA Higher Limit", Order: 0, Description: "Enter DSA Higher Limit")]
+        //public Input<int> DsaHigherLimit { get => dsaHigherLimit; set => dsaHigherLimit = value; }
+
+        public override void Run()
+        {
+          SerialPort serialPortObj =   (ChannelsSelection == Channels.Channel1 ) ? MruObj.GetDR49Ch1ComObj() : MruObj.GetDR49Ch2ComObj();
+            
+            //foreach (var item in (int)ChannelsSelection==1?CalibrationStep_CH1.HexValues4DSAWriging:CalibrationStep_CH2.HexValues4DSAWriging)
+            //{
+            //    //if (item>DsaHigherLimit.Value||item<DsaLowerLimit.Value)
+            //    //{
+            //    //   var messageDecision = MessageBox.Show("DSA Value is out of range :Lower Limit ="+DsaLowerLimit.Value +" DSA Higher Limit :" + DsaHigherLimit.Value +" Measured DSA :"+item +", Do you want to exit?","DSA Out of Range",MessageBoxButtons.YesNo);
+            //    //    if (messageDecision == DialogResult.Yes)
+            //    //    {
+            //    //        return;
+            //    //    }
+            //    //}
+            //}
+
+            MruObj.Dr49_CH_WritePowerFactorToEEPROM( (ChannelsSelection == Channels.Channel1 ? GeneralFunctions.powerFactorValuesCh1 : GeneralFunctions.powerFactorValuesCh2),serialPortObj);
+            Log.Info("DSA Values has been update in EEPROM of Channel "+Enum.GetName(typeof(Channels), ChannelsSelection));
+            // ToDo: Add test case code.
+            RunChildSteps(); //If the step supports child steps.
+
+            // If no verdict is used, the verdict will default to NotSet.
+            // You can change the verdict using UpgradeVerdict() as shown below.
+            // UpgradeVerdict(Verdict.Pass);
+        }
+    }
 
 
 
@@ -215,8 +337,7 @@ namespace RjioMRU.TestSteps
     public class DR49_Write_Temperature: TestStep
     {
         #region Settings
-        //Input<int> dsaHigherLimit ;
-        //Input<int> dsaLowerLimit ;
+       
         public enum Channels
         {
             Channel1 = 1,
@@ -237,34 +358,65 @@ namespace RjioMRU.TestSteps
         }
 
         public MRU_Rjio MruObj { get => mruObj; set => mruObj = value; }
+       
+
+        [Display("Select Channel", Order: 0, Description: "Select Channel")]
+        public Channels ChannelsSelection { get => channelsSelection; set => channelsSelection = value; }
+        
+        public override void Run()
+        {
+            DSACHexValues channelValues = new DSACHexValues();
+           
+
+            MruObj.Dr49_CH_WriteTemperatureToEEPROM((ChannelsSelection == Channels.Channel1 ? CalibrationStep_CH1.ChainTemperatureValues : CalibrationStep_CH2.ChainTemperatureValues), ((channelsSelection == Channels.Channel1 ? MruObj.GetDR49Ch1ComObj() : MruObj.GetDR49Ch2ComObj())));
+            Log.Info("temperature Values has been update in EEPROM of Channel "+ChannelsSelection);
+            // ToDo: Add test case code.
+            RunChildSteps(); //If the step supports child steps.
+
+            // If no verdict is used, the verdict will default to NotSet.
+            // You can change the verdict using UpgradeVerdict() as shown below.
+            // UpgradeVerdict(Verdict.Pass);
+        }
+    }
+    
+    
+    [Display("DR49 Write Temperature to EEPROM Generic", Group: "RjioMRU", Description: "Insert a description here")]
+    public class DR49_Write_Temperature_Generic: TestStep
+    {
+        #region Settings
+
+        public enum Channels
+        {
+            Channel1 = 1,
+            Channel2
+        };
+        Channels channelsSelection;
+        MRU_Rjio mruObj;
+        private string[] TemperaruerValues = new string[16] { "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "" };
+       
+        // ToDo: Add property here for each parameter the end user should be able to change
+        #endregion
+
+        public DR49_Write_Temperature_Generic()
+        {
+            
+        }
+
+        public MRU_Rjio MruObj { get => mruObj; set => mruObj = value; }
         //[Display("Select Automatic and Manual ", Order: 0, Description: "Enter Hex Values for DSA")]
         //public bool AutomaticDSAWriting { get => automaticDSAWriting; set => automaticDSAWriting = value; }
 
         [Display("Select Channel", Order: 0, Description: "Select Channel")]
         public Channels ChannelsSelection { get => channelsSelection; set => channelsSelection = value; }
 
-        //[Display("DSA Lower Limit", Order: 0, Description: "Enter DSA Lower Limit")]
-        //public Input<int> DsaLowerLimit { get => dsaLowerLimit; set => dsaLowerLimit = value; }
-        //[Display("DSA Higher Limit", Order: 0, Description: "Enter DSA Higher Limit")]
-        //public Input<int> DsaHigherLimit { get => dsaHigherLimit; set => dsaHigherLimit = value; }
 
         public override void Run()
         {
-            DSACHexValues channelValues = new DSACHexValues();
-            //foreach (var item in (int)ChannelsSelection==1?CalibrationStep_CH1.HexValues4DSAWriging:CalibrationStep_CH2.HexValues4DSAWriging)
-            //{
-            //    //if (item>DsaHigherLimit.Value||item<DsaLowerLimit.Value)
-            //    //{
-            //    //   var messageDecision = MessageBox.Show("DSA Value is out of range :Lower Limit ="+DsaLowerLimit.Value +" DSA Higher Limit :" + DsaHigherLimit.Value +" Measured DSA :"+item +", Do you want to exit?","DSA Out of Range",MessageBoxButtons.YesNo);
-            //    //    if (messageDecision == DialogResult.Yes)
-            //    //    {
-            //    //        return;
-            //    //    }
-            //    //}
-            //}
+           SerialPort serialPortObj = (ChannelsSelection == Channels.Channel1) ? MruObj.GetDR49Ch1ComObj() : MruObj.GetDR49Ch2ComObj();
+            
 
-            MruObj.Dr49_CH_WriteTemperatureToEEPROM((ChannelsSelection == Channels.Channel1 ? CalibrationStep_CH1.ChainTemperatureValues : CalibrationStep_CH2.ChainTemperatureValues), ((channelsSelection == Channels.Channel1 ? MruObj.GetDR49Ch1ComObj() : MruObj.GetDR49Ch2ComObj())));
-            Log.Info("temperature Values has been update in EEPROM of Channel "+ChannelsSelection);
+            MruObj.Dr49_CH_WriteTemperatureToEEPROM((ChannelsSelection == Channels.Channel1 ? GeneralFunctions.ChainTemperatureValuesCh1 : GeneralFunctions.ChainTemperatureValuesCh2),serialPortObj);
+            Log.Info("temperature Values has been update in EEPROM of Channel "+Enum.GetName(typeof(Channels), ChannelsSelection));
             // ToDo: Add test case code.
             RunChildSteps(); //If the step supports child steps.
 
