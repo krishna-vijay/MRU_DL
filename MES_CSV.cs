@@ -86,7 +86,7 @@ namespace RjioMRU
             var csvPath1 = System.IO.Path.Combine(MES_CSV_FilePath1, MES_CSV.MRU_Serial_number + "_" + MES_CSV.Employee_IDNumber + "_" + DateTime.Now.ToString("yyyyMMddHHmmss")) + ".CSV";
             File.WriteAllText(csvPath, csv);
             Thread.Sleep(1000);
-            File.Copy(csvPath, csvPath1);
+            File.Copy(csvPath, csvPath1,true);
 
 
         }
