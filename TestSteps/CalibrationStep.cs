@@ -722,6 +722,8 @@ namespace RjioMRU.TestSteps
                 MRURjioReportCls.MACID4 = DR21_ReadInfo.MAC4_;
                 MRURjioReportCls.PcbSerialNumber = DR21_ReadInfo.PCBserialNumber_;
                 MRURjioReportCls.ProductSerialNumber = MES_CSV.MRU_Serial_number;
+                MRURjioReportCls.testResult = this.PlanRun.Verdict == Verdict.Pass ? true : false;
+
                 foreach (var item in RjioMRU.TestSteps.CalibrationStep_CH1.StrChannelMeasurementsCh1)
                 {
                     MRURjioReportCls.Measurements += item + ";";
@@ -1400,6 +1402,7 @@ namespace RjioMRU.TestSteps
                 MRURjioReportCls.MACID4 = DR21_ReadInfo.MAC4_;
                 MRURjioReportCls.PcbSerialNumber = DR21_ReadInfo.PCBserialNumber_;
                 MRURjioReportCls.ProductSerialNumber = MES_CSV.MRU_Serial_number;
+                MRURjioReportCls.testResult = this.PlanRun.Verdict == Verdict.Pass ? true : false;
 
 
                 foreach (var item in RjioMRU.TestSteps.CalibrationStep_CH1.StrChannelMeasurementsCh1)
@@ -1624,7 +1627,7 @@ namespace RjioMRU.TestSteps
 
         public override void Run()
         {
-            bool[] PassChains = new bool[16] { true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true };
+            bool[] PassChains = new bool[16] { false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false };
             bool CalibrationDone = false;
             // EXM_E6680A E6680InsturmentComman = new EXM_E6680A(); ;
             int DSATrailsCount = 0;
@@ -1858,7 +1861,6 @@ namespace RjioMRU.TestSteps
                             if (resultStrings.Length < 5)
                             {
                                 MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, "FALSE", "Failed", "Failed", "Failed", "EQ", "TRUE", "NA");
-
                                 continue;
                             }
                             MeasuredPowerValue = Convert.ToDouble(resultStrings[13]);
@@ -2171,7 +2173,7 @@ namespace RjioMRU.TestSteps
                 else
                 {
                     GeneralFunctions.HexValues4DSAWrigingCh2[iteration] = HexValues[iteration];
-
+                    
                 }
                 return false;// break;
             }
@@ -2257,6 +2259,7 @@ namespace RjioMRU.TestSteps
                 MRURjioReportCls.MACID4 = DR21_ReadInfo.MAC4_;
                 MRURjioReportCls.PcbSerialNumber = DR21_ReadInfo.PCBserialNumber_;
                 MRURjioReportCls.ProductSerialNumber = MES_CSV.MRU_Serial_number;
+                MRURjioReportCls.testResult = this.PlanRun.Verdict == Verdict.Pass ? true : false;
                 foreach (var item in GeneralFunctions.StrChannelMeasurementsCh1)
                 {
                     MRURjioReportCls.Measurements += item + ";";
@@ -2270,7 +2273,7 @@ namespace RjioMRU.TestSteps
                 Log.Info("Measurements : " + MRURjioReportCls.Measurements);
                 MES_CSV.UpdateHeader(MES_CSV.MRU_Serial_number, MES_CSV.PART_Number, MES_CSV.Equipment_ID, MES_CSV.Slot, MES_CSV.Employee_IDNumber, this.PlanRun.Verdict.ToString().ToUpper() == "PASS" ? "Passed" : "Failed", MES_CSV.Operation_Mode, this.PlanRun.StartTime.ToString("dd-MM-yyyy HH:mm:ss"), DateTime.Now.ToString("dd-MM-yyyy HH:mm:ss"), MES_CSV.SequenceID, this.PlanRun.Verdict.ToString() == "FAIL" ? "FAIL" : ""); //MES_CSV.Overall_Defect_Code);
                 MES_CSV.WrteMESCSVFile();
-
+              
                 // MES_CSV.UpdateHeader(MES_CSV.MRU_Serial_number,MES_CSV.pa)
             }
         }
