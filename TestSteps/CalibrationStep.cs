@@ -1866,7 +1866,7 @@ namespace RjioMRU.TestSteps
                             ACPValues = new double[4] { Convert.ToDouble(ACP5GValues[8]), Convert.ToDouble(ACP5GValues[4]), Convert.ToDouble(ACP5GValues[6]), Convert.ToDouble(ACP5GValues[10]) };
                             MeasuredPowerValue += (CableLosses[iteration] * -1);
 
-                            string CalculatedPowerFactor = MRU_DUT.calcualtePowerFactor(MeasuredPowerValue, rxvalue, txvalue, iteration, "CH1");
+                            string CalculatedPowerFactor = MRU_DUT.calcualtePowerFactor(MeasuredPowerValue, rxvalue, txvalue, iteration,((int)ChannelsSelection == 1)? "CH1":"CH2");
                             string Temperature = MRU_DUT.Dr49_CH_ReadTemperature(serialPortObj, iteration, "rj-dac-tmp -mru_dac_num");
                             temperatureVerdict = genericFunctions.CheckTemperature(Convert.ToDouble(Temperature), TemperatureHighLimit, TemperatureLowLimit);
                             if ((int)ChannelsSelection == 1)
