@@ -1627,7 +1627,7 @@ namespace RjioMRU.TestSteps
 
         public override void Run()
         {
-            bool[] PassChains = new bool[16] { true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true };
+            bool[] PassChains = new bool[16] { false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false };
             bool CalibrationDone = false;
             // EXM_E6680A E6680InsturmentComman = new EXM_E6680A(); ;
             int DSATrailsCount = 0;
@@ -1861,7 +1861,6 @@ namespace RjioMRU.TestSteps
                             if (resultStrings.Length < 5)
                             {
                                 MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, "FALSE", "Failed", "Failed", "Failed", "EQ", "TRUE", "NA");
-
                                 continue;
                             }
                             MeasuredPowerValue = Convert.ToDouble(resultStrings[13]);
