@@ -85,40 +85,46 @@ namespace RjioMRU
             CarrierAggrigationClient = new SshClient(CcduServerIp, CcduUserName, CcduPassword);
 
             bool val;
-            var thread = new Thread(() =>    {
+            var thread = new Thread(() =>
+            {
                 val = MruCCDUServerClientConnectFunction().Result; // Publish the return value
-    });
+            });
             thread.Start();
-            
-            var thread1 = new Thread(() =>    {
+
+            var thread1 = new Thread(() =>
+            {
                 val = PTP_CCDUServerClientConnectFuction().Result; // Publish the return value
-    });
+            });
             thread1.Start();
-            
-            var thread2 = new Thread(() =>    {
+
+            var thread2 = new Thread(() =>
+            {
                 val = PHC_CCDUServerClientConnectFunction().Result; // Publish the return value
-    });
+            });
             thread2.Start();
-            
-            var thread3 = new Thread(() =>    {
+
+            var thread3 = new Thread(() =>
+            {
                 val = L1_CCDUServerClientConnectionFunction().Result; // Publish the return value
-    });
+            });
             thread3.Start();
-            
-            var thread4 = new Thread(() =>    {
+
+            var thread4 = new Thread(() =>
+            {
                 val = TestMac_CCDUServerClientConnectionFunction().Result; // Publish the return value
-    });
+            });
             thread4.Start();
-            
-            var thread5 = new Thread(() =>    {
+
+            var thread5 = new Thread(() =>
+            {
                 val = CarrierAggrigationClientConnectionFunction().Result; // Publish the return value
-    });
+            });
             thread5.Start();
 
 
-            thread.Join();  
+            thread.Join();
             thread1.Join();
-            thread2.Join(); 
+            thread2.Join();
             thread3.Join();
             thread4.Join();
             thread5.Join();
@@ -144,7 +150,7 @@ namespace RjioMRU
             //    }
             //    TapThread.Sleep(1000);
             //}
-           // MruCCDUServerClientConnectFunction();
+            // MruCCDUServerClientConnectFunction();
             //-------------------------------------------------------------------------------------------------------------
             //PTP_CCDUServerClientConnectFuction();
             ////-------------------------------------------------------------------------------------------------------------
@@ -430,6 +436,41 @@ namespace RjioMRU
 
             return false;
         }
+        
+        
+        public bool BasicCCDUCommands(string BasicverificationCommand)
+        {
+            Stopwatch sp = Stopwatch.StartNew();    
+            WritetoSSH("\x03");
+            WritetoSSH(Environment.NewLine);
+            WritetoSSH(BasicverificationCommand);
+            bool status = true;
+            do
+            {
+                var readValue = ReadFromSSH();
+                if (readValue.Contains("connecting (yes/no)?"))
+                {
+                    WritetoSSH("yes" + Environment.NewLine);
+                }
+                if (readValue.Contains("password:"))
+                {
+                    WritetoSSH("root");
+                    status = true;
+                    break;
+                }
+                if (sp.ElapsedMilliseconds > 10000)
+                {
+                    status = false;
+                    break;
+                }
+
+                Thread.Sleep(100);
+            } while (true);
+         
+            
+           
+            return status;
+        }
 
         public bool ChangeInterfceIP(string interfaceName, string ipAddress)
         {
@@ -454,20 +495,18 @@ namespace RjioMRU
             return true;
         }
 
-
-
         public void PtpTaBCommandExecute(bool KeepTrace)
         {
             if (string.IsNullOrEmpty(CCDUServer.linkInteraface.Trim()))
             {
                 CCDUServer.linkInteraface = "ens7f1";
-            } 
-           // int counter = 0;
+            }
+            // int counter = 0;
 
             //ptp4l -i p4p3 -m -f /configs/ptp4l-master.conf
             // PTPCCDUServerDataStream.WriteLine(Environment.NewLine);
             string command = "ptp4l -i " + CCDUServer.linkInteraface + " -m -f /configs/ptp4l-master.conf";
-           // command = "ptp4l -i  p4p3 -m -f /configs/ptp4l-master.conf";
+            // command = "ptp4l -i  p4p3 -m -f /configs/ptp4l-master.conf";
             Log.Info($"PtpTaBCommandExecute : {command}");
             PTPCCDUServerDataStream.WriteLine(command);
             //TapThread.Sleep(4000);
@@ -487,7 +526,7 @@ namespace RjioMRU
                                 {
                                     Log.Info("PTP Command in while:" + Readed);
                                 }
-                                
+
                             }
                         }
                     }
@@ -509,9 +548,9 @@ namespace RjioMRU
 
         public void PhCTaBCommandExecute(bool keepTrace, string Command1, string Command2)
         {
-           // int counter = 0;
+            // int counter = 0;
             PHCCCDUServerDataStream.WriteLine(Environment.NewLine);
-           
+
             PHCCCDUServerDataStream.WriteLine(Command1);
             Log.Info("PHC Command :" + Command1);
             Log.Info("PHC Read Back :" + PHCCCDUServerDataStream.Read());
@@ -528,7 +567,7 @@ namespace RjioMRU
                     if (!string.IsNullOrEmpty(readValue.Trim()))
                     {
                         if (keepTrace)
-                        Log.Info("PHC Command in while:" + readValue);
+                            Log.Info("PHC Command in while:" + readValue);
                     }
                 }
 
@@ -545,7 +584,7 @@ namespace RjioMRU
         }
 
 
-        public void L1TaBCommandExecute(bool KeepTrace,string command1)
+        public void L1TaBCommandExecute(bool KeepTrace, string command1)
         {
             // int counter = 0;
             //string command1 = "cd /home/macro-gnb/working_dir/pkg_HiPhy_22.11.00.12_Xml_v5.2.5_Os_CentOs/custom-sw/ccdu/scripts/l1/";
@@ -570,7 +609,7 @@ namespace RjioMRU
                             {
                                 Log.Info("L1 Command in while:" + readLines);
                             }
-                           
+
                         }
 
                     }
@@ -594,10 +633,10 @@ namespace RjioMRU
         }
 
 
-        public void TestMacTaBCommandExecute(bool KeepTrace,string command1, string command2 )
+        public bool TestMacTaBCommandExecute(bool KeepTrace, string command1, string command2, int timeout)
         {
             // int counter = 0;
-           // string command1 = "cd /home/macro-gnb/working_dir/testmac_pkg_22.11.00.03";
+            // string command1 = "cd /home/macro-gnb/working_dir/testmac_pkg_22.11.00.03";
             TestMacCCDUServerDataStream.WriteLine(command1);
             Log.Info("TestMac Command :" + command1);
             //Log.Info("PHC Read Back :" + PHCCCDUServerDataStream.Read());
@@ -606,6 +645,8 @@ namespace RjioMRU
             Log.Info($"TestMac Command2 : {command2}");
             TestMacCCDUServerDataStream.WriteLine(command2); ;
             //Log.Info("PHC Read Back :" + PHCCCDUServerDataStream.Read());
+            Stopwatch sp = Stopwatch.StartNew();
+            bool testMacPassed = false;
             do
             {
                 lock (ServerLockObject)
@@ -619,11 +660,12 @@ namespace RjioMRU
                             {
                                 Log.Info("TestMac Command in while:" + readlines);
                             }
-                           
+
                         }
                     }
                     if (readValue.Contains("welcome to application console"))
                     {
+                        testMacPassed = true;
                         break;
                     }
                 }
@@ -635,15 +677,23 @@ namespace RjioMRU
                 }
 
                 TapThread.Sleep(100);
+
+                if (sp.ElapsedMilliseconds > (timeout * 1000))
+                {
+                    break;
+                }
             } while (!TapThread.Current.AbortToken.IsCancellationRequested);
 
-
-            // return true;
+            if (testMacPassed)
+            {
+                return true;
+            }
+            return false;
         }
 
 
 
-        public void startDLTest(bool KeepTrace,string command,string command1)
+        public void startDLTest(bool KeepTrace, string command, string command1)
         {
             TestMacCCDUServerDataStream.WriteLine(Environment.NewLine);
             //string commamd = "phystart 4 0 0";
@@ -653,7 +703,7 @@ namespace RjioMRU
             Log.Info("TestMac Reply: " + readValue);
 
 
-           // string command1 = "run 1 2 1 100 1433";
+            // string command1 = "run 1 2 1 100 1433";
             TestMacCCDUServerDataStream.WriteLine(command1);
 
             do
@@ -669,7 +719,7 @@ namespace RjioMRU
                             {
                                 Log.Info("TestMac Test in while:" + readlines);
                             }
-                           
+
                         }
                     }
 
@@ -688,17 +738,51 @@ namespace RjioMRU
 
         public bool CarrierAggrigation(string command1 = "export LD_LIBRARY_PATH=/custom-sw/thirdparty/usr/lib64/:/custom-sw/thirdparty/usr/lib/:/usr/local/bin/:/custom-sw/thirdparty/usr/local/ssl/lib/", string command2 = "./netopeer2-cli", string command3 = "connect --host=192.168.1.2 --port=1830 --login=root", string refTag = "Type your password:", string password = "root", string command4 = "listen", string command4RefTag = "cmd_listen: Already connected to", string command5 = "edit-config --target running --config=/root/uplane_test_xml_for_release_2.9.0_ACTIVE_1.xml --defop merge", string command6 = "rm -rf /root/.ssh/known_hosts")
         {
+            bool rerun = false;
             bool warningMessage = false;
-            Stopwatch  sw = Stopwatch.StartNew();
-           // string command1 = "export LD_LIBRARY_PATH=/custom-sw/thirdparty/usr/lib64/:/custom-sw/thirdparty/usr/lib/:/usr/local/bin/:/custom-sw/thirdparty/usr/local/ssl/lib/";
-            CarrierAggrigationStream.WriteLine(command1);
-            TapThread.Sleep(1000);
-            Log.Info("CA Command sent : export LD_LIBRARY_PATH=/custom-sw/thirdparty/usr/lib64/:/custom-sw/thirdparty/usr/lib/:/usr/local/bin/:/custom-sw/thirdparty/usr/local/ssl/lib/");
             string readConsole = string.Empty;
+            while (true)
+            {
+                Stopwatch sw;
+                ExportCOmmandExecution(command1, command2, out readConsole, out sw);
 
-            CarrierAggrigationStream.WriteLine(command2 + "\n");
-            TapThread.Sleep(1000);
-            Log.Info("Command2 Sent: ./netopeer2-cli");
+                readConsole = ConnectCommand(command3, refTag, ref warningMessage, sw);
+
+
+                //if (rerun)
+                //{
+                //    rerun = false;
+                //    break;
+                //}
+
+                PasswordIfPrompts(password, warningMessage, sw);
+                readConsole = string.Empty;
+                readConsole = waitforConsole(command6, sw);
+
+                readConsole = ListenCommand(command4, command4RefTag, sw);
+
+                TapThread.Sleep(1000);
+
+
+                readConsole = Edit_configCommand(command5, sw);
+                if (readConsole.Contains("OK") || readConsole.Contains("0K"))
+
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+                TapThread.Sleep(100);
+            }
+
+            //  }
+        }
+
+        public string waitforConsole(string command6, Stopwatch sw)
+        {
+            string readConsole;
             do
             {
                 readConsole = CarrierAggrigationStream.Read();
@@ -710,14 +794,91 @@ namespace RjioMRU
                 {
                     break;
                 }
+
+                if (readConsole.Contains("Authentication response timeout"))
+                {
+                    CarrierAggrigationStream.WriteLine("\x03");
+
+                    CarrierAggrigationStream.WriteLine(command6);
+                    continue;
+                }
                 TapThread.Sleep(100);
                 if (sw.ElapsedMilliseconds > 10000)
                 {
                     throw new Exception("Timeout");
                 }
+                Log.Info("CA Functions Waiting for > " + readConsole);
             } while (readConsole.Contains(">"));
+            TapThread.Sleep(1000);
+            return readConsole;
+        }
 
-           
+        public void PasswordIfPrompts(string password, bool warningMessage, Stopwatch sw)
+        {
+            if (!warningMessage)
+            {
+
+                TapThread.Sleep(2000);
+                CarrierAggrigationStream.WriteLine(password);
+                TapThread.Sleep(2000);
+                CarrierAggrigationStream.WriteLine("");
+                sw.Restart();
+                TapThread.Sleep(100);
+
+
+            }
+        }
+
+        public string Edit_configCommand(string command5, Stopwatch sw)
+        {
+            string readConsole;
+            CarrierAggrigationStream.WriteLine(command5);
+            readConsole = string.Empty;
+            sw.Restart();
+            TapThread.Sleep(1000);
+            do
+            {
+                readConsole = CarrierAggrigationStream.Read();
+                TapThread.Sleep(100);
+                Log.Info(readConsole);
+                if (sw.ElapsedMilliseconds > 10000)
+                {
+                    throw new Exception("Timeout");
+                }
+            } while (!(readConsole.Contains("OK") || readConsole.Contains("0K")));
+            return readConsole;
+        }
+
+        public string ListenCommand(string command4, string command4RefTag, Stopwatch sw)
+        {
+            string readConsole;
+            CarrierAggrigationStream.WriteLine(command4);
+            readConsole = string.Empty;
+            sw.Restart();
+            TapThread.Sleep(1000);
+            do
+            {
+                readConsole = CarrierAggrigationStream.Read();
+                foreach (var item in readConsole.Split('\n'))
+                {
+                    Log.Info(readConsole);
+                }
+                if (readConsole.Contains(command4RefTag) || readConsole.Contains("OK") || readConsole.Contains("0K"))
+                {
+                    break;
+                }
+                TapThread.Sleep(100);
+                if (sw.ElapsedMilliseconds > 10000)
+                {
+                    throw new Exception("Timeout");
+                }
+            } while (readConsole.Contains(command4RefTag) || readConsole.Contains("OK"));
+            return readConsole;
+        }
+
+        public string ConnectCommand(string command3, string refTag, ref bool warningMessage, Stopwatch sw)
+        {
+            string readConsole;
             CarrierAggrigationStream.WriteLine(command3 + "\n");
             TapThread.Sleep(3000);
             Log.Info("Command3 Sent: connect --host=192.168.1.2 --port=1830 --login=root");
@@ -739,9 +900,14 @@ namespace RjioMRU
                 {
                     CarrierAggrigationStream.WriteLine("yes");
                 }
-                else if(readConsole.Contains("WARNING:"))
+                else if (readConsole.Contains("WARNING:"))
                 {
                     warningMessage = true;
+                    break;
+                }
+                else if (readConsole.Contains("password:"))
+                {
+                    warningMessage = false;
                     break;
                 }
                 //if (readConsole.Contains("login=rootnc ERROR: Remote host key changed"))
@@ -752,17 +918,19 @@ namespace RjioMRU
                 //    TapThread.Sleep(3000);
                 //}
                 TapThread.Sleep(1000);
-                if (sw.ElapsedMilliseconds>20000)
+                if (sw.ElapsedMilliseconds > 20000)
                 {
+                    CarrierAggrigationStream.WriteLine("\x03");
                     Log.Info("Timeout (20 seconds) occured during Carrier Aggrigation Functions");
                     //bool SendIfCommandOnce = true;
-                    //if(SendIfCommandOnce)
+                    //if (SendIfCommandOnce)
                     //{
                     //    SendIfCommandOnce = false;
                     //    CarrierAggrigationStream.WriteLine(command6 + "\n");
                     //    TapThread.Sleep(3000);
                     //    Log.Info("Command6 Sent:rm -rf /root/.ssh/known_hosts");
                     //}
+                    //rerun = true;
                     break;
                 }
 
@@ -773,19 +941,27 @@ namespace RjioMRU
                 //}
                 Log.Info("CA functions : " + readConsole);
             } while (!readConsole.Contains(refTag));
+            return readConsole;
+        }
 
-            if (!warningMessage)
-            {
+        public void ExportCOmmandExecution(string command1, string command2, out string readConsole, out Stopwatch sw)
+        {
+            CarrierAggrigationStream.WriteLine("\x03");
+            Thread.Sleep(100);
+            //while (true)
+            //{
+            CarrierAggrigationStream.Read();
 
-                TapThread.Sleep(2000);
-                CarrierAggrigationStream.WriteLine(password);
-                TapThread.Sleep(2000);
-                CarrierAggrigationStream.WriteLine("");
-                sw.Restart();
-                TapThread.Sleep(100);
-              
-            }
-            readConsole = string.Empty;
+            sw = Stopwatch.StartNew();
+            // string command1 = "export LD_LIBRARY_PATH=/custom-sw/thirdparty/usr/lib64/:/custom-sw/thirdparty/usr/lib/:/usr/local/bin/:/custom-sw/thirdparty/usr/local/ssl/lib/";
+            CarrierAggrigationStream.WriteLine(command1);
+            TapThread.Sleep(1000);
+            Log.Info("CA Command sent : export LD_LIBRARY_PATH=/custom-sw/thirdparty/usr/lib64/:/custom-sw/thirdparty/usr/lib/:/usr/local/bin/:/custom-sw/thirdparty/usr/local/ssl/lib/");
+
+
+            CarrierAggrigationStream.WriteLine(command2 + "\n");
+            TapThread.Sleep(1000);
+            Log.Info("Command2 Sent: ./netopeer2-cli");
             do
             {
                 readConsole = CarrierAggrigationStream.Read();
@@ -802,60 +978,11 @@ namespace RjioMRU
                 {
                     throw new Exception("Timeout");
                 }
-                Log.Info("CA Functions Waiting for > " + readConsole);
             } while (readConsole.Contains(">"));
-            TapThread.Sleep(1000);
-            CarrierAggrigationStream.WriteLine(command4);
-            readConsole = string.Empty;
-            sw.Restart();
-            TapThread.Sleep(1000);
-            do
-            {
-                readConsole = CarrierAggrigationStream.Read();
-                foreach (var item in readConsole.Split('\n'))
-                {
-                    Log.Info(readConsole);
-                }
-                if (readConsole.Contains(command4RefTag) || readConsole.Contains("OK"))
-                {
-                    break;
-                }
-                TapThread.Sleep(100);
-                if (sw.ElapsedMilliseconds > 10000)
-                {
-                    throw new Exception("Timeout");
-                }
-            } while (readConsole.Contains(command4RefTag)||readConsole.Contains("OK"));
-            TapThread.Sleep(1000);
-            CarrierAggrigationStream.WriteLine(command5);
-            readConsole = string.Empty;
-            sw.Restart();
-            TapThread.Sleep(1000);
-            do
-            {
-                readConsole = CarrierAggrigationStream.Read();
-                TapThread.Sleep(100);
-                Log.Info(readConsole);
-                if (sw.ElapsedMilliseconds > 10000)
-                {
-                    throw new Exception("Timeout");
-                }
-            } while (readConsole.Contains("OK"));
-            TapThread.Sleep(100);
-            if (readConsole.Contains("OK"))
-
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
         }
-        
-        
-        
-        
+
+
+
         private void WritetoSSH(string command)
         {
             // _shellStream.WriteLine("");        
@@ -870,14 +997,25 @@ namespace RjioMRU
             return data = MruCCDUServerDataStream.Read();
         }
 
-        public void RunVirutalFunctions(String VirtualFunctionCommand,string VirtualFunctionCommand2,string VirtualFunctionCommand3)
+        public bool RunVirutalFunctions(String VirtualFunctionCommand, string VirtualFunctionCommand2, string VirtualFunctionCommand3)
         {
-            WritetoSSH(VirtualFunctionCommand);
-            Log.Info    ("Virtual Functions command sent "+VirtualFunctionCommand);
-            WritetoSSH(VirtualFunctionCommand2);
-            Log.Info("Virtual Functions command sent " + VirtualFunctionCommand3);
-            WritetoSSH(VirtualFunctionCommand3);
-            Log.Info("Virtual Functions command sent " + VirtualFunctionCommand3);
+            try
+            {
+                WritetoSSH(VirtualFunctionCommand);
+                Log.Info("Virtual Functions command sent " + VirtualFunctionCommand);
+                WritetoSSH(VirtualFunctionCommand2);
+                Log.Info("Virtual Functions command sent " + VirtualFunctionCommand3);
+                WritetoSSH(VirtualFunctionCommand3);
+                Log.Info("Virtual Functions command sent " + VirtualFunctionCommand3);
+
+            }
+            catch (Exception)
+            {
+
+                return false;
+            }
+
+            return true;
         }
 
         public void CCDU_CA_known_hostsCommand()

@@ -12,6 +12,7 @@ using System.Data.Common;
 using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Spreadsheet;
 using SpreadsheetLight;
+using System.Xml.Serialization;
 
 
 namespace RjioMRU
@@ -39,6 +40,7 @@ namespace RjioMRU
         private string templetepathSUM;
 
         string reportName = string.Empty;
+        [XmlIgnore]
         public string ReportName { get => reportName; set => reportName = value; }
 
         bool creteCSV = false;
@@ -212,6 +214,7 @@ namespace RjioMRU
         }
         public override void OnResultPublished(Guid stepRun, ResultTable result)
         {
+            ReportName = result.Name;
             try
             {
 
@@ -244,20 +247,18 @@ namespace RjioMRU
 
         private void WriteToSpreadSheetLight(ResultTable result)
         {
+            bool testResult = true;
             try
             {
-
-
                 using (SLDocument sl = new SLDocument(TempletepathSUM, "Sheet1"))
-                {
-
-
-
-                    RowNumber = 1;
+                {                    RowNumber = 1;
                     for (int iteration = 0; iteration < result.Columns.Length; iteration++)
                     {
                         switch (result.Columns[iteration].Name)
                         {
+                            case "Test Result":
+                                testResult = (bool)result.Columns[iteration].Data.GetValue(0);
+                                break;
                             case "Ch1Measurements":
                             case "Ch2Measurements":
                             case "Ch3Measurements":
@@ -299,8 +300,9 @@ namespace RjioMRU
                         }
                         RowNumber++;
                     }
-                    sl.SaveAs(Path.Combine(ReportPath, (string.IsNullOrEmpty(ReportName) ? "" : ReportName) + "_" + DateTime.Now.ToShortDateString().Replace('/', '_') + "-" + DateTime.Now.ToLongTimeString().Replace(':', '_') + result.Name) + ".xlsx");
-                    Log.Info("Report saved in :" + Path.Combine(ReportPath, (string.IsNullOrEmpty(ReportName) ? "" : ReportName) + "_" + DateTime.Now.ToShortDateString().Replace('/', '_') + "-" + DateTime.Now.ToLongTimeString().Replace(':', '_') + result.Name) + ".xlsx");
+                    string filePath = Path.Combine(ReportPath, (string.IsNullOrEmpty(ReportName) ? "" : ReportName) + "_" + DateTime.Now.ToShortDateString().Replace('/', '_') + "-" + DateTime.Now.ToLongTimeString().Replace(':', '_')) + (testResult ? "_PASS" : "_FAIL") + ".xlsx";
+                    sl.SaveAs(filePath);
+                    Log.Info("Report saved at :" +filePath);
                 }
 
             }

@@ -361,3 +361,9 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+/TestPlan/MRU DL Testing BothChannels 24_07_2024.TapPlan
+/TestPlan/For Engg validation/MRU DL Testing BothChannels With out MES Flow check.TapPlan
+/.gitignore
+/TestPlan/For Engg validation/MRU DL Testing BothChannels 24_07_2024.TapPlan
+/TestPlan/For Engg validation/MRU DL Testing BothChannels 24_07_2024_with temp.TapPlan
+/TestPlan/MRU DL Testing BothChannels 7_9_2024 For Testing Only.TapPlan

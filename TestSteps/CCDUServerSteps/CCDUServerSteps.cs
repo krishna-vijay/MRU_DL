@@ -9,12 +9,72 @@ using RjioMRU;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading;
 
 namespace RjioMRU
 {
+    [Display("CCDU File Copy to 21DR", Group: "RjioMRU", Description: "Insert a description here")]
+    public class FileCopyfromCCDU_21DR : TestStep
+    {
+        /* 
+        scp /root/MRUV2_21_37/SKU1-MRU-FW-PKG-2.21.37-FACT-1.3-Sanmina/binaries.tar.gz root@192.168.1.2:/home/root/
+The authenticity of host '192.168.1.2 (192.168.1.2)' can't be established.
+ECDSA key fingerprint is SHA256:cY+BS1XUY83h1Q8RR/YYFHIntdykt59ugx111WUgKzQ.
+ECDSA key fingerprint is MD5:94:b1:1a:4f:13:10:00:68:76:8e:9e:ee:4a:98:ff:ed.
+Are you sure you want to continue connecting (yes/no)? yes
+Warning: Permanently added '192.168.1.2' (ECDSA) to the list of known hosts.
+root@192.168.1.2's password:
+
+         */
+
+        private string command = "scp /root/MRUV2_21_37/SKU1-MRU-FW-PKG-2.21.37-FACT-1.3-Sanmina/binaries.tar.gz root@192.168.1.2:/home/root/";
+
+        private CCDUServer cCDUServerobj;
+
+        #region Settings
+        [Display("CCDU Server", Order: 0, Description: "Select Server")]
+        public CCDUServer CCDUServerobj { get => cCDUServerobj; set => cCDUServerobj = value; }
+        [Display(" Command to CCDU", Order: 1, Description: "server command  ")]
+        public string CommandforCCDU { get => command; set => command = value; }
+
+
+
+        // ToDo: Add property here for each parameter the end user should be able to change
+        #endregion
+
+        public FileCopyfromCCDU_21DR()
+        {
+            // ToDo: Set default values for properties / settings.
+        }
+
+        public override void Run()
+        {
+            var FileCopyReturn = CCDUServerobj.BasicCCDUCommands(CommandforCCDU);
+
+            // ToDo: Add test case code.
+            RunChildSteps(); //If the step supports child steps.
+            if (FileCopyReturn)
+            {
+                UpgradeVerdict(Verdict.Pass);
+            }
+            else
+            {
+                UpgradeVerdict(Verdict.Fail);
+            }        
+
+            // If no verdict is used, the verdict will default to NotSet.
+            // You can change the verdict using UpgradeVerdict() as shown below.
+            // UpgradeVerdict(Verdict.Pass);
+        }
+    }
+
+
+
+
+
     [Display("CCDU Basic Verification", Group: "RjioMRU", Description: "Insert a description here")]
     public class CCDUBasicVerification : TestStep
     {
@@ -67,7 +127,7 @@ namespace RjioMRU
             {
                 UpgradeVerdict(Verdict.Fail);
             }
-            MES_CSV.UpdateMESCSV_Parametric_List(MES_CSV.GroupName,this.StepRun.TestStepName, this.Verdict.ToString(), "NA", "25000Mb/s", "NA", "NA", "NA", "NA");
+            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, this.Verdict.ToString(), " ", this.Verdict== Verdict.Pass?"TRUE":"FALSE",  " ", "EQ", "TRUE", "Bool");
             // If no verdict is used, the verdict will default to NotSet.
             // You can change the verdict using UpgradeVerdict() as shown below.
             // UpgradeVerdict(Verdict.Pass);
@@ -119,7 +179,7 @@ namespace RjioMRU
             {
                 UpgradeVerdict(Verdict.Fail);
             }
-            MES_CSV.UpdateMESCSV_Parametric_List(MES_CSV.GroupName, this.StepRun.TestStepName, this.Verdict.ToString(), "NA", ipChangeStatus.ToString(), "TRUE", "EQ", "TRUE", "NA");
+            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, this.Verdict.ToString(), " ", ipChangeStatus.ToString(),"", "EQ", "TRUE", "Bool");
             // If no verdict is used, the verdict will default to NotSet.
             // You can change the verdict using UpgradeVerdict() as shown below.
             // UpgradeVerdict(Verdict.Pass);
@@ -188,7 +248,7 @@ namespace RjioMRU
         public CCDUServer CCDUServerobj { get => cCDUServerobj; set => cCDUServerobj = value; }
         [Display("Enable Trace", Order: 10, Description: "Check for Trace Enable.")]
         public bool KeepTrace1 { get => KeepTrace; set => KeepTrace = value; }
- 
+
         //[Display("Interface IP",Order:20,Description:"Enter ip of the interface ")]
         //public string IpAddress { get => ipAddress; set => ipAddress = value; }
 
@@ -208,14 +268,15 @@ namespace RjioMRU
 
         public override void Run()
         {
-            Thread PTPthread = new Thread(()=>CCDUServerobj.PtpTaBCommandExecute(KeepTrace1));
+            Thread PTPthread = new Thread(() => CCDUServerobj.PtpTaBCommandExecute(KeepTrace1));
             PTPthread.IsBackground = false;
             PTPthread.Start();
             // ToDo: Add test case code.
             RunChildSteps(); //If the step supports child steps.
 
-              UpgradeVerdict(Verdict.Pass);
-            MES_CSV.UpdateMESCSV_Parametric_List(MES_CSV.GroupName, this.StepRun.TestStepName, this.Verdict.ToString(), "NA", "NA", "NA", "NA", "NA", "NA"       );
+            UpgradeVerdict(Verdict.Pass);
+            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, this.Verdict.ToString(), " ", this.Verdict == Verdict.Pass ? "TRUE" : "FALSE", " ","EQ", "TRUE", "Bool");
+
         }
     }
 
@@ -234,13 +295,13 @@ namespace RjioMRU
         #region Settings
         [Display("CCDU Server", Order: 0, Description: "Select Server")]
         public CCDUServer CCDUServerobj { get => cCDUServerobj; set => cCDUServerobj = value; }
-        [Display("Enable Trace",Order:10,Description:"Check for Trace Enable.")]
+        [Display("Enable Trace", Order: 10, Description: "Check for Trace Enable.")]
         public bool KeepTracing1 { get => KeepTracing; set => KeepTracing = value; }
-        [Display("Command1 ",Order:15,Description:"Enter the first command")]
+        [Display("Command1 ", Order: 15, Description: "Enter the first command")]
 
         public string Command1 { get => command1; set => command1 = value; }
 
-        [Display("Command2",Order:20,Description:"Enter second command")]
+        [Display("Command2", Order: 20, Description: "Enter second command")]
         public string Command2phc { get => command2phc; set => command2phc = value; }
 
 
@@ -261,7 +322,7 @@ namespace RjioMRU
         public override void Run()
         {
             Command2phc = "./phc2sys -s " + CCDUServer.linkInteraface + " -O -37 -m";
-            Thread PHCthread = new Thread(()=>CCDUServerobj.PhCTaBCommandExecute(KeepTracing1,Command1, Command2phc));
+            Thread PHCthread = new Thread(() => CCDUServerobj.PhCTaBCommandExecute(KeepTracing1, Command1, Command2phc));
             PHCthread.IsBackground = true;
             PHCthread.Start();
             // var PingTestStatus = CCDUServerobj.PhCTaBCommandExecute(CCDUBasicVerification.linkInteraface);
@@ -270,7 +331,10 @@ namespace RjioMRU
 
             //if (PingTestStatus)
             //{
-                UpgradeVerdict(Verdict.Pass);
+            UpgradeVerdict(Verdict.Pass);
+            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, Verdict.ToString(), " ", this.Verdict == Verdict.Pass ? "TRUE" : "FALSE", "", "EQ", "TRUE", "Bool");
+
+
             //}
             //else
             //{
@@ -282,16 +346,16 @@ namespace RjioMRU
         }
 
     }
-    
-    
+
+
     [Display("L1 Tab phc2sys Command", Group: "RjioMRU", Description: "Insert a description here")]
     public class L1_Tabphc2sysCommand : TestStep
     {
-       
+
 
         private CCDUServer cCDUServerobj;
         private bool KeepTrace = false;
-        private string command1  = "cd /home/macro-gnb/working_dir/pkg_HiPhy_22.11.00.12_Xml_v5.2.5_Os_CentOs/custom-sw/ccdu/scripts/l1/";
+        private string command1 = "cd /home/macro-gnb/working_dir/pkg_HiPhy_22.11.00.12_Xml_v5.2.5_Os_CentOs/custom-sw/ccdu/scripts/l1/";
 
         #region Settings
         [Display("CCDU Server", Order: 0, Description: "Select Server")]
@@ -299,7 +363,7 @@ namespace RjioMRU
         [Display("Enable Trace", Order: 10, Description: "Check for Trace Enable.")]
         public bool KeepTrace1 { get => KeepTrace; set => KeepTrace = value; }
 
-        [Display("Command 1",Order: 15,Description:"Enter command1 script")]
+        [Display("Command 1", Order: 15, Description: "Enter command1 script")]
         public string Command1 { get => command1; set => command1 = value; }
 
         //[Display("Interface Name", Order: 2, Description: "Interface Name")]
@@ -318,7 +382,8 @@ namespace RjioMRU
 
         public override void Run()
         {
-            Thread L1_thread = new Thread(()=>CCDUServerobj.L1TaBCommandExecute(KeepTrace1, Command1));
+            bool returnValue = false;
+            Thread L1_thread = new Thread(() => CCDUServerobj.L1TaBCommandExecute(KeepTrace1, Command1));
             L1_thread.IsBackground = true;
             L1_thread.Start();
             // var PingTestStatus = CCDUServerobj.PhCTaBCommandExecute(CCDUBasicVerification.linkInteraface);
@@ -327,7 +392,10 @@ namespace RjioMRU
 
             //if (PingTestStatus)
             //{
-               UpgradeVerdict(Verdict.Pass);
+
+            UpgradeVerdict(Verdict.Pass);
+            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, this.Verdict.ToString(), " ", this.Verdict == Verdict.Pass ? "TRUE" : "FALSE", " ", "EQ", "TRUE", "Bool");
+
             //}
             //else
             //{
@@ -344,7 +412,7 @@ namespace RjioMRU
     {
 
         private string command1 = "cd /home/macro-gnb/working_dir/testmac_pkg_22.11.00.03";
-       private string command2 = "./testmac_entry.sh";
+        private string command2 = "./testmac_entry.sh";
         private CCDUServer cCDUServerobj;
         private bool KeepTracing = false;
         #region Settings
@@ -352,10 +420,15 @@ namespace RjioMRU
         public CCDUServer CCDUServerobj { get => cCDUServerobj; set => cCDUServerobj = value; }
         [Display("Enable Trace", Order: 10, Description: "Check for Trace Enable.")]
         public bool KeepTracing1 { get => KeepTracing; set => KeepTracing = value; }
-        [Display("Command1",Order:15,Description:"Enter the command1 script")]
+        [Display("Command1", Order: 15, Description: "Enter the command1 script")]
         public string Command1 { get => command1; set => command1 = value; }
-        [Display("Command2",Order:20,Description:"Enter the command2 script")]
+        [Display("Command2", Order: 20, Description: "Enter the command2 script")]
         public string Command2 { get => command2; set => command2 = value; }
+
+        int timeout = 10;
+        [Display("Time out", Order: 30, Description: "Enter the timeout in seconds")]
+        public int Timeout { get => timeout; set => timeout = value; }
+
 
         // ToDo: Add property here for each parameter the end user should be able to change
         #endregion
@@ -367,19 +440,30 @@ namespace RjioMRU
 
         public override void Run()
         {
-            Thread TestMac_thread = new Thread(()=>CCDUServerobj.TestMacTaBCommandExecute(KeepTracing1, Command1,Command2));
+            bool resultStatus = false;
+            Thread TestMac_thread = new Thread(() => resultStatus = CCDUServerobj.TestMacTaBCommandExecute(KeepTracing1, Command1, Command2, Timeout));
             TestMac_thread.IsBackground = true;
             TestMac_thread.Start();
             // var PingTestStatus = CCDUServerobj.PhCTaBCommandExecute(CCDUBasicVerification.linkInteraface);
             // ToDo: Add test case code.
             RunChildSteps(); //If the step supports child steps
+                             //if (resultStatus)
+                             //{
+
             UpgradeVerdict(Verdict.Pass);
+            //}
+            //else
+            //{
+            // UpgradeVerdict(Verdict.Fail);
+            // }
+            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, this.Verdict.ToString(), " ", resultStatus.ToString(), "", "EQ", "TRUE", "Bool");
+
         }
 
     }
-    
+
     [Display("TestMac Start DL Testing", Group: "RjioMRU", Description: "Insert a description here")]
-    public class TestMac_TABStartDLTest: TestStep
+    public class TestMac_TABStartDLTest : TestStep
     {
 
 
@@ -393,10 +477,10 @@ namespace RjioMRU
 
         [Display("Enable Trace", Order: 10, Description: "Check for Trace Enable.")]
         public bool KeepTracing1 { get => KeepTracing; set => KeepTracing = value; }
-        [Display("Command",Order:15,Description:"Enter the command script")]
+        [Display("Command", Order: 15, Description: "Enter the command script")]
         public string Commamd { get => commamd; set => commamd = value; }
 
-        [Display("command1",Order:20,Description:"ENter the command1 script")]
+        [Display("command1", Order: 20, Description: "ENter the command1 script")]
         public string Command1 { get => command1; set => command1 = value; }
 
 
@@ -410,7 +494,7 @@ namespace RjioMRU
 
         public override void Run()
         {
-            Thread TestMacTest_thread = new Thread(()=>CCDUServerobj.startDLTest(KeepTracing1,Commamd,Command1));
+            Thread TestMacTest_thread = new Thread(() => CCDUServerobj.startDLTest(KeepTracing1, Commamd, Command1));
             TestMacTest_thread.IsBackground = true;
             TestMacTest_thread.Start();
             //CCDUServerobj.startDLTest();
@@ -419,7 +503,7 @@ namespace RjioMRU
             RunChildSteps(); //If the step supports child steps
 
             UpgradeVerdict(Verdict.Pass);
-            MES_CSV.UpdateMESCSV_Parametric_List(MES_CSV.GroupName, this.StepRun.TestStepName, this.Verdict.ToString(), "NA", "NA", "NA", "NA", "NA", "NA");
+            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, this.Verdict.ToString(), " ", this.Verdict == Verdict.Pass ? "TRUE" : "FALSE", " ", "EQ", "TRUE", "Bool");
         }
 
     }
@@ -428,7 +512,7 @@ namespace RjioMRU
     [Display("Close all Plugins", Group: "RjioMRU", Description: "Insert a description here")]
     public class CloseAllPlugins : TestStep
     {
-         
+
 
         public CloseAllPlugins()
         {
@@ -446,16 +530,18 @@ namespace RjioMRU
             RunChildSteps(); //If the step supports child steps.
 
             UpgradeVerdict(Verdict.Pass);
+            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, Verdict.ToString(), " ", this.Verdict == Verdict.Pass ? "TRUE" : "FALSE", "", "EQ", "TRUE", "Bool");
+
             // If no verdict is used, the verdict will default to NotSet.
             // You can change the verdict using UpgradeVerdict() as shown below.
             // UpgradeVerdict(Verdict.Pass);
         }
     }
-    
+
     [Display("Loop Break False", Group: "RjioMRU", Description: "Insert a description here")]
-    public class LoopBreakFalse: TestStep
+    public class LoopBreakFalse : TestStep
     {
-         
+
 
         public LoopBreakFalse()
         {
@@ -475,7 +561,7 @@ namespace RjioMRU
 
             // If no verdict is used, the verdict will default to NotSet.
             // You can change the verdict using UpgradeVerdict() as shown below.
-             UpgradeVerdict(Verdict.Pass);
+            UpgradeVerdict(Verdict.Pass);
         }
     }
 
@@ -487,8 +573,8 @@ namespace RjioMRU
         string command2 = string.Empty;
         string command3 = string.Empty;
         public CCDUServer CCDUServerobj { get => cCDUServerobj; set => cCDUServerobj = value; }
-        [Display("Virtual Function script1",Order:1,Description:"Enter virtual function script1")]
-       
+        [Display("Virtual Function script1", Order: 1, Description: "Enter virtual function script1")]
+
         public string Command1 { get => command1; set => command1 = value; }
         [Display("Virtual Function script2", Order: 5, Description: "Enter virtual function script2")]
 
@@ -503,9 +589,10 @@ namespace RjioMRU
 
         public override void Run()
         {
+            bool returnValue = false;
             try
             {
-                CCDUServerobj.RunVirutalFunctions(Command1, Command2, Command3);
+                returnValue = CCDUServerobj.RunVirutalFunctions(Command1, Command2, Command3);
 
             }
             catch (Exception)
@@ -522,10 +609,10 @@ namespace RjioMRU
             // If no verdict is used, the verdict will default to NotSet.
             // You can change the verdict using UpgradeVerdict() as shown below.
             UpgradeVerdict(Verdict.Pass);
-            MES_CSV.UpdateMESCSV_Parametric_List(MES_CSV.GroupName,this.StepRun.TestStepName, this.Verdict.ToString(), "NA", "NA", "NA", "NA", "NA", "NA");
+            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, this.Verdict.ToString(), " ", returnValue.ToString(), "","EQ", "TRUE", "Bool");
         }
     }
-    
+
     [Display("Carrier Aggrigation Functions", Group: "RjioMRU", Description: "Insert a description here")]
     public class RunCAFunctions : TestStep
     {
@@ -546,17 +633,17 @@ namespace RjioMRU
         string command6 = "rm -rf /root/.ssh/known_hosts"; // if failed only
 
         public CCDUServer CCDUServerobj { get => cCDUServerobj; set => cCDUServerobj = value; }
-        [Display("CA script1",Order:1,Description:"Enter CA function script1")]
-       
-        public string Command1 { get => command1; set => command1 = value; }
+        [Display("CA script1", Order: 1, Description: "Enter CA function script1")]
+
+        public string ExportCommand { get => command1; set => command1 = value; }
         [Display("CA script2", Order: 5, Description: "Enter CA function script2")]
 
-        public string Command2 { get => command2; set => command2 = value; }
+        public string netopeer2_cli_Command2 { get => command2; set => command2 = value; }
         [Display("CA script3", Order: 10, Description: "Enter CA function script3")]
-        public string Command3 { get => command3; set => command3 = value; }
+        public string ConnectCommand3 { get => command3; set => command3 = value; }
 
         [Display("REF Tag", Order: 10, Description: "Enter Reg Tag script3")]
-        public string RefTag { get => refTag; set => refTag = value; }
+        public string ConsolePasswordPrompt { get => refTag; set => refTag = value; }
 
         [Display("Password", Order: 10, Description: "Enter Password")]
         public string Password { get => password; set => password = value; }
@@ -582,11 +669,30 @@ namespace RjioMRU
         public override void Run()
         {
             bool CAResult = false;
+            string readConsole = string.Empty;
+            bool warning = false;
+            Stopwatch sp = Stopwatch.StartNew();
             try
             {
-               CAResult = CCDUServerobj.CarrierAggrigation(Command1, Command2, Command3, RefTag, Password, Command4, Command4RefTag, Command5, Command6);
+                CCDUServerobj.ExportCOmmandExecution(ExportCommand, netopeer2_cli_Command2, out readConsole, out sp);
+                readConsole = CCDUServerobj.ConnectCommand(ConnectCommand3, ConsolePasswordPrompt, ref warning, sp);
+                CCDUServerobj.PasswordIfPrompts(Password, warning, sp);
+                readConsole = CCDUServerobj.waitforConsole(command6, sp);
+                readConsole = CCDUServerobj.ListenCommand(command4, command4RefTag, sp);
+                TapThread.Sleep(1000);
+                readConsole = CCDUServerobj.Edit_configCommand(command5, sp);
+                if (readConsole.Contains("OK") || readConsole.Contains("0K"))
+                {
+                    CAResult = true;
+                }
+                else
+                {
+                    CAResult = false;
+                }
+
+                //CAResult = CCDUServerobj.CarrierAggrigation(ExportCommand, netopeer2_cli_Command2, ConnectCommand3, ConsolePasswordPrompt, Password, Command4, Command4RefTag, Command5, Command6);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Log.Error("Error during Carrier Aggrigation Functions: {0}", ex);
                 UpgradeVerdict(Verdict.Error);
@@ -603,15 +709,15 @@ namespace RjioMRU
             {
                 UpgradeVerdict(Verdict.Fail);
             }
-            MES_CSV.UpdateMESCSV_Parametric_List(MES_CSV.GroupName,this.StepRun.TestStepName, this.Verdict.ToString(), CAResult.ToString(), "NA", "TRUE", "EQ", "TRUE", "NA"   );
+            MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, this.Verdict.ToString(),"", CAResult.ToString(),"", "EQ", "TRUE", "Bool");
 
             //UpgradeVerdict(Verdict.Pass);
         }
     }
-    
-    
+
+
     [Display("rm -rf /root/.ssh/known_hosts ", Group: "RjioMRU", Description: "Insert a description here")]
-    public class RunCAKnownHostCommand: TestStep
+    public class RunCAKnownHostCommand : TestStep
     {
 
 
@@ -619,11 +725,11 @@ namespace RjioMRU
          string command1 = "export LD_LIBRARY_PATH=/custom-sw/thirdparty/usr/lib64/:/custom-sw/thirdparty/usr/lib/:/usr/local/bin/:/custom-sw/thirdparty/usr/local/ssl/lib/", string command2 = "./netopeer2-cli", string command3 = "connect --host=192.168.1.2 --port=1830 --login=root", string refTag = "Type your password:", string password = "root", string command4 = "listen", string command4RefTag = "cmd_listen: Already connected to", string command5 = "edit-config --target running --config=/root/uplane_test_xml_for_release_2.9.0_ACTIVE_1.xml --defop merge"
          */
         private CCDUServer cCDUServerobj;
-         
+
 
         public CCDUServer CCDUServerobj { get => cCDUServerobj; set => cCDUServerobj = value; }
-        [Display("CA script1",Order:1,Description:"Enter CA function script1")]
-        
+        [Display("CA script1", Order: 1, Description: "Enter CA function script1")]
+
 
         public RunCAKnownHostCommand()
         {

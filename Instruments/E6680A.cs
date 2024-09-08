@@ -444,7 +444,8 @@ namespace RjioMRU
             string ReturnValue = string.Empty;
             try
             {
-               // ScpiCommand(":INIT:CONT OFF");
+                MeasureContinues(false);
+                // ScpiCommand(":INIT:CONT OFF");
                 TapThread.Sleep(500);
                 //ScpiCommand("INIT");
                 //TapThread.Sleep(500);
@@ -459,7 +460,8 @@ namespace RjioMRU
                     ScpiCommand("ABORT");
                    ReturnValue = "-99";
                 }
-               // ScpiCommand(":INIT:CONT ON");
+                MeasureContinues(true);
+                // ScpiCommand(":INIT:CONT ON");
             }
             catch (Exception)
             {
@@ -503,6 +505,12 @@ namespace RjioMRU
         public void ACP_GATESource_ABs_Trig_Level(double level)
         {
             ScpiCommand(":TRIG:SEQ:RFB:LEV:ABS " + level);
+        }
+
+        internal string getInstrumentSCreen()
+        {
+          return  ScpiQuery<string>(":INSTrument:SCReen:SELect?");
+
         }
         #region Enums
 

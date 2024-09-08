@@ -24,6 +24,7 @@ using System.Collections.ObjectModel;
 using System.Runtime.Remoting.Channels;
 using System.Windows.Forms;
 using System.Net;
+using RjioMRU.TestSteps;
 
 namespace RjioMRU
 {
@@ -222,6 +223,105 @@ namespace RjioMRU
             return true;
         }
 
+        public bool DR49CHexecuteCALDSAScripts(string sendScript, string validateScript, SerialPort serialPortObj)
+        {
+            Log.Debug("49DR CH Functions");
+            Stopwatch sw = Stopwatch.StartNew();
+            string returnValue;
+            int attemptNumber = 1;
+
+            serialPortObj.ReadExisting();
+            serialPortObj.WriteLine(sendScript);
+            if (!string.IsNullOrEmpty(validateScript))
+            {
+                returnValue = string.Empty;
+                do
+                {
+#if NORMAL
+                    TapThread.Sleep(100);
+#else
+                    TapThread.Sleep(100);
+#endif
+                    returnValue = serialPortObj.ReadExisting();
+                    if (!string.IsNullOrEmpty(returnValue))
+                    {
+                        foreach (var item in returnValue.Split('\r'))
+                        {
+                            Log.Info("DR49 Ch Commands:" + item);
+
+                        }
+                        if (returnValue.Contains("configuration failed") || returnValue.Contains("Initialization Failed"))//17:20:46.791  RjioMRU      DR49 Ch1 Commands:                             for DAC connected with R Channel MUX CH0
+
+                        {
+                            serialPortObj.WriteLine(sendScript);
+                            sw.Restart();
+                        }
+                    }
+                    if (sw.ElapsedMilliseconds > 5000 && attemptNumber < 2)
+                    {
+                        attemptNumber++;
+                        serialPortObj.WriteLine(sendScript);
+                        sw.Restart();
+                    }
+                    else if (sw.ElapsedMilliseconds > 5000 && attemptNumber >= 2)
+                    {
+                        return false;
+                    }
+                } while (!returnValue.Replace("\n", string.Empty).Contains(validateScript));
+            }
+            return true;
+        }
+
+
+        //        public bool DR49CHexecuteCALDSAScripts(string sendScript, string validateScript,SerialPort serialPortObj)
+        //        {
+        //            Log.Debug("49DR CH1 Functions");
+        //            Stopwatch sw = Stopwatch.StartNew();
+        //            string returnValue;
+        //            int attemptNumber = 1;
+
+        //            serialPortObj.ReadExisting();
+        //            serialPortObj.WriteLine(sendScript);
+        //            if (!string.IsNullOrEmpty(validateScript))
+        //            {
+        //                returnValue = string.Empty;
+        //                do
+        //                {
+        //#if NORMAL
+        //                    TapThread.Sleep(100);
+        //#else
+        //                    TapThread.Sleep(100);
+        //#endif
+        //                    returnValue = serialPortObj.ReadExisting();
+        //                    if (!string.IsNullOrEmpty(returnValue))
+        //                    {
+        //                        foreach (var item in returnValue.Split('\r'))
+        //                        {
+        //                            Log.Info("DR49 Ch1 Commands:" + item);
+
+        //                        }
+        //                        if (returnValue.Contains("configuration failed") || returnValue.Contains("Initialization Failed"))//17:20:46.791  RjioMRU      DR49 Ch1 Commands:                             for DAC connected with R Channel MUX CH0
+
+        //                        {
+        //                            serialPortObj.WriteLine(sendScript);
+        //                            sw.Restart();
+        //                        }
+        //                    }
+        //                    if (sw.ElapsedMilliseconds > 5000 && attemptNumber < 2)
+        //                    {
+        //                        attemptNumber++;
+        //                        serialPortObj.WriteLine(sendScript);
+        //                        sw.Restart();
+        //                    }
+        //                    else if (sw.ElapsedMilliseconds > 5000 && attemptNumber >= 2)
+        //                    {
+        //                        return false;
+        //                    }
+        //                } while (!returnValue.Replace("\n", string.Empty).Contains(validateScript));
+        //            }
+        //            return true;
+        //        }
+
 
         internal void DR49CH1Jjio_DPD_InitRun(int chainNumber)
         {
@@ -260,10 +360,53 @@ namespace RjioMRU
             //startReceiveEvent();
         }
 
+
+        internal void DR49CHJjio_DPD_InitRun(int chainNumber, SerialPort SerialPortObj)
+        {
+            Log.Debug("49DR CH1 Functions");
+            //stopReceiveEvent();
+            int flag = 0;
+            string returnValue = string.Empty;
+            //DR49Ch1ComObj.WriteLine("rjio_dpd_init.sh");
+            SerialPortObj.WriteLine("cfr_dpd_init.sh 100");
+            do
+            {
+                returnValue = SerialPortObj.ReadExisting();
+                if (!string.IsNullOrEmpty(returnValue.Trim()))
+                {
+                    Log.Info("DPD INIT CH for Chain :" + chainNumber + " :" + returnValue);
+                }
+
+                TapThread.Sleep(100);
+                if (flag == 0 && (returnValue.Replace("\n", string.Empty).Contains("down") || returnValue.Replace("\n", string.Empty).Contains("environment") || returnValue.Replace("\n", string.Empty).Contains("~#")))
+
+                {
+                    flag = 1;
+
+                }
+                else if (flag == 1 && (returnValue.Replace("\n", string.Empty).Contains("down") || returnValue.Replace("\n", string.Empty).Contains("environment") || returnValue.Replace("\n", string.Empty).Contains("~#")))
+                {
+                    flag = 2;
+                }
+                if (returnValue.Contains("CFR/Rescalers/DPD init done"))
+                {
+                    break;
+                }
+
+
+            } while (flag != 2 || TapThread.Current.AbortToken.IsCancellationRequested);
+            //startReceiveEvent();
+        }
+
         public void Dr49_CH1_ControlC()
         {
             Log.Debug("49DR CH1 Functions");
             DR49Ch1ComObj.WriteLine("\x03");
+        }
+        public void Dr49_CH_ControlC(SerialPort dR49ChComObj)
+        {
+            Log.Debug("49DR CH Functions");
+            dR49ChComObj.WriteLine("\x03");
         }
         public void Dr21_ControlC()
         {
@@ -408,7 +551,16 @@ namespace RjioMRU
             return ORANInit;
         }
 
-        public bool Dr49_CH1_DPD_Measurement(int channelNumber, out double Txvalue, out double RxValue)
+        public SerialPort GetDR49Ch1ComObj()
+        {
+            return DR49Ch1ComObj;
+        }
+        public SerialPort GetDR49Ch2ComObj()
+        {
+            return DR49Ch2ComObj;
+        }
+
+        public bool Dr49_DPD_Measurement(int channelNumber, out double Txvalue, out double RxValue, SerialPort dR49ChComObj)
         {
             Log.Debug("49DR CH1 Functions");
             int count = 0;
@@ -424,12 +576,12 @@ namespace RjioMRU
             //string command = (channelNumber <= 7 ? "dpd1-debug" : "dpd2-debug");
             string command = (channelNumber <= 7 ? "dpd_dbg_host_app 0xa0060000" : "dpd_dbg_host_app 0xa00e0000");
             channelNumber = channelNumber % 8;
-            DR49Ch1ComObj.WriteLine(command);
+            dR49ChComObj.WriteLine(command);
             string readValue = string.Empty;
             do
             {
                 TapThread.Sleep(200);
-                readValue = DR49Ch1ComObj.ReadExisting();
+                readValue = dR49ChComObj.ReadExisting();
                 if (!string.IsNullOrEmpty(readValue.Trim()))
                 {
                     foreach (var line in readValue.Split('\n'))
@@ -443,38 +595,37 @@ namespace RjioMRU
                     if (sp.ElapsedMilliseconds > 10000)
                     {
                         sp.Restart();
-                        DR49Ch1ComObj.WriteLine("\x03");
+                        dR49ChComObj.WriteLine("\x03");
                         TapThread.Sleep(200);
-                        DR49Ch1ComObj.WriteLine("\x03");
+                        dR49ChComObj.WriteLine("\x03");
                         TapThread.Sleep(1000);
-                        DR49Ch1ComObj.ReadExisting();
+                        dR49ChComObj.ReadExisting();
                         readValue = string.Empty;
-                        DR49Ch1ComObj.WriteLine(command);
+                        dR49ChComObj.WriteLine(command);
                     }
                 }
 
                 ///DPD HOST Example Application MAIN MENU
                 if (readValue.Replace("\n", string.Empty).Contains("Selection:") && (
                     readValue.Replace("\n", string.Empty).Contains("Open DPD Host Interface") ||
-                    readValue.Contains("DFE System Reset") ||
-                    readValue.Contains("")))
+                    readValue.Contains("DFE System Reset")))
                 {
                     if (!Read_Capture_Power_Meter)
                     {
-                        DR49Ch1ComObj.WriteLine("1");
+                        dR49ChComObj.WriteLine("1");
                     }
                     else
                     {
-                        DR49Ch1ComObj.WriteLine("2");
+                        dR49ChComObj.WriteLine("2");
                     }
                 }
 
 
 
 
-                if (readValue.Replace("\n", string.Empty).Contains("DPD User Interface Base Address: [0xa0060000]") || readValue.Replace("\n", string.Empty).Contains("DPD User Interface Base Address: [0xa4060000]"))
+                if (readValue.Replace("\n", string.Empty).Contains("DPD User Interface Base Address: [0xa0060000]") || readValue.Replace("\n", string.Empty).Contains("DPD User Interface Base Address: [0xa4060000]") || readValue.Replace("\n", string.Empty).Contains("DPD User Interface Base Address: [0xa00e0000]:"))
                 {
-                    DR49Ch1ComObj.WriteLine(Environment.NewLine);
+                    dR49ChComObj.WriteLine(Environment.NewLine);
                 }
 
                 if ((readValue.Replace("\n", string.Empty).Contains("Application SUB MENU") ||
@@ -504,11 +655,11 @@ namespace RjioMRU
                         string txStr = string.Empty;
                         string rxStr = string.Empty;
                         TapThread.Sleep(200);
-                        DR49Ch1ComObj.ReadExisting();
-                        DR49Ch1ComObj.WriteLine("6");
+                        dR49ChComObj.ReadExisting();
+                        dR49ChComObj.WriteLine("6");
                         do
                         {
-                            TxRxValues += DR49Ch1ComObj.ReadExisting().Replace("\n", string.Empty);
+                            TxRxValues += dR49ChComObj.ReadExisting().Replace("\n", string.Empty);
                             //TapThread.Sleep(200);
                         } while (!TxRxValues.Replace("\n", string.Empty).Contains("Sub Menu Selection:"));
                         ///////////////////////////////////////////////
@@ -544,35 +695,35 @@ namespace RjioMRU
                         ///////////////////////////////////////////////
                         //  extractTxRx(channelNumber, out txvalue, out RxValue, TxRxValues);
                         Read_Capture_Power_Meter = true;
-                        DR49Ch1ComObj.WriteLine("99");
+                        dR49ChComObj.WriteLine("99");
                     }
                 }
 
                 if (readValue.Contains("Exiting program"))
                 {
-                    DR49Ch1ComObj.WriteLine(Environment.NewLine);
+                    dR49ChComObj.WriteLine(Environment.NewLine);
                     break;
                 }
 
                 if (readValue.Replace("\n", string.Empty).Contains("Failed to open DPD Host Interface"))
                 {
-                    DR49Ch1ComObj.WriteLine("\x03");
+                    dR49ChComObj.WriteLine("\x03");
                     TapThread.Sleep(500);
-                    DR49Ch1ComObj.WriteLine("\x03");
+                    dR49ChComObj.WriteLine("\x03");
                     TapThread.Sleep(1000);
-                    DR49Ch1ComObj.WriteLine(command);
+                    dR49ChComObj.WriteLine(command);
                     Read_Capture_Power_Meter = false;
                     Log.Info("DPD Meas Repeting for Failed to open DPD Host Interface");
                     //throw new Exception("DPD Host interface open failed");
                 }
                 if (readValue.Replace("\n", string.Empty).Contains("Error! Wrong selection"))
                 {
-                    DR49Ch1ComObj.WriteLine("\x03");
+                    dR49ChComObj.WriteLine("\x03");
                     TapThread.Sleep(500);
-                    DR49Ch1ComObj.ReadExisting();
+                    dR49ChComObj.ReadExisting();
                     readValue = string.Empty;
                     Log.Info("DPD Meas Repeting for Error! Wrong selection");
-                    DR49Ch1ComObj.WriteLine(command);
+                    dR49ChComObj.WriteLine(command);
 
                 }
 
@@ -584,19 +735,19 @@ namespace RjioMRU
             //int count = 0;
             //txvalue = 0;
             //RxValue = 0;
-            //DR49Ch1ComObj.WriteLine("\x03");
+            //dR49ChComObj.WriteLine("\x03");
             //Stopwatch sw = Stopwatch.StartNew();
-            //// DR49Ch1ComObj.WriteLine(Environment.NewLine);
+            //// dR49ChComObj.WriteLine(Environment.NewLine);
 
             //bool Read_Capture_Power_Meter = false;
             //string command = (channelNumber <= 7 ? "dpd1-debug" : "dpd2-debug");
             //channelNumber = channelNumber % 8;
-            //DR49Ch1ComObj.WriteLine(command);
+            //dR49ChComObj.WriteLine(command);
             //string readValue = string.Empty;
             //do
             //{
             //    TapThread.Sleep(200);
-            //    readValue = DR49Ch1ComObj.ReadExisting();
+            //    readValue = dR49ChComObj.ReadExisting();
             //    if (!string.IsNullOrEmpty(readValue.Trim()))
             //    {
             //        foreach (var line in readValue.Split('\n'))
@@ -609,11 +760,11 @@ namespace RjioMRU
             //    {
             //        if (sw.ElapsedMilliseconds > 10000)
             //        {
-            //            DR49Ch1ComObj.WriteLine("\x03");
+            //            dR49ChComObj.WriteLine("\x03");
             //            TapThread.Sleep(100);
-            //            DR49Ch1ComObj.ReadExisting();
+            //            dR49ChComObj.ReadExisting();
             //            readValue = string.Empty;
-            //            DR49Ch1ComObj.WriteLine(command);
+            //            dR49ChComObj.WriteLine(command);
             //            sw.Restart();
             //        }
 
@@ -624,37 +775,37 @@ namespace RjioMRU
             //    {
             //        if (!Read_Capture_Power_Meter)
             //        {
-            //            DR49Ch1ComObj.WriteLine("1");
+            //            dR49ChComObj.WriteLine("1");
 
             //        }
             //        else
             //        {
-            //            DR49Ch1ComObj.WriteLine("2");
+            //            dR49ChComObj.WriteLine("2");
             //        }
             //    }
 
 
             //    if (readValue.Replace("\n", string.Empty).Contains("Failed to open DPD Host Interface"))
             //    {
-            //        DR49Ch1ComObj.WriteLine("\x03");
+            //        dR49ChComObj.WriteLine("\x03");
             //        TapThread.Sleep(100);
-            //        DR49Ch1ComObj.WriteLine(command);
+            //        dR49ChComObj.WriteLine(command);
             //        Read_Capture_Power_Meter = false;
             //        Log.Info("DPD Meas Repeating for Failed to open DPD Host Interface");
             //        //throw new Exception("DPD Host interface open failed");
             //    }
             //    if (readValue.Replace("\n", string.Empty).Contains("Error! Wrong selection"))
-            //        DR49Ch1ComObj.WriteLine("\x03");
+            //        dR49ChComObj.WriteLine("\x03");
             //        TapThread.Sleep(100);
-            //        DR49Ch1ComObj.ReadExisting();
+            //        dR49ChComObj.ReadExisting();
             //        readValue = string.Empty;
-            //        DR49Ch1ComObj.WriteLine(command);
+            //        dR49ChComObj.WriteLine(command);
             //        Log.Info("DPD Meas Repeating for Error! Wrong selection");
             //    }
 
             //    if (readValue.Replace("\n", string.Empty).Contains("DPD User Interface Base Address: [0xa4000000]:") || readValue.Replace("\n", string.Empty).Contains("DPD User Interface Base Address: [0xa4060000]"))
             //    {
-            //        DR49Ch1ComObj.WriteLine(Environment.NewLine);
+            //        dR49ChComObj.WriteLine(Environment.NewLine);
 
             //    }
 
@@ -667,13 +818,13 @@ namespace RjioMRU
             //            string txStr = string.Empty;
             //            string rxStr = string.Empty;
             //            TapThread.Sleep(100);
-            //            DR49Ch1ComObj.WriteLine("6");
+            //            dR49ChComObj.WriteLine("6");
 
             //            do
             //            {
 
 
-            //                TxRxValues += DR49Ch1ComObj.ReadExisting().Replace("\n", string.Empty);
+            //                TxRxValues += dR49ChComObj.ReadExisting().Replace("\n", string.Empty);
             //                //TapThread.Sleep(200);
 
             //            } while (!TxRxValues.Replace("\n", string.Empty).Contains("Sub Menu Selection:"));
@@ -721,14 +872,14 @@ namespace RjioMRU
 
             //            Read_Capture_Power_Meter = true;
 
-            //            DR49Ch1ComObj.WriteLine("99");
+            //            dR49ChComObj.WriteLine("99");
             //        }
             //    }
 
 
             //    if (readValue.Contains("Exiting program"))
             //    {
-            //        DR49Ch1ComObj.WriteLine(Environment.NewLine);
+            //        dR49ChComObj.WriteLine(Environment.NewLine);
             //        break;
             //    }
 
@@ -1823,7 +1974,7 @@ namespace RjioMRU
             sw.Restart();
             string returnValue;
             DR21ComObj.WriteLine("ping -c " + NoofPingsRequested + " " + ipaddress);
-
+            Thread.Sleep(500);
             do
             {
                 //returnValue = DR21ComObj.ReadExisting();
@@ -2156,47 +2307,64 @@ namespace RjioMRU
 
         public bool Dr21GetEepromInfo(out string MAC1, out string MAC2, out string MAC3, out string MAC4, out string ProductSerialNumber, out string PCBSerialNumber, out string ProdID)
         {
-            MAC1 = string.Empty; MAC2 = string.Empty; MAC3 = string.Empty; MAC4 = string.Empty; ProductSerialNumber = string.Empty; PCBSerialNumber = string.Empty; ProdID = string.Empty;
-            DR21ComObj.WriteLine("hstb-m-eeprom -read_info");
-            TapThread.Sleep(100);
-            var returnValue = DR21ComObj.ReadExisting();
-            Log.Info("MAC and Other Details : " + returnValue);
-            if (returnValue.Contains("MAC1 :"))
+            MAC1 = string.Empty;
+            MAC2 = string.Empty;
+            MAC3 = string.Empty;
+            MAC4 = string.Empty;
+            ProductSerialNumber = string.Empty;
+            PCBSerialNumber = string.Empty;
+            ProdID = string.Empty;
+            try
             {
-                MAC1 = returnValue.Substring(returnValue.IndexOf("MAC1 :") + "MAC1 :".Length + 1, returnValue.IndexOf("mac2 crc") - (returnValue.IndexOf("MAC1 :") + "MAC1 :".Length + 1));
-            }
-            if (returnValue.Contains("MAC2 :"))
-            {
-                MAC2 = returnValue.Substring(returnValue.IndexOf("MAC2 :") + "MAC2 :".Length + 1, returnValue.IndexOf("mac3 crc") - (returnValue.IndexOf("MAC2 :") + "MAC2 :".Length + 1));
-            }
 
-            if (returnValue.Contains("MAC3 :"))
-            {
-                MAC3 = returnValue.Substring(returnValue.IndexOf("MAC3 :") + "MAC3 :".Length + 1, returnValue.IndexOf("mac4 crc") - (returnValue.IndexOf("MAC3 :") + "MAC3 :".Length + 1));
-            }
-            if (returnValue.Contains("MAC4 :"))
-            {
-                MAC4 = returnValue.Substring(returnValue.IndexOf("MAC4 :") + "MAC4 :".Length + 1, returnValue.IndexOf("prod serial") - (returnValue.IndexOf("MAC4 :") + "MAC4 :".Length + 1));
-            }
-            if (returnValue.Contains("PROD_SERIAL_NUMBER :"))
-            {
-                ProductSerialNumber = returnValue.Substring(returnValue.IndexOf("PROD_SERIAL_NUMBER :") + "PROD_SERIAL_NUMBER :".Length + 1, returnValue.IndexOf("pcb serial no") - (returnValue.IndexOf("PROD_SERIAL_NUMBER :") + "PROD_SERIAL_NUMBER :".Length + 1));
-            }
-            if (returnValue.Contains("PCB_SERIAL_NUMBER :"))
-            {
-                PCBSerialNumber = returnValue.Substring(returnValue.IndexOf("PCB_SERIAL_NUMBER :") + "PCB_SERIAL_NUMBER :".Length + 1, returnValue.IndexOf("prod id") - (returnValue.IndexOf("PCB_SERIAL_NUMBER :") + "PCB_SERIAL_NUMBER :".Length + 1));
-            }
-            if (returnValue.Contains("PROD_ID :"))
-            {
-                foreach (var item in returnValue.Split('\n'))
+
+                MAC1 = string.Empty; MAC2 = string.Empty; MAC3 = string.Empty; MAC4 = string.Empty; ProductSerialNumber = string.Empty; PCBSerialNumber = string.Empty; ProdID = string.Empty;
+                DR21ComObj.WriteLine("hstb-m-eeprom -read_info");
+                TapThread.Sleep(100);
+                var returnValue = DR21ComObj.ReadExisting();
+                Log.Info("MAC and Other Details : " + returnValue);
+                if (returnValue.Contains("MAC1 :"))
                 {
-                    if (item.Contains("PROD_ID :"))
-                    {
-                        ProdID = item.Split(':')[1];
-                        break;
-                    }
+                    MAC1 = returnValue.Substring(returnValue.IndexOf("MAC1 :") + "MAC1 :".Length + 1, returnValue.IndexOf("mac2 crc") - (returnValue.IndexOf("MAC1 :") + "MAC1 :".Length + 1));
                 }
-                //ProdID = returnValue.Substring(returnValue.IndexOf("PROD_ID :") + "PROD_ID :".Length + 1, returnValue.IndexOf("app ver") - (returnValue.IndexOf("PROD_ID :") + "PROD_ID :".Length + 1));
+                if (returnValue.Contains("MAC2 :"))
+                {
+                    MAC2 = returnValue.Substring(returnValue.IndexOf("MAC2 :") + "MAC2 :".Length + 1, returnValue.IndexOf("mac3 crc") - (returnValue.IndexOf("MAC2 :") + "MAC2 :".Length + 1));
+                }
+
+                if (returnValue.Contains("MAC3 :"))
+                {
+                    MAC3 = returnValue.Substring(returnValue.IndexOf("MAC3 :") + "MAC3 :".Length + 1, returnValue.IndexOf("mac4 crc") - (returnValue.IndexOf("MAC3 :") + "MAC3 :".Length + 1));
+                }
+                if (returnValue.Contains("MAC4 :"))
+                {
+                    MAC4 = returnValue.Substring(returnValue.IndexOf("MAC4 :") + "MAC4 :".Length + 1, returnValue.IndexOf("prod serial") - (returnValue.IndexOf("MAC4 :") + "MAC4 :".Length + 1));
+                }
+                if (returnValue.Contains("PROD_SERIAL_NUMBER :"))
+                {
+                    ProductSerialNumber = returnValue.Substring(returnValue.IndexOf("PROD_SERIAL_NUMBER :") + "PROD_SERIAL_NUMBER :".Length + 1, returnValue.IndexOf("pcb serial no") - (returnValue.IndexOf("PROD_SERIAL_NUMBER :") + "PROD_SERIAL_NUMBER :".Length + 1));
+                }
+                if (returnValue.Contains("PCB_SERIAL_NUMBER :"))
+                {
+                    PCBSerialNumber = returnValue.Substring(returnValue.IndexOf("PCB_SERIAL_NUMBER :") + "PCB_SERIAL_NUMBER :".Length + 1, returnValue.IndexOf("prod id") - (returnValue.IndexOf("PCB_SERIAL_NUMBER :") + "PCB_SERIAL_NUMBER :".Length + 1));
+                }
+                if (returnValue.Contains("PROD_ID :"))
+                {
+                    foreach (var item in returnValue.Split('\n'))
+                    {
+                        if (item.Contains("PROD_ID :"))
+                        {
+                            ProdID = item.Split(':')[1];
+                            break;
+                        }
+                    }
+                    //ProdID = returnValue.Substring(returnValue.IndexOf("PROD_ID :") + "PROD_ID :".Length + 1, returnValue.IndexOf("app ver") - (returnValue.IndexOf("PROD_ID :") + "PROD_ID :".Length + 1));
+                }
+            }
+            catch (Exception)
+            {
+
+                return false;
             }
             return true;
         }
@@ -2317,28 +2485,115 @@ namespace RjioMRU
             } while (true);
         }
 
-        internal void Dr49_CH1_WriteDSAToEEPROM(string[] hexValues)
+
+
+        internal void Dr49_CH_WriteDSAToEEPROM(string[] hexValues, SerialPort dR49ChComObj)
         {
-            DR49Ch1ComObj.ReadExisting();
+            dR49ChComObj.ReadExisting();
             string command4EEPROM_DSA = "rj-rfeeprom-updater -upd_dsa_tx " + hexValues[0] + "," + hexValues[1] + "," + hexValues[2] + "," + hexValues[3] + "," + hexValues[4] + "," + hexValues[5] + "," + hexValues[6] + "," + hexValues[7] + "," + hexValues[8] + "," + hexValues[9] + "," + hexValues[10] + "," + hexValues[11] + "," + hexValues[12] + "," + hexValues[13] + "," + hexValues[14] + "," + hexValues[15] + " -upd_dsa_fb 0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f -upd_dac0 0x47E -upd_dac1 0x64B -upd_fw_ver 1.0 -upd_hw_ver B -upd_prv_valid";
             Log.Info(command4EEPROM_DSA);
-            DR49Ch1ComObj.WriteLine(command4EEPROM_DSA);
+            dR49ChComObj.WriteLine(command4EEPROM_DSA);
+        }
+        //internal void Dr49_CH2_WriteDSAToEEPROM(string[] hexValues)
+        //{
+        //    DR49Ch1ComObj.ReadExisting();
+        //    string command4EEPROM_DSA = "rj-rfeeprom-updater -upd_dsa_tx " + hexValues[0] + "," + hexValues[1] + "," + hexValues[2] + "," + hexValues[3] + "," + hexValues[4] + "," + hexValues[5] + "," + hexValues[6] + "," + hexValues[7] + "," + hexValues[8] + "," + hexValues[9] + "," + hexValues[10] + "," + hexValues[11] + "," + hexValues[12] + "," + hexValues[13] + "," + hexValues[14] + "," + hexValues[15] + " -upd_dsa_fb 0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f -upd_dac0 0x47E -upd_dac1 0x64B -upd_fw_ver 1.0 -upd_hw_ver B -upd_prv_valid";
+        //    Log.Info(command4EEPROM_DSA);
+        //    DR49Ch2ComObj.WriteLine(command4EEPROM_DSA);
+
+
+        //}
+
+
+
+        internal void Dr49_CH_WritePowerFactorToEEPROM(string[] hexValues, SerialPort dR49ChComObj)
+        {
+            dR49ChComObj.ReadExisting();
+            string command4EEPROM_PowerFactor = "rj-rfeeprom-updater -upd_pwr_fact_tx " + hexValues[0] + "," + hexValues[1] + "," + hexValues[2] + "," + hexValues[3] + "," + hexValues[4] + "," + hexValues[5] + "," + hexValues[6] + "," + hexValues[7] + "," + hexValues[8] + "," + hexValues[9] + "," + hexValues[10] + "," + hexValues[11] + "," + hexValues[12] + "," + hexValues[13] + "," + hexValues[14] + "," + hexValues[15];
+            Log.Info(command4EEPROM_PowerFactor);
+            dR49ChComObj.WriteLine(command4EEPROM_PowerFactor);
 
 
         }
-        internal void Dr49_CH2_WriteDSAToEEPROM(string[] hexValues)
+
+        internal void Dr49_CH_WriteTemperatureToEEPROM(string[] TemperatureValues, SerialPort dR49ChComObj)
         {
-            DR49Ch1ComObj.ReadExisting();
-            string command4EEPROM_DSA = "rj-rfeeprom-updater -upd_dsa_tx " + hexValues[0] + "," + hexValues[1] + "," + hexValues[2] + "," + hexValues[3] + "," + hexValues[4] + "," + hexValues[5] + "," + hexValues[6] + "," + hexValues[7] + "," + hexValues[8] + "," + hexValues[9] + "," + hexValues[10] + "," + hexValues[11] + "," + hexValues[12] + "," + hexValues[13] + "," + hexValues[14] + "," + hexValues[15] + " -upd_dsa_fb 0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f -upd_dac0 0x47E -upd_dac1 0x64B -upd_fw_ver 1.0 -upd_hw_ver B -upd_prv_valid";
-            Log.Info(command4EEPROM_DSA);
-            DR49Ch2ComObj.WriteLine(command4EEPROM_DSA);
+            dR49ChComObj.ReadExisting();
+            string command4EEPROM_Temperarure = "rj-rfeeprom-updater -upd_ref_temp " + TemperatureValues[0] + "," + TemperatureValues[1] + "," + TemperatureValues[2] + "," + TemperatureValues[3] + "," + TemperatureValues[4] + "," + TemperatureValues[5] + "," + TemperatureValues[6] + "," + TemperatureValues[7] + "," + TemperatureValues[8] + "," + TemperatureValues[9] + "," + TemperatureValues[10] + "," + TemperatureValues[11] + "," + TemperatureValues[12] + "," + TemperatureValues[13] + "," + TemperatureValues[14] + "," + TemperatureValues[15];
+            Log.Info(command4EEPROM_Temperarure);
+            dR49ChComObj.WriteLine(command4EEPROM_Temperarure);
+        }
+
+        internal string Dr49_CH_ReadTemperature(SerialPort dR49ChComObj, int chainNumber, string tempScript = "rj-dac-tmp -mru_dac_num")
+        {
+            dR49ChComObj.ReadExisting();
+            dR49ChComObj.WriteLine(tempScript + " " + chainNumber / 2);
+            Thread.Sleep(200);
+            //  Log.Info(command4EEPROM_PowerFactor);
+            var temperatureValues = dR49ChComObj.ReadExisting();
+            Log.Info($"Temperature Value for chain number {chainNumber}  is : {temperatureValues.ToString()}");
+            string[] tempArray = temperatureValues.Split(new string[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
+            var a1 = Array.FindAll(tempArray, s => s.Contains("Channel " + chainNumber % 2 + ""));
+            var temperature = a1[0].Split(new string[] { "Temp:" }, StringSplitOptions.RemoveEmptyEntries)[1];
+            temperature = temperature.Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries)[0];
+            return temperature;
+        }
 
 
+
+        internal string Dr49_ReadRFBSerialNumber(SerialPort dR49ChComObj, string tempScript = "rj-rfeeprom-updater -rd_rfb_info")
+        {
+            dR49ChComObj.ReadExisting();
+            dR49ChComObj.WriteLine(tempScript);
+            Thread.Sleep(2000);
+            var RFBValues = dR49ChComObj.ReadExisting();
+            Log.Info("RFB Serial Number :" + RFBValues.ToString());
+            string[] tempArray = RFBValues.Split(new string[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
+            var a1 = Array.FindAll(tempArray, s => s.Contains("RFB_SER_NUM:"));
+            var RFBSerialNumber = a1[0].Split(new string[] { "RFB_SER_NUM:" }, StringSplitOptions.RemoveEmptyEntries);
+            RFBSerialNumber[0] = RFBSerialNumber[0].Trim();
+            return RFBSerialNumber[0];
+        }
+
+        internal string calcualtePowerFactor(double measuredPowerValue, double rxvalue, double txvalue, int iteration, string channel)
+        {/*[Yesterday 15:46] Naresh3 K (External)
+          * for power factor calculation 
+          * (Channel Power Measured - DPD FB Power ) * 100
+          * [Yesterday 15:47] Naresh3 K (External)
+          * example --> (38-(-17.4))*100 = 55.4*100 = 5540 = 0x15A4
+          * */
+
+            //double powerFactor = (measuredPowerValue - rxvalue) * 100;
+            // Assuming powerFactor calculation is done here
+            double powerFactor = (measuredPowerValue - rxvalue) * 100;
+
+            // Convert powerFactor to an integer
+            int powerFactorInt = (int)Math.Round(powerFactor);
+
+            // Convert the integer to a hexadecimal string
+            string powerFactorHex = Convert.ToString(powerFactorInt, 16).ToUpper();
+            if (channel == "CH1")
+            {
+                CalibrationStep_CH1.powerFactorValues[iteration] = "0x" + powerFactorHex;
+                GeneralFunctions.powerFactorValuesCh1[iteration] = "0x" + powerFactorHex;
+            }
+            else
+            {
+                CalibrationStep_CH2.powerFactorValues[iteration] = "0x" + powerFactorHex;
+                GeneralFunctions.powerFactorValuesCh2[iteration] = "0x" + powerFactorHex;
+            }
+            return powerFactorHex;
+            // Now powerFactorHex contains the hexadecimal representation of the power factor
         }
         #endregion DR21Functions
 
 
+        internal void RemoveIP4mETH2()
+        {
+            DR21ComObj.ReadExisting();
 
+            DR21ComObj.WriteLine("scriptToRemoveAddressBlock.sh");
+        }
 
     }
 }
