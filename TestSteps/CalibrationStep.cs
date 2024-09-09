@@ -1690,6 +1690,9 @@ namespace RjioMRU.TestSteps
                     bool ContinueOrNot = initialPowerPickup(ref resultStrings, ref ACPValues, iteration, ref MeasuredPowerValue, (iteration <= 7) ? E6680InsturmentTrx1 : E6680InsturmentTrx2);
                     if (ContinueOrNot == false)
                     {
+                        MessageBox.Show("Skipping because of Initial Power not fetched");
+                        Log.Info("Channel " + Enum.GetName(typeof(Channels), ChannelsSelection) + " Skipping chain because of power measurment failure ,Chain :" + iteration);
+
                         continue;
                     }
 
@@ -1848,6 +1851,8 @@ namespace RjioMRU.TestSteps
                                 resultStrings = ((iteration <= 7) ? E6680InsturmentTrx1.ReadSequencerPower() : E6680InsturmentTrx2.ReadSequencerPower());
                                 if (resultStrings.Length < 5)
                                 {
+                                    MessageBox.Show("Skipping chain because of power measurment failure");
+                                    Log.Info("Channel " + Enum.GetName(typeof(Channels), ChannelsSelection) + " Skipping chain because of power measurment failure ,Chain :" + iteration);
                                     continue;
                                 }
                                 else
@@ -1968,7 +1973,7 @@ namespace RjioMRU.TestSteps
 
                         if (HexValues[iteration] < DSAlowerLimit || HexValues[iteration] > DSAHigherLimit)
                         {
-                            Log.Error("Channel "+Enum.GetName(typeof(Channels), ChannelsSelection)+"DSA Value exceeds limits DSA Value :" + HexValues[iteration] + " DSA Higher Limits :" + DSAHigherLimit + " DSA Lower Limit :" + DSAlowerLimit + " Chanin Number : " + iteration);
+                            Log.Error("Channel "+Enum.GetName(typeof(Channels), ChannelsSelection)+" DSA Value exceeds limits DSA Value :" + HexValues[iteration] + " DSA Higher Limits :" + DSAHigherLimit + " DSA Lower Limit :" + DSAlowerLimit + " Chanin Number : " + iteration);
                             MessageBox.Show("DSA Limit exceeds, Breaking loop");
                             stepPassFlag = false;
                             Log.Error("Channel " + Enum.GetName(typeof(Channels), ChannelsSelection) + " Step Failed at Chain number" + iteration.ToString());
@@ -2002,6 +2007,8 @@ namespace RjioMRU.TestSteps
                             //  MeasuredPowerValue = Convert.ToDouble(resultStrings[22]);
                             if (resultStrings.Length < 5)
                             {
+                                MessageBox.Show("Skipping chain because of power measurement failure");
+                                Log.Info("Channel " + Enum.GetName(typeof(Channels), ChannelsSelection) + " Skipping chain because of power measurement failure ,Chain :" +iteration);
                                 continue;
                             }
                             else
