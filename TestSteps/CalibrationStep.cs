@@ -1682,7 +1682,7 @@ namespace RjioMRU.TestSteps
                         E6680InsturmentTrx2.SetRFInputPort((iteration % 8) + 1);
 
                     DSACommand = genericFunctions.GenerateCommand(iteration, HexValues[iteration]);
-                    Log.Info("Initialization Command for Ch" + iteration + " " + DSACommand);
+                    Log.Info(Enum.GetName(typeof(Channels), ChannelsSelection) + "Initialization Command for Chain :" + iteration + " " + DSACommand);
                     MRU_DUT.DR49CHexecuteCALDSAScripts(DSACommand, "rjInitialConfiguration Completed", serialPortObj);
                     TapThread.Sleep(2000);
                     double MeasuredPowerValue = double.NaN;
@@ -1757,7 +1757,7 @@ namespace RjioMRU.TestSteps
                                 var DpdStartTime = stopwathCh1.ElapsedMilliseconds;
                                 MRU_DUT.DR49CHJjio_DPD_InitRun(iteration, serialPortObj);
                                 var DpdStopTime = stopwathCh1.ElapsedMilliseconds;
-                                Log.Info("DPD init Run TIme for Ch and chain {0} is {1}", iteration, (DpdStopTime - DpdStartTime) / 1000);
+                                Log.Info("Channel " + Enum.GetName(typeof(Channels), ChannelsSelection) +  " DPD init Run TIme for Ch and chain {0} is {1} seconds", iteration, (DpdStopTime - DpdStartTime) / 1000);
                                 TapThread.Sleep(PostDpdDelay);
                             }
                             if (iteration <= 7)
@@ -1834,7 +1834,7 @@ namespace RjioMRU.TestSteps
                             //MRU_DUT.Dr49_DPD_Measurement(iteration, out var txvalue, out var rxvalue, MRU_DUT.GetDR49Ch1ComObj());
 
                             var dpdMeasurementStopTime = stopwathCh1.ElapsedMilliseconds;
-                            Log.Info("DPD Measurement time for Ch1 and chain {0} is {1} ", iteration, (dpdMeasurementStopTime - dpdMEasurementStartTime) / 1000);
+                            Log.Info("Channel " + Enum.GetName(typeof(Channels), ChannelsSelection) + " DPD Measurement time for Ch1 and chain {0} is {1} Seconds", iteration, (dpdMeasurementStopTime - dpdMEasurementStartTime) / 1000);
                             if (iteration <= 7)
                             {
                                 E6680InsturmentTrx1.SelectInstScreen("SEQ");
@@ -1868,7 +1868,7 @@ namespace RjioMRU.TestSteps
                             ACPValues = new double[4] { Convert.ToDouble(ACP5GValues[8]), Convert.ToDouble(ACP5GValues[4]), Convert.ToDouble(ACP5GValues[6]), Convert.ToDouble(ACP5GValues[10]) };
                             MeasuredPowerValue += (CableLosses[iteration] * -1);
 
-                            string CalculatedPowerFactor = MRU_DUT.calcualtePowerFactor(MeasuredPowerValue, rxvalue, txvalue, iteration,((int)ChannelsSelection == 1)? "CH1":"CH2");
+                            string CalculatedPowerFactor = MRU_DUT.calcualtePowerFactor(MeasuredPowerValue, rxvalue, txvalue, iteration, ((int)ChannelsSelection == 1) ? "CH1" : "CH2");
                             string Temperature = MRU_DUT.Dr49_CH_ReadTemperature(serialPortObj, iteration, "rj-dac-tmp -mru_dac_num");
                             temperatureVerdict = genericFunctions.CheckTemperature(Convert.ToDouble(Temperature), TemperatureHighLimit, TemperatureLowLimit);
                             if ((int)ChannelsSelection == 1)
@@ -1879,12 +1879,12 @@ namespace RjioMRU.TestSteps
                             {
                                 GeneralFunctions.ChainTemperatureValuesCh2[iteration] = Convert.ToInt32(Convert.ToDouble(Temperature)).ToString();
                             }
-                            Log.Info("Temperature measured CH1 chain no :" + iteration + " Is " + Temperature); ;
+                            Log.Info("Channel " + Enum.GetName(typeof(Channels), ChannelsSelection) + " Temperature measured chain no :" + iteration + " Is " + Temperature); ;
                             //string CalculatedPowerFactor = calcualtePowerFactor(MeasuredPowerValue,rxvalue, txvalue, iteration, powerFactorValues);
 
 
-                            Log.Info("CH1 DSA Command Used: " + DSACommand);
-                            Log.Info("CH1 Chain NO:" + iteration + " Channel Power : " + MeasuredPowerValue + "dBm ACP1: " + ACPValues[0] + " ACP2 : " + ACPValues[1] + " ACP3 : " + ACPValues[2] + " ACP4 : " + ACPValues[3]);
+                            Log.Info("Channel " + Enum.GetName(typeof(Channels), ChannelsSelection) + " chain " +iteration+ " DSA Command Used: " + DSACommand);
+                            Log.Info("Channel " + Enum.GetName(typeof(Channels), ChannelsSelection) + " Chain NO:" + iteration + " Channel Power : " + MeasuredPowerValue + "dBm ACP1: " + ACPValues[0] + " ACP2 : " + ACPValues[1] + " ACP3 : " + ACPValues[2] + " ACP4 : " + ACPValues[3]);
                             //Log.Info("CH1 Chain NO:" + iteration + " DPD TxValue :" + txvalue + " RxValue :" + rxvalue);
                             //StrChannelMeasurementsCh1[iteration] = iteration + "," + $" 0x{HexValues[iteration]:X}" + "," + MeasuredPowerValue + "," + ACPValues[0] + "," + ACPValues[1] + "," + ACPValues[2] + "," + ACPValues[3] + "," + txvalue + "," + rxvalue;
 
@@ -1918,12 +1918,12 @@ namespace RjioMRU.TestSteps
                             }
                             resultStrings = ((iteration <= 7) ? E6680InsturmentTrx1.measureModulationRead() : E6680InsturmentTrx2.measureModulationRead());
                             var varificationStopTIme = stopwathCh1.ElapsedMilliseconds;
-                            Log.Info("Varification time for Ch1 chaing {0} is {1}", iteration, (varificationStopTIme - varificationStartTime) / 1000);
+                            Log.Info("Channel " + Enum.GetName(typeof(Channels), ChannelsSelection) + " Varification time for  chain {0} is {1} seconds", iteration, (varificationStopTIme - varificationStartTime) / 1000);
 
-                            Log.Info(" CH1 ChainNo" + iteration + " Modulation measurements  :Channel Power : " + resultStrings[22] + "dBm ,EVM : " + Convert.ToDouble(resultStrings[1]) + "% ,Frequency Error : " + Convert.ToDouble(resultStrings[3]) + "Hz;");
+                            Log.Info("Channel " + Enum.GetName(typeof(Channels), ChannelsSelection) + " ChainNo" + iteration + " Modulation measurements  :Channel Power : " + resultStrings[22] + "dBm ,EVM : " + Convert.ToDouble(resultStrings[1]) + "% ,Frequency Error : " + Convert.ToDouble(resultStrings[3]) + "Hz;");
                             if (resultStrings.Length < 5)
                             {
-                                Log.Error("Skipping Chain No " + iteration + " because of result length " + resultStrings.Length.ToString());
+                                Log.Error("Channel " + Enum.GetName(typeof(Channels), ChannelsSelection) + " Skipping Chain No " + iteration + " because of result length " + resultStrings.Length.ToString());
                                 continue;
                             }
                             else
@@ -1968,10 +1968,10 @@ namespace RjioMRU.TestSteps
 
                         if (HexValues[iteration] < DSAlowerLimit || HexValues[iteration] > DSAHigherLimit)
                         {
-                            Log.Error("DSA Value exceeds limits DSA Value :" + HexValues[iteration] + " DSA Higher Limits :" + DSAHigherLimit + " DSA Lower Limit :" + DSAlowerLimit + " Chanin Number : " + iteration);
+                            Log.Error("Channel "+Enum.GetName(typeof(Channels), ChannelsSelection)+"DSA Value exceeds limits DSA Value :" + HexValues[iteration] + " DSA Higher Limits :" + DSAHigherLimit + " DSA Lower Limit :" + DSAlowerLimit + " Chanin Number : " + iteration);
                             MessageBox.Show("DSA Limit exceeds, Breaking loop");
                             stepPassFlag = false;
-                            Log.Error("Step Failed at Chain number" + iteration.ToString());
+                            Log.Error("Channel " + Enum.GetName(typeof(Channels), ChannelsSelection) + " Step Failed at Chain number" + iteration.ToString());
                             break;
 
                         }
@@ -1994,7 +1994,7 @@ namespace RjioMRU.TestSteps
                             }
                             catch (Exception ex)
                             {
-                                Log.Info("Exception/ CH-1 at CAL-DSA Script: {0}", ex);
+                                Log.Info("Channel " + Enum.GetName(typeof(Channels), ChannelsSelection) + " Exception/ CH-1 at CAL-DSA Script: {0}", ex);
                                 break;
                             }
                             /// resultStrings = E6680Insturment.measureModulationRead();
@@ -2029,7 +2029,7 @@ namespace RjioMRU.TestSteps
                             }
 
                             stepPassFlag = false;
-                            Log.Error("Step Failed at Chain number " + iteration.ToString());
+                            Log.Error("Channel " + Enum.GetName(typeof(Channels), ChannelsSelection) +  " Step Failed at Chain number " + iteration.ToString());
                             continue;
                         }
                         else
@@ -2048,7 +2048,7 @@ namespace RjioMRU.TestSteps
                             MeasuredPowerValue += (CableLosses[iteration] * -1);
                             measuredPowerValueBeforeDPD = MeasuredPowerValue;
                         }
-                        Log.Info("CH1 during Chain : " + iteration + " Cal Measured power value :" + MeasuredPowerValue);
+                        Log.Info("Channel " + Enum.GetName(typeof(Channels), ChannelsSelection) +  " during Chain : " + iteration + " Cal Measured power value :" + MeasuredPowerValue);
                     }
 
                     // ToDo: Add test case code.
@@ -2058,7 +2058,7 @@ namespace RjioMRU.TestSteps
                     // You can change the verdict using UpgradeVerdict() as shown below.
                     // UpgradeVerdict(Verdict.Pass);
                     var totalCh1CalTime = stopwathCh1.Elapsed;
-                    Log.Info("Total Ch1 Cal Time : " + (totalCh1CalTime.TotalMilliseconds / 1000).ToString());
+                    Log.Info("Channel " + Enum.GetName(typeof(Channels), ChannelsSelection) + " Total  Cal Time : " + (totalCh1CalTime.TotalMilliseconds / 1000).ToString());
                     PassChains[iteration] = ChannelPowerOk && ACLR_R1OK && ACLR_L2OK && ACLR_R2OK && ACLR_L2OK && FREQERROK && EVMOK && temperatureVerdict;
                     Log.Info($"Step Pass Flag Condition at iteration {iteration}: " + PassChains[iteration].ToString());
 
@@ -2173,7 +2173,7 @@ namespace RjioMRU.TestSteps
                 else
                 {
                     GeneralFunctions.HexValues4DSAWrigingCh2[iteration] = HexValues[iteration];
-                    
+
                 }
                 return false;// break;
             }
@@ -2273,7 +2273,7 @@ namespace RjioMRU.TestSteps
                 Log.Info("Measurements : " + MRURjioReportCls.Measurements);
                 MES_CSV.UpdateHeader(MES_CSV.MRU_Serial_number, MES_CSV.PART_Number, MES_CSV.Equipment_ID, MES_CSV.Slot, MES_CSV.Employee_IDNumber, this.PlanRun.Verdict.ToString().ToUpper() == "PASS" ? "Passed" : "Failed", MES_CSV.Operation_Mode, this.PlanRun.StartTime.ToString("dd-MM-yyyy HH:mm:ss"), DateTime.Now.ToString("dd-MM-yyyy HH:mm:ss"), MES_CSV.SequenceID, this.PlanRun.Verdict.ToString() == "FAIL" ? "FAIL" : ""); //MES_CSV.Overall_Defect_Code);
                 MES_CSV.WrteMESCSVFile();
-              
+
                 // MES_CSV.UpdateHeader(MES_CSV.MRU_Serial_number,MES_CSV.pa)
             }
         }
