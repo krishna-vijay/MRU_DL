@@ -1640,10 +1640,10 @@ namespace RjioMRU.TestSteps
             E6680InsturmentTrx1.SelectInstScreen("SEQ");
             E6680InsturmentTrx2.SelectInstScreen("SEQ");
 
-            E6680InsturmentTrx1.MeasureContinues(true);
+            E6680InsturmentTrx1.MeasureContinues(false);
             if (calEndPort > 7)
             {
-                E6680InsturmentTrx2.MeasureContinues(true);
+                E6680InsturmentTrx2.MeasureContinues(false);
             }
             // E6680Insturment.SelectInstScreen("EVM");
             UpperChannelLimit = ChannelPower + ChannelPowerLimit;
