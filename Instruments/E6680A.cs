@@ -444,26 +444,28 @@ namespace RjioMRU
             string ReturnValue = string.Empty;
             try
             {
-                MeasureContinues(false);
+               // MeasureContinues(false);
                 // ScpiCommand(":INIT:CONT OFF");
-                TapThread.Sleep(500);
+                TapThread.Sleep(1000);
+                ScpiQuery("INITiate:IMMediate;*OPC?");
                 //ScpiCommand("INIT");
                 //TapThread.Sleep(500);
-                string ReturnOpeResponse = ScpiQuery<string>(":STAT:OPER:COND?");
-                if(ReturnOpeResponse == "0")
-                {
-                    TapThread.Sleep(500);
-                    ReturnValue = ScpiQuery("read:LSEQuencer?");
-                }
-                else
-                {
-                    ScpiCommand("ABORT");
-                   ReturnValue = "-99";
-                }
-                MeasureContinues(true);
+               // string ReturnOpeResponse = ScpiQuery<string>(":STAT:OPER:COND?");
+               // if(ReturnOpeResponse == "0")
+               // {
+                 //   TapThread.Sleep(500);
+                   // ReturnValue = ScpiQuery("read:LSEQuencer?");
+                    ReturnValue = ScpiQuery("FETCH:LSEQuencer?");
+               // }
+               // else
+              //  {
+               //     ScpiCommand("ABORT");
+                //   ReturnValue = "-99";
+              //  }
+               // MeasureContinues(true);
                 // ScpiCommand(":INIT:CONT ON");
             }
-            catch (Exception)
+            catch (Exception ex)
             {
 
                 ReturnValue = string.Empty;
