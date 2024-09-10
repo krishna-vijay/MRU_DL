@@ -24,6 +24,7 @@ namespace RjioMRU.TestSteps
 {
 
     [Display("CalibrationStep Ch1", Group: "RjioMRU.Calibration", Description: "Insert a description here")]
+    [Obsolete("Use the new step 'CalibrationStep' instead.")]
     public class CalibrationStep_CH1 : TestStep
     {
         GeneralFunctions genericFunctions = new GeneralFunctions();
@@ -745,6 +746,7 @@ namespace RjioMRU.TestSteps
 
 
     [Display("CalibrationStep Ch2", Group: "RjioMRU.Calibration", Description: "Insert a description here")]
+    [Obsolete("Use the new step 'CalibrationStep' instead.")]
     public class CalibrationStep_CH2 : TestStep
     {
         GeneralFunctions genericFunctions = new GeneralFunctions();
@@ -1662,6 +1664,7 @@ namespace RjioMRU.TestSteps
             {
                 for (int iteration = calStartPort; iteration <= CalEndPort; iteration++)
                 {
+                    bool skipLoop = false;
                     //genericFunctions.SetupSequencerForMeasurement(CableLosses[iteration],ChannelPower, E6680InsturmentTrx1);
                     //genericFunctions.SetupSequencerForMeasurement(CableLosses[iteration],ChannelPower, E6680InsturmentTrx2);
 
@@ -1692,7 +1695,6 @@ namespace RjioMRU.TestSteps
                     {
                         MessageBox.Show("Skipping because of Initial Power not fetched");
                         Log.Info("Channel " + Enum.GetName(typeof(Channels), ChannelsSelection) + " Skipping chain because of power measurment failure ,Chain :" + iteration);
-
                         continue;
                     }
 
@@ -1760,7 +1762,7 @@ namespace RjioMRU.TestSteps
                                 var DpdStartTime = stopwathCh1.ElapsedMilliseconds;
                                 MRU_DUT.DR49CHJjio_DPD_InitRun(iteration, serialPortObj);
                                 var DpdStopTime = stopwathCh1.ElapsedMilliseconds;
-                                Log.Info("Channel " + Enum.GetName(typeof(Channels), ChannelsSelection) +  " DPD init Run TIme for Ch and chain {0} is {1} seconds", iteration, (DpdStopTime - DpdStartTime) / 1000);
+                                Log.Info("Channel " + Enum.GetName(typeof(Channels), ChannelsSelection) + " DPD init Run TIme for Ch and chain {0} is {1} seconds", iteration, (DpdStopTime - DpdStartTime) / 1000);
                                 TapThread.Sleep(PostDpdDelay);
                             }
                             if (iteration <= 7)
@@ -1846,25 +1848,30 @@ namespace RjioMRU.TestSteps
                             {
                                 E6680InsturmentTrx2.SelectInstScreen("SEQ");
                             }
+                            Thread.Sleep(1000);
                             for (int j = 0; j < 5; j++)
                             {
                                 resultStrings = ((iteration <= 7) ? E6680InsturmentTrx1.ReadSequencerPower() : E6680InsturmentTrx2.ReadSequencerPower());
+
                                 if (resultStrings.Length < 5)
                                 {
-                                    MessageBox.Show("Skipping chain because of power measurment failure");
-                                    Log.Info("Channel " + Enum.GetName(typeof(Channels), ChannelsSelection) + " Skipping chain because of power measurment failure ,Chain :" + iteration);
-                                    continue;
-                                }
-                                else
-                                {
-                                    if (j > 0)
+                                   
+                                    DialogResult dr = MessageBox.Show("Signal power not measured  \"Do you want to try agein press ok, to Skip press cancel ?", "Power Measure Error", MessageBoxButtons.OKCancel, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
+                                    if (dr == DialogResult.OK)
                                     {
-                                        break;
+                                        continue;
                                     }
-                                }
+                                    else
+                                    {
+                                        skipLoop = true;
+                                        Log.Info("Channel " + Enum.GetName(typeof(Channels), ChannelsSelection) + " Skipping chain because of power measurment failure ,Chain :" + iteration);
+                                    }
+                                }                             
+
                             }
-                            if (resultStrings.Length < 5)
+                            if (skipLoop)
                             {
+                                skipLoop = false;
                                 MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, "FALSE", "Failed", "Failed", "Failed", "EQ", "TRUE", "NA");
                                 continue;
                             }
@@ -1888,7 +1895,7 @@ namespace RjioMRU.TestSteps
                             //string CalculatedPowerFactor = calcualtePowerFactor(MeasuredPowerValue,rxvalue, txvalue, iteration, powerFactorValues);
 
 
-                            Log.Info("Channel " + Enum.GetName(typeof(Channels), ChannelsSelection) + " chain " +iteration+ " DSA Command Used: " + DSACommand);
+                            Log.Info("Channel " + Enum.GetName(typeof(Channels), ChannelsSelection) + " chain " + iteration + " DSA Command Used: " + DSACommand);
                             Log.Info("Channel " + Enum.GetName(typeof(Channels), ChannelsSelection) + " Chain NO:" + iteration + " Channel Power : " + MeasuredPowerValue + "dBm ACP1: " + ACPValues[0] + " ACP2 : " + ACPValues[1] + " ACP3 : " + ACPValues[2] + " ACP4 : " + ACPValues[3]);
                             //Log.Info("CH1 Chain NO:" + iteration + " DPD TxValue :" + txvalue + " RxValue :" + rxvalue);
                             //StrChannelMeasurementsCh1[iteration] = iteration + "," + $" 0x{HexValues[iteration]:X}" + "," + MeasuredPowerValue + "," + ACPValues[0] + "," + ACPValues[1] + "," + ACPValues[2] + "," + ACPValues[3] + "," + txvalue + "," + rxvalue;
@@ -1973,8 +1980,10 @@ namespace RjioMRU.TestSteps
 
                         if (HexValues[iteration] < DSAlowerLimit || HexValues[iteration] > DSAHigherLimit)
                         {
-                            Log.Error("Channel "+Enum.GetName(typeof(Channels), ChannelsSelection)+" DSA Value exceeds limits DSA Value :" + HexValues[iteration] + " DSA Higher Limits :" + DSAHigherLimit + " DSA Lower Limit :" + DSAlowerLimit + " Chanin Number : " + iteration);
+                            Log.Error("Channel " + Enum.GetName(typeof(Channels), ChannelsSelection) + " DSA Value exceeds limits DSA Value :" + HexValues[iteration] + " DSA Higher Limits :" + DSAHigherLimit + " DSA Lower Limit :" + DSAlowerLimit + " Chanin Number : " + iteration);
                             MessageBox.Show("DSA Limit exceeds, Breaking loop");
+                            // DialogResult result = new InputBox("Error", "DSA Value exceeds limits DSA Value :" + HexValues[iteration] + " DSA Higher Limits :" + DSAHigherLimit + " DSA Lower Limit :" + DSAlowerLimit + " Chanin Number : " + iteration+ "DSA Value exceeds limits \"if you want to change DSA value please enter (Decimal Value of hex) to continue with calculated value leave a blank \" ").ShowDialog();
+
                             stepPassFlag = false;
                             Log.Error("Channel " + Enum.GetName(typeof(Channels), ChannelsSelection) + " Step Failed at Chain number" + iteration.ToString());
                             break;
@@ -1991,71 +2000,77 @@ namespace RjioMRU.TestSteps
                             //{
                             TapThread.Sleep(1000);
                             //  E6680Insturment.SetRFInputPort((iteration+1)%9);
+
                             try
                             {
-
-
                                 resultStrings = ((iteration <= 7) ? E6680InsturmentTrx1.ReadSequencerPower() : E6680InsturmentTrx2.ReadSequencerPower());
                             }
                             catch (Exception ex)
                             {
-                                Log.Info("Channel " + Enum.GetName(typeof(Channels), ChannelsSelection) + " Exception/ CH-1 at CAL-DSA Script: {0}", ex);
-                                break;
+                                Log.Info("Channel " + Enum.GetName(typeof(Channels), ChannelsSelection) + " Exception: {0}", ex);
+                                DialogResult dr = MessageBox.Show("There is an exception :" + ex.Message + " \"Do you want to try agein?", "Power Measure Error", MessageBoxButtons.OKCancel, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
+                                if (dr == DialogResult.OK)
+                                {
+                                    continue;
+                                }
+                                else
+                                {
+                                    skipLoop = true;
+                                }
                             }
                             /// resultStrings = E6680Insturment.measureModulationRead();
-                            MeasuredPowerValue = Convert.ToDouble(resultStrings[13]);
                             //  MeasuredPowerValue = Convert.ToDouble(resultStrings[22]);
                             if (resultStrings.Length < 5)
                             {
-                                MessageBox.Show("Skipping chain because of power measurement failure");
-                                Log.Info("Channel " + Enum.GetName(typeof(Channels), ChannelsSelection) + " Skipping chain because of power measurement failure ,Chain :" +iteration);
-                                continue;
+                                // MessageBox.Show("Skipping chain because of power measurement failure");
+                                DialogResult dr = MessageBox.Show("Signal power not measured  \"Do you want to try agein press ok, to Skip press cancel ?", "Power Measure Error", MessageBoxButtons.OKCancel, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
+                                if (dr == DialogResult.OK)
+                                {
+                                    continue;
+                                }
+                                else
+                                {
+                                    skipLoop = true;
+                                }
                             }
                             else
                             {
                                 MeasuredPowerValue = Convert.ToDouble(resultStrings[13]);
-                                if (j > 0)
-                                {
                                     break;
-                                }
-
                             }
                             // } while (MeasuredPowerValue < -5 || TapThread.Current.AbortToken.IsCancellationRequested);
                         }
-                        if (resultStrings.Length < 5 || MeasuredPowerValue < 0)
+                        if (skipLoop|| MeasuredPowerValue < 0)
                         {
+                            skipLoop = false;
                             if ((int)ChannelsSelection == 1)
                             {
-
                                 GeneralFunctions.StrChannelMeasurementsCh1[iteration] = iteration + "," + $" 0x{HexValues[iteration]:X}" + "," + "-999" + "," + "-999" + "," + "-999" + "," + "-999" + "," + "-999" + "," + "" + "," + "";
                             }
                             else
                             {
-
                                 GeneralFunctions.StrChannelMeasurementsCh2[iteration] = iteration + "," + $" 0x{HexValues[iteration]:X}" + "," + "-999" + "," + "-999" + "," + "-999" + "," + "-999" + "," + "-999" + "," + "" + "," + "";
                             }
 
                             stepPassFlag = false;
-                            Log.Error("Channel " + Enum.GetName(typeof(Channels), ChannelsSelection) +  " Step Failed at Chain number " + iteration.ToString());
+                            Log.Error("Channel " + Enum.GetName(typeof(Channels), ChannelsSelection) + " Step Failed at Chain number " + iteration.ToString());
                             continue;
                         }
                         else
                         {
                             if ((int)ChannelsSelection == 1)
                             {
-
                                 GeneralFunctions.HexValues4DSAWrigingCh1[iteration] = HexValues[iteration];
                             }
                             else
                             {
-
                                 GeneralFunctions.HexValues4DSAWrigingCh2[iteration] = HexValues[iteration];
                             }
                             ACPValues = new double[4] { Convert.ToDouble(resultStrings[67]), Convert.ToDouble(resultStrings[69]), Convert.ToDouble(resultStrings[71]), Convert.ToDouble(resultStrings[73]) };
                             MeasuredPowerValue += (CableLosses[iteration] * -1);
                             measuredPowerValueBeforeDPD = MeasuredPowerValue;
                         }
-                        Log.Info("Channel " + Enum.GetName(typeof(Channels), ChannelsSelection) +  " during Chain : " + iteration + " Cal Measured power value :" + MeasuredPowerValue);
+                        Log.Info("Channel " + Enum.GetName(typeof(Channels), ChannelsSelection) + " during Chain : " + iteration + " Cal Measured power value :" + MeasuredPowerValue);
                     }
 
                     // ToDo: Add test case code.
@@ -2094,7 +2109,8 @@ namespace RjioMRU.TestSteps
         }
 
         private bool initialPowerPickup(ref string[] resultStrings, ref double[] ACPValues, int iteration, ref double MeasuredPowerValue, EXM_E6680A instrumentObject)
-        {
+        {bool skipLoop = false;
+
             if (iteration == 1)
             {
                 Thread.Sleep(3000);
@@ -2108,12 +2124,28 @@ namespace RjioMRU.TestSteps
                 catch (Exception ex)
                 {
                     Log.Error(ex);
-                    break;
+                    DialogResult dr = MessageBox.Show("There is an exception :" + ex.Message + " \"Do you want to try agein?", "Power Measure Error", MessageBoxButtons.OKCancel, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
+                    if (dr == DialogResult.OK)
+                    {
+                        continue;
+                    }
+                    else
+                    {
+                        skipLoop = true;
+                    }
                 }
                 // var resutlStrings = E6680Insturment.measureModulationRead();
                 if (resultStrings.Length < 5)
                 {
-                    continue;
+                    DialogResult dr = MessageBox.Show("Signal power not measured  \"Do you want to try agein?", "Power Measure Error", MessageBoxButtons.OKCancel, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
+                    if (dr == DialogResult.OK)
+                    {
+                        continue;
+                    }
+                    else
+                    {
+                        skipLoop = true;
+                    }
                 }
                 else
                 {
@@ -2124,7 +2156,7 @@ namespace RjioMRU.TestSteps
                     }
                 }
             }
-            if (resultStrings.Length < 5 || MeasuredPowerValue < 0)
+            if (skipLoop || MeasuredPowerValue < 0)
             {
                 if ((int)ChannelsSelection == 1)
                 {
