@@ -72,24 +72,27 @@ namespace RjioMRU
 
                 foreach (var componinetitem in componentArray)
                 {
-                    if (componinetitem.ref_designator== "MAC1")
+                    if (componinetitem != null)
                     {
-                        MacID = componinetitem.component_id.ToString();
-                    }
+                        if (componinetitem.ref_designator == "MAC1")
+                        {
+                            MacID = componinetitem.component_id.ToString();
+                        }
 
-                    if (componinetitem.ref_designator == "PRODUCT CODE")
-                    {
-                        ProductID = componinetitem.component_id.ToString();
-                    }
-                    
-                    if (componinetitem.ref_designator == "SACN 70341")
-                    {
-                        pcbSerialNumber_HSTB = componinetitem.component_id.ToString();
-                    }
-                    
-                    if (componinetitem.ref_designator == "SCAN MRURF PCBA")
-                    {
-                        RFBSerialNumber = componinetitem.component_id.ToString();
+                        if (componinetitem.ref_designator == "PRODUCT CODE")
+                        {
+                            ProductID = componinetitem.component_id.ToString();
+                        }
+
+                        if (componinetitem.ref_designator == "SACN 70341")
+                        {
+                            pcbSerialNumber_HSTB = componinetitem.component_id.ToString();
+                        }
+
+                        if (componinetitem.ref_designator == "SCAN MRURF PCBA")
+                        {
+                            RFBSerialNumber = componinetitem.component_id.ToString();
+                        }
                     }
 
                 }

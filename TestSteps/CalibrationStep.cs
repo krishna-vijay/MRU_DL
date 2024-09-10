@@ -1855,7 +1855,7 @@ namespace RjioMRU.TestSteps
 
                                 if (resultStrings.Length < 5)
                                 {
-                                   
+
                                     DialogResult dr = MessageBox.Show("Signal power not measured  \"Do you want to try agein press ok, to Skip press cancel ?", "Power Measure Error", MessageBoxButtons.OKCancel, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
                                     if (dr == DialogResult.OK)
                                     {
@@ -1866,7 +1866,15 @@ namespace RjioMRU.TestSteps
                                         skipLoop = true;
                                         Log.Info("Channel " + Enum.GetName(typeof(Channels), ChannelsSelection) + " Skipping chain because of power measurment failure ,Chain :" + iteration);
                                     }
-                                }                             
+                                }
+                                else
+                                {
+                                    MeasuredPowerValue = Convert.ToDouble(resultStrings[13]);
+                                    if (j > 0)
+                                    {
+                                        break;
+                                    }
+                                }
 
                             }
                             if (skipLoop)
@@ -1875,7 +1883,7 @@ namespace RjioMRU.TestSteps
                                 MES_CSV.UpdateMESCSV_Parametric_List((MES_CSV.GroupName++).ToString(), this.StepRun.TestStepName, "FALSE", "Failed", "Failed", "Failed", "EQ", "TRUE", "NA");
                                 continue;
                             }
-                            MeasuredPowerValue = Convert.ToDouble(resultStrings[13]);
+                            //MeasuredPowerValue = Convert.ToDouble(resultStrings[13]);
                             //ACP Values L2 L1 H1 H2
                             ACPValues = new double[4] { Convert.ToDouble(ACP5GValues[8]), Convert.ToDouble(ACP5GValues[4]), Convert.ToDouble(ACP5GValues[6]), Convert.ToDouble(ACP5GValues[10]) };
                             MeasuredPowerValue += (CableLosses[iteration] * -1);
