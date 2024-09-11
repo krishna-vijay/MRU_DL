@@ -2089,7 +2089,7 @@ namespace RjioMRU.TestSteps
                     // UpgradeVerdict(Verdict.Pass);
                     var totalCh1CalTime = stopwathCh1.Elapsed;
                     Log.Info("Channel " + Enum.GetName(typeof(Channels), ChannelsSelection) + " Total  Cal Time : " + (totalCh1CalTime.TotalMilliseconds / 1000).ToString());
-                    PassChains[iteration] = ChannelPowerOk && ACLR_R1OK && ACLR_L2OK && ACLR_R2OK && ACLR_L2OK && FREQERROK && EVMOK && temperatureVerdict;
+                    PassChains[iteration] = ChannelPowerOk && ACLR_R1OK && ACLR_L2OK && ACLR_R2OK && ACLR_L2OK && FREQERROK && EVMOK && temperatureVerdict && dpdFBpowerVerdict;
                     Log.Info($"Step Pass Flag Condition at iteration {iteration}: " + PassChains[iteration].ToString());
 
                 }
