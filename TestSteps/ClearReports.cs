@@ -29,6 +29,8 @@ namespace RjioMRU.TestSteps
         {
             CalibrationStep_CH1.StrChannelMeasurementsCh1 = new string[16] { ";", ";", ";", ";", ";", ";", ";", ";", ";", ";", ";", ";", ";", ";", ";", ";" };
             CalibrationStep_CH2.StrChannelMeasurementsCh2 = new string[16] { ";", ";", ";", ";", ";", ";", ";", ";", ";", ";", ";", ";", ";", ";", ";", ";" };
+            GeneralFunctions.ChainTemperatureValuesCh1 = new string[16] { ";", ";", ";", ";", ";", ";", ";", ";", ";", ";", ";", ";", ";", ";", ";", ";" };
+            GeneralFunctions.StrChannelMeasurementsCh2 = new string[16] { ";", ";", ";", ";", ";", ";", ";", ";", ";", ";", ";", ";", ";", ";", ";", ";" };
 
 
             // ToDo: Add test case code.
