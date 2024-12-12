@@ -444,24 +444,28 @@ namespace RjioMRU
             string ReturnValue = string.Empty;
             try
             {
-               // ScpiCommand(":INIT:CONT OFF");
-                TapThread.Sleep(500);
+               // MeasureContinues(false);
+                // ScpiCommand(":INIT:CONT OFF");
+                TapThread.Sleep(1000);
+                ScpiQuery("INITiate:IMMediate;*OPC?");
                 //ScpiCommand("INIT");
                 //TapThread.Sleep(500);
-                string ReturnOpeResponse = ScpiQuery<string>(":STAT:OPER:COND?");
-                if(ReturnOpeResponse == "0")
-                {
-                    TapThread.Sleep(500);
-                    ReturnValue = ScpiQuery("read:LSEQuencer?");
-                }
-                else
-                {
-                    ScpiCommand("ABORT");
-                   ReturnValue = "-99";
-                }
-               // ScpiCommand(":INIT:CONT ON");
+               // string ReturnOpeResponse = ScpiQuery<string>(":STAT:OPER:COND?");
+               // if(ReturnOpeResponse == "0")
+               // {
+                 //   TapThread.Sleep(500);
+                   // ReturnValue = ScpiQuery("read:LSEQuencer?");
+                    ReturnValue = ScpiQuery("FETCH:LSEQuencer?");
+               // }
+               // else
+              //  {
+               //     ScpiCommand("ABORT");
+                //   ReturnValue = "-99";
+              //  }
+               // MeasureContinues(true);
+                // ScpiCommand(":INIT:CONT ON");
             }
-            catch (Exception)
+            catch (Exception ex)
             {
 
                 ReturnValue = string.Empty;
@@ -503,6 +507,12 @@ namespace RjioMRU
         public void ACP_GATESource_ABs_Trig_Level(double level)
         {
             ScpiCommand(":TRIG:SEQ:RFB:LEV:ABS " + level);
+        }
+
+        internal string getInstrumentSCreen()
+        {
+          return  ScpiQuery<string>(":INSTrument:SCReen:SELect?");
+
         }
         #region Enums
 

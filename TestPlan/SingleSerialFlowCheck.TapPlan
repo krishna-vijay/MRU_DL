@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TestPlan type="OpenTap.TestPlan">
+  <Steps>
+    <TestStep type="RjioMRU.TestSteps.MESSteps.SingleSerialFlowCheck" Id="b476c126-a6bb-45ae-9b1f-0043cb1ffd9d">
+      <MesResource Source="OpenTap.InstrumentSettings">MES</MesResource>
+      <SerialNumber>JITSAF1FKMRU00018</SerialNumber>
+      <ServerURL>http://corpconduit3.sanmina.com:18003/conduit</ServerURL>
+      <Name Metadata="Step Name">SingleSerialFlowCheck</Name>
+    </TestStep>
+  </Steps>
+  <Package.Dependencies>
+    <Package Name="OpenTAP" Version="^9.25.0+9298e832" />
+  </Package.Dependencies>
+</TestPlan>
